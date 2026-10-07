@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Events - ClubConnect</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../public/css/style.css">
+
+    <style>
+        .event-card {
+            height: 100%;
+            transition: 0.3s;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .event-image {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .event-details p {
+            margin-bottom: 8px;
+        }
+
+        #message {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+
+        <div class="container">
+
+            <a class="navbar-brand fw-bold" href="index.html">
+                ClubConnect
+            </a>
+
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarMenu">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarMenu">
+
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            Home
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="clubs.html">
+                            Clubs
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="events.html">
+                            Events
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">
+                            Login
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- PAGE HEADER -->
+    <section class="container my-5">
+
+        <div class="text-center mb-5">
+
+            <h1 class="fw-bold">
+                College Events
+            </h1>
+
+            <p class="text-muted">
+                Discover and register for exciting college events.
+            </p>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+        <div id="message"
+             class="alert"
+             role="alert">
+        </div>
+
+
+        <!-- LOADING -->
+        <div id="loading"
+             class="text-center my-5">
+
+            <div class="spinner-border text-primary"
+                 role="status">
+
+                <span class="visually-hidden">
+                    Loading...
+                </span>
+
+            </div>
+
+            <p class="mt-3">
+                Loading events...
+            </p>
+
+        </div>
+
+
+        <!-- EVENTS -->
+        <div id="eventsContainer"
+             class="row g-4">
+
+        </div>
+
+
+        <!-- NO EVENTS -->
+        <div id="noEvents"
+             class="text-center my-5"
+             style="display:none;">
+
+            <h4>
+                No Events Available
+            </h4>
+
+            <p class="text-muted">
+                There are currently no events available.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer class="bg-dark text-white text-center p-4">
+
+        <p class="mb-1">
+            ClubConnect - College Club Management System
+        </p>
+
+        <p class="mb-0">
+            &copy; 2026 ClubConnect. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <script>
+
+        // ==========================================
+        // SHOW MESSAGE
+        // ==========================================
+
+        function showMessage(message, type) {
+
+            const messageBox =
+                document.getElementById("message");
+
+            messageBox.className =
+                `alert alert-${type}`;
+
+            messageBox.textContent =
+                message;
+
+            messageBox.style.display =
+                "block";
+
+            setTimeout(() => {
+
+                messageBox.style.display =
+                    "none";
+
+            }, 4000);
+        }
+
+
+        // ==========================================
+        // GET LOGGED-IN USER
+        // ==========================================
+
+        function getLoggedInUser() {
+
+            const possibleKeys = [
+                "user",
+                "loggedInUser",
+                "currentUser",
+                "student"
+            ];
+
+            for (const key of possibleKeys) {
+
+                const storedUser =
+                    localStorage.getItem(key);
+
+                if (storedUser) {
+
+                    try {
+
+                        return JSON.parse(storedUser);
+
+                    } catch (error) {
+
+                        console.error(
+                            "Invalid user data:",
+                            error
+                        );
+
+                    }
+
+                }
+
+            }
+
+            return null;
+        }
+
+
+        // ==========================================
+        // LOAD EVENTS
+        // ==========================================
+
+        async function loadEvents() {
+
+            const loading =
+                document.getElementById("loading");
+
+            const container =
+                document.getElementById("eventsContainer");
+
+            const noEvents =
+                document.getElementById("noEvents");
+
+
+            try {
+
+                const response =
+                    await fetch("/api/events");
+
+
+                const data =
+                    await response.json();
+
+
+                loading.style.display =
+                    "none";
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Unable to load events."
+                    );
+
+                }
+
+
+                container.innerHTML =
+                    "";
+
+
+                if (!data.events ||
+                    data.events.length === 0) {
+
+                    noEvents.style.display =
+                        "block";
+
+                    return;
+
+                }
+
+
+                noEvents.style.display =
+                    "none";
+
+
+                data.events.forEach(event => {
+
+                    const card =
+                        document.createElement("div");
+
+                    card.className =
+                        "col-md-6 col-lg-4";
+
+
+                    // DATE
+                    let eventDate = "";
+
+                    if (event.date) {
+
+                        eventDate =
+                            new Date(
+                                event.date
+                            ).toLocaleDateString(
+                                "en-IN",
+                                {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric"
+                                }
+                            );
+
+                    }
+
+
+                    // IMAGE
+                    const image =
+                        event.image ||
+                        "../public/images/coding-event.png";
+
+
+                    // SEATS
+                    const availableSeats =
+                        Number(
+                            event.availableSeats
+                        );
+
+
+                    const totalSeats =
+                        Number(
+                            event.totalSeats
+                        );
+
+
+                    let buttonHTML = "";
+
+
+                    if (availableSeats <= 0) {
+
+                        buttonHTML = `
+                            <button
+                                class="btn btn-secondary w-100"
+                                disabled>
+                                Event Full
+                            </button>
+                        `;
+
+                    } else {
+
+                        buttonHTML = `
+                            <button
+                                class="btn btn-primary w-100"
+                                onclick="registerForEvent('${event._id}')">
+                                Register
+                            </button>
+                        `;
+
+                    }
+
+
+                    card.innerHTML = `
+
+                        <div class="card event-card shadow-sm">
+
+                            <img
+                                src="${image}"
+                                class="card-img-top event-image"
+                                alt="${event.title}"
+                                onerror="this.src='../public/images/coding-event.png';"
+                            >
+
+                            <div class="card-body">
+
+                                <h5 class="card-title fw-bold">
+                                    ${event.title || "Event"}
+                                </h5>
+
+                                <p class="text-primary fw-semibold">
+                                    ${event.clubName || "Club"}
+                                </p>
+
+
+                                <div class="event-details">
+
+                                    <p>
+                                        <strong>Date:</strong>
+                                        ${eventDate}
+                                    </p>
+
+                                    <p>
+                                        <strong>Time:</strong>
+                                        ${event.time || "N/A"}
+                                    </p>
+
+                                    <p>
+                                        <strong>Venue:</strong>
+                                        ${event.venue || "N/A"}
+                                    </p>
+
+                                    <p>
+                                        <strong>Seats:</strong>
+                                        ${availableSeats}
+                                        / ${totalSeats}
+                                    </p>
+
+                                </div>
+
+
+                                <div class="mt-3">
+
+                                    ${buttonHTML}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+
+                    container.appendChild(card);
+
+                });
+
+
+            } catch (error) {
+
+                console.error(
+                    "Load Events Error:",
+                    error
+                );
+
+
+                loading.style.display =
+                    "none";
+
+
+                container.innerHTML = `
+
+                    <div class="col-12">
+
+                        <div class="alert alert-danger text-center">
+
+                            Unable to load events.
+
+                            <br>
+
+                            ${error.message}
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+        // ==========================================
+        // REGISTER FOR EVENT
+        // ==========================================
+
+        async function registerForEvent(eventId) {
+
+            const user =
+                getLoggedInUser();
+
+
+            // USER NOT LOGGED IN
+            if (!user) {
+
+                showMessage(
+                    "Please login first to register for an event.",
+                    "warning"
+                );
+
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        "login.html";
+
+                }, 1200);
+
+
+                return;
+
+            }
+
+
+            // FIND STUDENT ID
+            const studentId =
+                user._id ||
+                user.id ||
+                user.userId;
+
+
+            if (!studentId) {
+
+                showMessage(
+                    "Student information not found. Please login again.",
+                    "danger"
+                );
+
+                return;
+
+            }
+
+
+            // CONFIRM REGISTRATION
+            const confirmation =
+                confirm(
+                    "Are you sure you want to register for this event?"
+                );
+
+
+            if (!confirmation) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/api/events/${eventId}/register`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                studentId:
+                                    studentId
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Registration failed."
+                    );
+
+                }
+
+
+                showMessage(
+                    data.message ||
+                    "Event registration successful!",
+                    "success"
+                );
+
+
+                // Reload events to update seats
+                loadEvents();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Event Registration Error:",
+                    error
+                );
+
+
+                showMessage(
+                    error.message ||
+                    "Unable to register for event.",
+                    "danger"
+                );
+
+            }
+
+        }
+
+
+        // ==========================================
+        // PAGE LOAD
+        // ==========================================
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                loadEvents();
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

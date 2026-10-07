@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Membership Requests - ClubConnect</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="../public/css/style.css">
+
+</head>
+
+<body>
+
+
+<!-- ========================= -->
+<!-- Admin Navbar -->
+<!-- ========================= -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+
+    <div class="container">
+
+        <a class="navbar-brand"
+           href="admin-dashboard.html">
+
+            ClubConnect Admin
+
+        </a>
+
+
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarMenu">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+        <div class="collapse navbar-collapse"
+             id="navbarMenu">
+
+            <ul class="navbar-nav ms-auto">
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       href="admin-dashboard.html">
+
+                        Dashboard
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       href="manage-clubs.html">
+
+                        Manage Clubs
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       href="manage-events.html">
+
+                        Manage Events
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link active"
+                       href="membership-requests.html">
+
+                        Requests
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       href="manage-announcements.html">
+
+                        Announcements
+
+                    </a>
+
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link"
+                       href="index.html">
+
+                        Logout
+
+                    </a>
+
+                </li>
+
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ========================= -->
+<!-- Membership Requests -->
+<!-- ========================= -->
+
+<section class="container my-5">
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+
+        <div>
+
+            <h2>
+                Membership Requests
+            </h2>
+
+            <p class="mb-0">
+                Review student requests to join college clubs.
+            </p>
+
+        </div>
+
+
+        <!-- Excel Export Button -->
+
+        <button class="btn btn-success"
+                onclick="exportMemberships()">
+
+            Export Excel
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- ========================= -->
+    <!-- Message -->
+    <!-- ========================= -->
+
+    <div id="message"
+         class="alert d-none"
+         role="alert">
+
+    </div>
+
+
+
+    <!-- ========================= -->
+    <!-- Loading -->
+    <!-- ========================= -->
+
+    <div id="loading"
+         class="text-center my-4">
+
+        <div class="spinner-border text-primary"
+             role="status">
+
+            <span class="visually-hidden">
+                Loading...
+            </span>
+
+        </div>
+
+        <p class="mt-2">
+            Loading membership requests...
+        </p>
+
+    </div>
+
+
+
+    <!-- ========================= -->
+    <!-- Membership Table -->
+    <!-- ========================= -->
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered table-striped">
+
+
+            <thead class="table-primary">
+
+                <tr>
+
+                    <th>
+                        Student Name
+                    </th>
+
+                    <th>
+                        Enrollment No.
+                    </th>
+
+                    <th>
+                        Club
+                    </th>
+
+                    <th>
+                        Category
+                    </th>
+
+                    <th>
+                        Request Date
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+
+            <tbody id="requestsTableBody">
+
+                <!-- MongoDB data will be loaded here -->
+
+            </tbody>
+
+
+        </table>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ========================= -->
+<!-- Footer -->
+<!-- ========================= -->
+
+<footer class="bg-dark text-white text-center p-3">
+
+
+    <p class="mb-1">
+
+        ClubConnect - Admin Panel
+
+    </p>
+
+
+    <p class="mb-0">
+
+        &copy; 2026 ClubConnect.
+        All Rights Reserved.
+
+    </p>
+
+
+</footer>
+
+
+
+<!-- ========================= -->
+<!-- Bootstrap JavaScript -->
+<!-- ========================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+<!-- ========================= -->
+<!-- Membership Request JS -->
+<!-- ========================= -->
+
+<script>
+
+
+// =====================================================
+// LOAD MEMBERSHIP REQUESTS
+// =====================================================
+
+async function loadMembershipRequests() {
+
+
+    const tableBody =
+        document.getElementById(
+            "requestsTableBody"
+        );
+
+
+    const loading =
+        document.getElementById(
+            "loading"
+        );
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                "/api/admin/memberships"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        loading.style.display =
+            "none";
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load membership requests."
+            );
+
+        }
+
+
+        tableBody.innerHTML = "";
+
+
+
+        // No requests
+
+        if (
+            !data.memberships ||
+            data.memberships.length === 0
+        ) {
+
+
+            tableBody.innerHTML = `
+
+                <tr>
+
+                    <td colspan="7"
+                        class="text-center">
+
+                        No membership requests found.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+
+            return;
+
+        }
+
+
+
+        // Display every membership
+
+        data.memberships.forEach(
+            (membership) => {
+
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                let studentName =
+                    "";
+
+                let enrollment =
+                    "";
+
+
+
+                if (membership.student) {
+
+                    studentName =
+                        membership.student.name ||
+                        "";
+
+                    enrollment =
+                        membership.student.enrollment ||
+                        "";
+
+                }
+
+
+
+                // Request date
+
+                const requestDate =
+                    membership.requestDate
+                        ? new Date(
+                            membership.requestDate
+                        ).toLocaleString()
+                        : "";
+
+
+
+                // Status badge
+
+                let statusBadge =
+                    "";
+
+
+
+                if (
+                    membership.status ===
+                    "Approved"
+                ) {
+
+
+                    statusBadge = `
+
+                        <span class="badge bg-success">
+
+                            Approved
+
+                        </span>
+
+                    `;
+
+
+                }
+
+                else if (
+                    membership.status ===
+                    "Rejected"
+                ) {
+
+
+                    statusBadge = `
+
+                        <span class="badge bg-danger">
+
+                            Rejected
+
+                        </span>
+
+                    `;
+
+
+                }
+
+                else {
+
+
+                    statusBadge = `
+
+                        <span class="badge bg-warning text-dark">
+
+                            Pending
+
+                        </span>
+
+                    `;
+
+                }
+
+
+
+                // Action buttons
+
+                let actionButtons =
+                    "";
+
+
+
+                if (
+                    membership.status ===
+                    "Pending"
+                ) {
+
+
+                    actionButtons = `
+
+                        <button
+                            class="btn btn-success btn-sm me-1"
+                            onclick="updateMembershipStatus(
+                                '${membership._id}',
+                                'Approved'
+                            )">
+
+                            Approve
+
+                        </button>
+
+
+                        <button
+                            class="btn btn-danger btn-sm"
+                            onclick="updateMembershipStatus(
+                                '${membership._id}',
+                                'Rejected'
+                            )">
+
+                            Reject
+
+                        </button>
+
+                    `;
+
+
+                }
+
+                else {
+
+
+                    actionButtons = `
+
+                        <span class="text-muted">
+
+                            No Action
+
+                        </span>
+
+                    `;
+
+                }
+
+
+
+                // Create row
+
+                row.innerHTML = `
+
+                    <td>
+
+                        ${studentName}
+
+                    </td>
+
+
+                    <td>
+
+                        ${enrollment}
+
+                    </td>
+
+
+                    <td>
+
+                        ${membership.clubName || ""}
+
+                    </td>
+
+
+                    <td>
+
+                        ${membership.category || ""}
+
+                    </td>
+
+
+                    <td>
+
+                        ${requestDate}
+
+                    </td>
+
+
+                    <td>
+
+                        ${statusBadge}
+
+                    </td>
+
+
+                    <td>
+
+                        ${actionButtons}
+
+                    </td>
+
+                `;
+
+
+
+                tableBody.appendChild(
+                    row
+                );
+
+
+            }
+        );
+
+
+    }
+
+    catch (error) {
+
+
+        console.error(
+            "Load Membership Error:",
+            error
+        );
+
+
+        loading.style.display =
+            "none";
+
+
+        tableBody.innerHTML = `
+
+            <tr>
+
+                <td colspan="7"
+                    class="text-center text-danger">
+
+                    Unable to load membership requests.
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        showMessage(
+            error.message,
+            "danger"
+        );
+
+
+    }
+
+}
+
+
+
+// =====================================================
+// APPROVE / REJECT MEMBERSHIP
+// =====================================================
+
+async function updateMembershipStatus(
+    membershipId,
+    status
+) {
+
+
+    const actionName =
+        status === "Approved"
+            ? "approve"
+            : "reject";
+
+
+
+    const confirmation =
+        confirm(
+            `Are you sure you want to ${actionName} this membership request?`
+        );
+
+
+
+    if (!confirmation) {
+
+        return;
+
+    }
+
+
+
+    try {
+
+
+        const response =
+            await fetch(
+
+                `/api/admin/memberships/${membershipId}`,
+
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            status:
+                                status
+
+                        })
+
+                }
+
+            );
+
+
+
+        const data =
+            await response.json();
+
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Unable to update membership request."
+            );
+
+        }
+
+
+
+        showMessage(
+
+            data.message ||
+            `Membership request ${status.toLowerCase()} successfully.`,
+
+            "success"
+
+        );
+
+
+
+        // Reload table
+
+        loadMembershipRequests();
+
+
+    }
+
+    catch (error) {
+
+
+        console.error(
+            "Membership Status Error:",
+            error
+        );
+
+
+        showMessage(
+            error.message,
+            "danger"
+        );
+
+
+    }
+
+}
+
+
+
+// =====================================================
+// SHOW MESSAGE
+// =====================================================
+
+function showMessage(
+    message,
+    type
+) {
+
+
+    const messageBox =
+        document.getElementById(
+            "message"
+        );
+
+
+    messageBox.className =
+        `alert alert-${type}`;
+
+
+    messageBox.textContent =
+        message;
+
+
+    messageBox.classList.remove(
+        "d-none"
+    );
+
+
+
+    setTimeout(
+        () => {
+
+            messageBox.classList.add(
+                "d-none"
+            );
+
+        },
+        3000
+    );
+
+}
+
+
+
+// =====================================================
+// EXCEL EXPORT
+// =====================================================
+
+function exportMemberships() {
+
+
+    window.location.href =
+        "/api/export/memberships";
+
+
+}
+
+
+
+// =====================================================
+// PAGE LOAD
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        loadMembershipRequests();
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>

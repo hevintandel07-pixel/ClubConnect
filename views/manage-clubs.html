@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Clubs - ClubConnect</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #f5f7fb;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+        }
+
+        .page-title {
+            font-weight: 700;
+        }
+
+        .club-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: 0.2s;
+        }
+
+        .club-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .club-image {
+            height: 190px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .club-description {
+            min-height: 70px;
+        }
+
+        .member-badge {
+            font-size: 13px;
+        }
+
+        .empty-message {
+            padding: 50px;
+            text-align: center;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<nav class="navbar navbar-dark bg-dark">
+
+    <div class="container">
+
+        <a class="navbar-brand"
+           href="/admin-dashboard.html">
+
+            ClubConnect Admin
+
+        </a>
+
+        <button
+            class="btn btn-outline-light"
+            onclick="goDashboard()">
+
+            Dashboard
+
+        </button>
+
+    </div>
+
+</nav>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<div class="container py-4">
+
+    <div class="d-flex
+                justify-content-between
+                align-items-center
+                flex-wrap
+                gap-2
+                mb-4">
+
+        <div>
+
+            <h2 class="page-title mb-1">
+                Manage Clubs
+            </h2>
+
+            <p class="text-muted mb-0">
+                Add, edit, delete and manage college clubs.
+            </p>
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <button
+                class="btn btn-success"
+                onclick="exportClubs()">
+
+                📊 Export Excel
+
+            </button>
+
+            <button
+                class="btn btn-primary"
+                onclick="openAddModal()">
+
+                + Add Club
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ALERT -->
+
+    <div
+        id="alertBox"
+        class="alert d-none"
+        role="alert">
+    </div>
+
+
+    <!-- CLUBS -->
+
+    <div
+        id="clubsContainer"
+        class="row g-4">
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     ADD / EDIT MODAL
+===================================================== -->
+
+<div
+    class="modal fade"
+    id="clubModal"
+    tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title"
+                    id="modalTitle">
+
+                    Add Club
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <form id="clubForm">
+
+                    <input
+                        type="hidden"
+                        id="clubId">
+
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Club Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="clubName"
+                                class="form-control"
+                                placeholder="Enter club name"
+                                required>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Category
+                            </label>
+
+                            <select
+                                id="clubCategory"
+                                class="form-select"
+                                required>
+
+                                <option value="">
+                                    Select Category
+                                </option>
+
+                                <option value="Technical">
+                                    Technical
+                                </option>
+
+                                <option value="Cultural">
+                                    Cultural
+                                </option>
+
+                                <option value="Sports">
+                                    Sports
+                                </option>
+
+                                <option value="Creative">
+                                    Creative
+                                </option>
+
+                                <option value="Social">
+                                    Social
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Coordinator
+                        </label>
+
+                        <input
+                            type="text"
+                            id="clubCoordinator"
+                            class="form-control"
+                            placeholder="Enter coordinator name"
+                            required>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Image URL
+                        </label>
+
+                        <input
+                            type="text"
+                            id="clubImage"
+                            class="form-control"
+                            placeholder="Optional image URL">
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="clubDescription"
+                            class="form-control"
+                            rows="4"
+                            placeholder="Enter club description"
+                            required>
+                        </textarea>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="saveClub()">
+
+                    Save Club
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     DELETE MODAL
+===================================================== -->
+
+<div
+    class="modal fade"
+    id="deleteModal"
+    tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Delete Club
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <p class="mb-0">
+
+                    Are you sure you want to delete this club?
+
+                    <br>
+
+                    <strong>
+                        All related membership requests and
+                        announcements will also be removed.
+                    </strong>
+
+                </p>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    onclick="confirmDelete()">
+
+                    Delete
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<script>
+
+let clubs = [];
+
+let selectedDeleteId = null;
+
+let clubModal;
+let deleteModal;
+
+
+// =====================================================
+// PAGE LOAD
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        clubModal =
+            new bootstrap.Modal(
+                document.getElementById("clubModal")
+            );
+
+        deleteModal =
+            new bootstrap.Modal(
+                document.getElementById("deleteModal")
+            );
+
+        loadClubs();
+
+    }
+);
+
+
+// =====================================================
+// LOAD CLUBS
+// =====================================================
+
+async function loadClubs() {
+
+    const container =
+        document.getElementById(
+            "clubsContainer"
+        );
+
+    container.innerHTML = `
+
+        <div class="col-12 text-center py-5">
+
+            <div
+                class="spinner-border text-primary">
+            </div>
+
+            <p class="mt-2 text-muted">
+                Loading clubs...
+            </p>
+
+        </div>
+
+    `;
+
+
+    try {
+
+        const response =
+            await fetch("/api/clubs");
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load clubs."
+            );
+
+        }
+
+
+        clubs =
+            data.clubs || [];
+
+        renderClubs();
+
+    }
+
+    catch (error) {
+
+        showAlert(
+            error.message,
+            "danger"
+        );
+
+        container.innerHTML = `
+
+            <div class="col-12">
+
+                <div class="alert alert-danger">
+                    ${escapeHtml(error.message)}
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// =====================================================
+// RENDER CLUBS
+// =====================================================
+
+function renderClubs() {
+
+    const container =
+        document.getElementById(
+            "clubsContainer"
+        );
+
+
+    if (clubs.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="col-12">
+
+                <div class="card empty-message">
+
+                    <h4>
+                        No Clubs Found
+                    </h4>
+
+                    <p class="text-muted">
+                        Click "Add Club" to create your first club.
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        clubs.map(club => {
+
+            const image =
+                club.image ||
+                "../public/images/coding-event.png";
+
+
+            return `
+
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card club-card shadow-sm h-100">
+
+                        <img
+                            src="${escapeAttribute(image)}"
+                            class="club-image"
+                            alt="${escapeAttribute(club.name)}"
+                            onerror="this.src='../public/images/coding-event.png'">
+
+
+                        <div class="card-body d-flex flex-column">
+
+                            <div class="d-flex
+                                        justify-content-between
+                                        align-items-start
+                                        gap-2">
+
+                                <h5 class="fw-bold mb-1">
+
+                                    ${escapeHtml(club.name)}
+
+                                </h5>
+
+                                <span
+                                    class="badge bg-primary">
+
+                                    ${escapeHtml(club.category)}
+
+                                </span>
+
+                            </div>
+
+
+                            <p class="text-muted mb-2">
+
+                                Coordinator:
+                                <strong>
+                                    ${escapeHtml(club.coordinator)}
+                                </strong>
+
+                            </p>
+
+
+                            <span
+                                class="badge bg-light text-dark border member-badge align-self-start mb-3">
+
+                                👥 ${club.members || 0} Members
+
+                            </span>
+
+
+                            <p class="club-description">
+
+                                ${escapeHtml(club.description)}
+
+                            </p>
+
+
+                            <div class="mt-auto d-flex gap-2">
+
+                                <button
+                                    class="btn btn-outline-primary btn-sm flex-fill"
+                                    onclick="openEditModal('${club._id}')">
+
+                                    Edit
+
+                                </button>
+
+                                <button
+                                    class="btn btn-outline-danger btn-sm flex-fill"
+                                    onclick="openDeleteModal('${club._id}')">
+
+                                    Delete
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+// =====================================================
+// OPEN ADD MODAL
+// =====================================================
+
+function openAddModal() {
+
+    document.getElementById(
+        "clubForm"
+    ).reset();
+
+
+    document.getElementById(
+        "clubId"
+    ).value = "";
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Add Club";
+
+
+    clubModal.show();
+
+}
+
+
+// =====================================================
+// OPEN EDIT MODAL
+// =====================================================
+
+function openEditModal(id) {
+
+    const club =
+        clubs.find(
+            item => item._id === id
+        );
+
+
+    if (!club) {
+
+        showAlert(
+            "Club not found.",
+            "danger"
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "clubId"
+    ).value =
+        club._id;
+
+
+    document.getElementById(
+        "clubName"
+    ).value =
+        club.name;
+
+
+    document.getElementById(
+        "clubCategory"
+    ).value =
+        club.category;
+
+
+    document.getElementById(
+        "clubCoordinator"
+    ).value =
+        club.coordinator;
+
+
+    document.getElementById(
+        "clubImage"
+    ).value =
+        club.image || "";
+
+
+    document.getElementById(
+        "clubDescription"
+    ).value =
+        club.description;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Club";
+
+
+    clubModal.show();
+
+}
+
+
+// =====================================================
+// SAVE CLUB
+// =====================================================
+
+async function saveClub() {
+
+    const id =
+        document.getElementById(
+            "clubId"
+        ).value;
+
+
+    const name =
+        document.getElementById(
+            "clubName"
+        ).value.trim();
+
+
+    const category =
+        document.getElementById(
+            "clubCategory"
+        ).value;
+
+
+    const coordinator =
+        document.getElementById(
+            "clubCoordinator"
+        ).value.trim();
+
+
+    const image =
+        document.getElementById(
+            "clubImage"
+        ).value.trim();
+
+
+    const description =
+        document.getElementById(
+            "clubDescription"
+        ).value.trim();
+
+
+    if (
+        !name ||
+        !category ||
+        !coordinator ||
+        !description
+    ) {
+
+        showAlert(
+            "Please fill all required fields.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+
+    const payload = {
+
+        name,
+        category,
+        coordinator,
+        description,
+        image
+
+    };
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                id
+                    ? `/api/clubs/${id}`
+                    : "/api/clubs",
+
+                {
+
+                    method:
+                        id
+                            ? "PUT"
+                            : "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            payload
+                        )
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Unable to save club."
+            );
+
+        }
+
+
+        clubModal.hide();
+
+
+        showAlert(
+            data.message ||
+            "Club saved successfully!",
+            "success"
+        );
+
+
+        await loadClubs();
+
+    }
+
+    catch (error) {
+
+        showAlert(
+            error.message,
+            "danger"
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// OPEN DELETE MODAL
+// =====================================================
+
+function openDeleteModal(id) {
+
+    selectedDeleteId = id;
+
+    deleteModal.show();
+
+}
+
+
+// =====================================================
+// CONFIRM DELETE
+// =====================================================
+
+async function confirmDelete() {
+
+    if (!selectedDeleteId) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                `/api/clubs/${selectedDeleteId}`,
+
+                {
+
+                    method: "DELETE"
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Unable to delete club."
+            );
+
+        }
+
+
+        deleteModal.hide();
+
+        selectedDeleteId = null;
+
+
+        showAlert(
+            data.message ||
+            "Club deleted successfully!",
+            "success"
+        );
+
+
+        await loadClubs();
+
+    }
+
+    catch (error) {
+
+        showAlert(
+            error.message,
+            "danger"
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// EXPORT CLUBS
+// =====================================================
+
+function exportClubs() {
+
+    window.location.href =
+        "/api/export/clubs";
+
+}
+
+
+// =====================================================
+// ALERT
+// =====================================================
+
+function showAlert(
+    message,
+    type
+) {
+
+    const alertBox =
+        document.getElementById(
+            "alertBox"
+        );
+
+
+    alertBox.className =
+        `alert alert-${type}`;
+
+
+    alertBox.textContent =
+        message;
+
+
+    alertBox.classList.remove(
+        "d-none"
+    );
+
+
+    setTimeout(
+        () => {
+
+            alertBox.classList.add(
+                "d-none"
+            );
+
+        },
+        3500
+    );
+
+}
+
+
+// =====================================================
+// DASHBOARD
+// =====================================================
+
+function goDashboard() {
+
+    window.location.href =
+        "/admin-dashboard.html";
+
+}
+
+
+// =====================================================
+// SECURITY HELPERS
+// =====================================================
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replace(
+            /[&<>"']/g,
+            function (char) {
+
+                const entities = {
+
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#039;"
+
+                };
+
+                return entities[char];
+
+            }
+        );
+
+}
+
+
+function escapeAttribute(value) {
+
+    return escapeHtml(value);
+
+}
+
+</script>
+
+</body>
+
+</html>

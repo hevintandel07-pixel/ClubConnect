@@ -1,0 +1,738 @@
+/* =========================
+   ClubConnect Common Style
+   ========================= */
+
+/* Whole Website */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    margin: 0;
+}
+
+
+/* Navbar */
+.navbar {
+    background-color: #173b67 !important;
+    padding: 12px 0;
+}
+
+.navbar-brand {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.navbar .nav-link {
+    color: white !important;
+    margin-left: 10px;
+}
+
+.navbar .nav-link:hover {
+    color: #dbeafe !important;
+}
+
+.navbar .nav-link.active {
+    font-weight: bold;
+    border-bottom: 2px solid white;
+}
+
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5 {
+    color: #173b67;
+}
+
+
+/* Sections */
+section {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+
+/* Buttons */
+.btn-primary {
+    background-color: #2563a6;
+    border-color: #2563a6;
+}
+
+.btn-primary:hover {
+    background-color: #173b67;
+    border-color: #173b67;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    overflow:hidden;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Tables */
+.table {
+    background-color: white;
+}
+
+.table thead {
+    background-color: #173b67;
+    color: white;
+}
+
+
+/* Forms */
+.form-control,
+.form-select {
+    border-radius: 7px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #2563a6;
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 166, 0.15);
+}
+
+
+/* Footer */
+footer {
+    background-color: #102a43 !important;
+    color: white;
+}
+
+/* =========================
+   Home Page Hero Section
+   ========================= */
+
+.hero-section {
+    background: linear-gradient(135deg, #eaf2fb, #ffffff);
+    padding: 90px 20px;
+}
+
+.hero-section h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.hero-section p {
+    font-size: 20px;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.hero-section .btn {
+    padding: 12px 28px;
+    font-size: 18px;
+    border-radius: 8px;
+}
+
+/* =========================
+   Home Page Features
+   ========================= */
+
+.hero-section + section {
+    padding: 70px 20px;
+}
+
+.hero-section + section h2 {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Feature Cards */
+.card-body {
+    padding: 25px;
+}
+
+.card-title {
+    font-weight: bold;
+    color: #173b67;
+}
+
+.card-text {
+    color: #555;
+    line-height: 1.6;
+}
+/* Our Features */
+.feature-box {
+    background-color: white;
+    padding: 30px 20px;
+    border-radius: 12px;
+    height: 100%;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-box:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.feature-symbol {
+    font-size: 42px;
+    margin-bottom: 15px;
+}
+
+.feature-box h4 {
+    color: #173b67;
+    font-weight: bold;
+}
+/* Event Images */
+.event-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+}
+/* =========================
+   Register Page
+   ========================= */
+
+.register-container {
+    max-width: 600px;
+    margin-top: 60px;
+    margin-bottom: 60px;
+    background-color: white;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.10);
+}
+
+.register-container h2 {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+/* Register Button */
+.register-btn {
+    padding: 11px;
+    font-size: 17px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+/* Register Login Link */
+.login-text {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 0;
+    color: #555;
+}
+
+.login-text a {
+    color: #2563a6;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.login-text a:hover {
+    text-decoration: underline;
+}
+/* =========================
+   Login Page
+   ========================= */
+
+.login-container {
+    max-width: 500px;
+    margin-top: 80px;
+    margin-bottom: 80px;
+    background-color: white;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.10);
+}
+
+.login-container h2 {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+/* Login Button */
+.login-container .btn {
+    padding: 11px;
+    font-size: 17px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Register Link */
+.login-container p {
+    color: #555;
+}
+
+.login-container p a {
+    color: #2563a6;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.login-container p a:hover {
+    text-decoration: underline;
+}
+/* =========================
+   Clubs Page
+   ========================= */
+
+.clubs-section {
+    padding-top: 50px;
+    padding-bottom: 60px;
+}
+
+.clubs-section h2 {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.clubs-section .page-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+/* Club Images */
+.club-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+/* Club Search Box */
+.club-search {
+    max-width: 600px;
+    margin: 0 auto 40px;
+}
+
+.club-search .form-control {
+    padding: 12px 18px;
+    font-size: 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 25px;
+    background-color: white;
+}
+
+.club-search .form-control:focus {
+    border-color: #2563a6;
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 166, 0.12);
+}
+/* Club Card Layout */
+.clubs-section .card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Keep buttons at bottom */
+.clubs-section .card-text {
+    flex-grow: 1;
+}
+
+/* Club Card Buttons */
+.clubs-section .btn {
+    margin-top: 8px;
+    border-radius: 7px;
+}
+/* =========================
+   Events Page
+   ========================= */
+
+.events-section {
+    padding-top: 50px;
+    padding-bottom: 60px;
+}
+
+.events-section h2 {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.event-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 35px;
+}
+/* =========================
+   Student Dashboard
+   ========================= */
+
+.student-dashboard {
+    padding-top: 50px;
+    padding-bottom: 60px;
+}
+
+/* Welcome Section */
+.dashboard-welcome {
+    margin-bottom: 35px;
+}
+
+.dashboard-welcome h2 {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.dashboard-welcome p {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 0;
+}
+/* Dashboard Summary Cards */
+.student-dashboard .row.mb-5 .card {
+    background-color: white;
+    border: none;
+    border-radius: 12px;
+}
+
+.student-dashboard .row.mb-5 .card-body {
+    padding: 30px 20px;
+}
+
+.student-dashboard .row.mb-5 .card-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.student-dashboard .row.mb-5 .card-body h2 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #2563a6;
+    margin-bottom: 12px;
+}
+
+.student-dashboard .row.mb-5 .card-text {
+    color: #666;
+    margin-bottom: 0;
+}
+/* Dashboard Tables */
+.student-dashboard .table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.student-dashboard .table {
+    margin-bottom: 0;
+}
+
+.student-dashboard .table th {
+    padding: 14px;
+    vertical-align: middle;
+}
+
+.student-dashboard .table td {
+    padding: 13px 14px;
+    vertical-align: middle;
+}
+
+/* Dashboard Section Headings */
+.student-dashboard h3 {
+    font-size: 23px;
+    font-weight: bold;
+    margin-bottom: 18px !important;
+}
+/* Dashboard Announcements */
+.student-dashboard .card.mb-3 {
+    border-left: 4px solid #2563a6;
+    border-radius: 10px;
+}
+
+.student-dashboard .card.mb-3 .card-body {
+    padding: 20px 25px;
+}
+
+.student-dashboard .card.mb-3 .card-title {
+    margin-bottom: 10px;
+}
+
+.student-dashboard .card.mb-3 .card-text {
+    margin-bottom: 0;
+    color: #555;
+}
+/* =========================
+   Admin Dashboard
+   ========================= */
+
+.admin-dashboard {
+    padding-top: 50px;
+    padding-bottom: 60px;
+}
+
+/* Admin Welcome */
+.admin-welcome {
+    margin-bottom: 35px;
+}
+
+.admin-welcome h2 {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.admin-welcome p {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 0;
+}
+
+/* Admin Summary Cards */
+.admin-dashboard .card-body {
+    padding: 30px 20px;
+}
+
+.admin-dashboard .card-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.admin-dashboard .card-body h2 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #2563a6;
+    margin-bottom: 12px;
+}
+
+.admin-dashboard .card-text {
+    color: #666;
+    margin-bottom: 0;
+}
+/* =========================
+   Manage Clubs Page
+   ========================= */
+
+.manage-clubs-section {
+    padding-top: 50px;
+    padding-bottom: 60px;
+}
+
+/* Page Heading */
+.manage-clubs-section h2 {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.manage-clubs-section h2 + p {
+    color: #666;
+}
+
+/* Add New Club Button */
+.manage-clubs-section .btn-success {
+    border-radius: 7px;
+    padding: 9px 16px;
+    font-weight: 500;
+}
+
+/* Clubs Table Box */
+.manage-clubs-section .table-responsive {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Clubs Table */
+.manage-clubs-section .table {
+    margin-bottom: 0;
+}
+
+.manage-clubs-section .table th {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.manage-clubs-section .table td {
+    padding: 14px 15px;
+    vertical-align: middle;
+}
+
+/* Action Buttons */
+.manage-clubs-section .table .btn {
+    margin-right: 5px;
+    border-radius: 6px;
+}
+
+/* Modal Heading */
+.manage-clubs-section .modal-title {
+    font-weight: bold;
+    color: #173b67;
+}
+/* =========================
+   Manage Events Page
+   ========================= */
+
+.manage-events-section {
+    padding-top: 50px;
+    padding-bottom: 60px;
+}
+
+/* Page Heading */
+.manage-events-section h2 {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.manage-events-section h2 + p {
+    color: #666;
+}
+
+/* Add New Event Button */
+.manage-events-section .btn-success {
+    border-radius: 7px;
+    padding: 9px 16px;
+    font-weight: 500;
+}
+
+/* Events Table Box */
+.manage-events-section .table-responsive {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Events Table */
+.manage-events-section .table {
+    margin-bottom: 0;
+}
+
+.manage-events-section .table th {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.manage-events-section .table td {
+    padding: 14px 15px;
+    vertical-align: middle;
+}
+
+/* Action Buttons */
+.manage-events-section .table .btn {
+    margin-right: 5px;
+    border-radius: 6px;
+}
+
+/* Modal Heading */
+.manage-events-section .modal-title {
+    font-weight: bold;
+    color: #173b67;
+}
+/* =========================
+   Membership Requests Page
+   ========================= */
+
+.membership-requests-section {
+    padding-top: 50px;
+    padding-bottom: 60px;
+}
+
+/* Page Heading */
+.membership-requests-section h2 {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.membership-requests-section h2 + p {
+    color: #666;
+}
+
+/* Requests Table Box */
+.membership-requests-section .table-responsive {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Requests Table */
+.membership-requests-section .table {
+    margin-bottom: 0;
+}
+
+.membership-requests-section .table th {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.membership-requests-section .table td {
+    padding: 14px 15px;
+    vertical-align: middle;
+}
+
+/* Pending Status */
+.membership-requests-section .badge {
+    padding: 7px 11px;
+    font-size: 13px;
+    border-radius: 6px;
+}
+
+/* Approve and Reject Buttons */
+.membership-requests-section .table .btn {
+    margin-right: 5px;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+/* =========================
+   Manage Announcements Page
+   ========================= */
+
+.manage-announcements-section {
+    padding-top: 50px;
+    padding-bottom: 60px;
+}
+
+/* Page Heading */
+.manage-announcements-section h2 {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.manage-announcements-section h2 + p {
+    color: #666;
+}
+
+/* Add Announcement Button */
+.manage-announcements-section .btn-success {
+    border-radius: 7px;
+    padding: 9px 16px;
+    font-weight: 500;
+}
+
+/* Announcements Table Box */
+.manage-announcements-section .table-responsive {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Announcements Table */
+.manage-announcements-section .table {
+    margin-bottom: 0;
+}
+
+.manage-announcements-section .table th {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.manage-announcements-section .table td {
+    padding: 14px 15px;
+    vertical-align: middle;
+}
+
+/* Action Buttons */
+.manage-announcements-section .table .btn {
+    margin-right: 5px;
+    border-radius: 6px;
+}
+
+/* Modal Heading */
+.manage-announcements-section .modal-title {
+    font-weight: bold;
+    color: #173b67;
+}

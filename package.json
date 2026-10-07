@@ -1,0 +1,16 @@
+{
+  "name": "clubconnect",
+  "version": "1.0.0",
+  "description": "College Club Management System",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.5",
+    "exceljs": "^4.4.0",
+    "express": "^5.2.1",
+    "mongoose": "^9.10.3"
+  }
+}
