@@ -2014,13 +2014,21 @@ app.get(
 // STUDENT DASHBOARD
 // =====================================================
 
+// =====================================================
+// STUDENT DASHBOARD
+// =====================================================
+
 app.get(
     "/api/student/dashboard/:studentId",
     async (req, res) => {
 
         try {
 
-            if (!validId(req.params.studentId)) {
+            const studentId = req.params.studentId;
+
+
+            // Validate Student ID
+            if (!validId(studentId)) {
 
                 return res.status(400).json({
 
@@ -2031,60 +2039,117 @@ app.get(
 
             }
 
+
+            // Find student
+            const student =
+                await User.findById(studentId)
+                    .select("-password")
+                    .lean();
+
+
+            if (!student) {
+
+                return res.status(404).json({
+
+                    message:
+                        "Student not found."
+
+                });
+
+            }
+
+
+            // Get Memberships
             const memberships =
                 await Membership.find({
 
-                    student:
-                        req.params.studentId
+                    student: studentId
 
                 })
-                    .sort({
-                        requestDate: -1
-                    })
-                    .lean();
+                .sort({
 
+                    requestDate: -1
+
+                })
+                .lean();
+
+
+            // Get Registered Events
             const registrations =
                 await EventRegistration.find({
 
-                    student:
-                        req.params.studentId,
+                    student: studentId,
 
-                    status:
-                        "Registered"
+                    status: "Registered"
 
                 })
-                    .populate("event")
-                    .sort({
-                        registrationDate: -1
-                    })
-                    .lean();
+                .populate("event")
+                .sort({
 
+                    registrationDate: -1
+
+                })
+                .lean();
+
+
+            // Convert registrations into events
+            const events =
+                registrations
+                    .filter(
+                        registration =>
+                            registration.event
+                    )
+                    .map(
+                        registration =>
+                            registration.event
+                    );
+
+
+            // Get Announcements
             const announcements =
                 await Announcement.find()
                     .sort({
-                        date: -1
+
+                        date: -1,
+
+                        createdAt: -1
+
                     })
                     .limit(10)
                     .lean();
 
-            res.json({
 
-                memberships,
+            // Send dashboard data
+            res.status(200).json({
 
-                registrations,
+                student: student,
 
-                announcements
+                memberships: memberships,
+
+                events: events,
+
+                announcements: announcements
 
             });
 
         }
 
+
         catch (error) {
+
+            console.error(
+                "Student Dashboard Error:",
+                error
+            );
+
 
             res.status(500).json({
 
                 message:
-                    "Unable to load student dashboard."
+                    "Unable to load student dashboard.",
+
+                error:
+                    error.message
 
             });
 
@@ -2092,7 +2157,7 @@ app.get(
 
     }
 );
-
+   
 // =====================================================
 // EXCEL EXPORT - STUDENTS
 // =====================================================
