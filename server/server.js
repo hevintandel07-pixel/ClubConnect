@@ -24,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve frontend pages and static files
 app.use(express.static(path.join(__dirname, "../views")));
+app.use(express.static(path.join(__dirname, "views")));
 app.use(express.static(path.join(__dirname, "../public/js")));
 app.use("/public", express.static(path.join(__dirname, "../public")));
 
