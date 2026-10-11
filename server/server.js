@@ -37,7 +37,17 @@ app.use(express.static(path.join(__dirname, "../public/js")));
 // =========================
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "views", "index.html"));
+    res.sendFile(
+        path.join(__dirname, "views", "index.html"),
+        (err) => {
+            if (err) {
+                console.error("Homepage error:", err.message);
+                if (!res.headersSent) {
+                    res.status(500).send("Homepage file not found.");
+                }
+            }
+        }
+    );
 });
 
 // DATABASE CONNECTION
