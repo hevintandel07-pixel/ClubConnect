@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/public", express.static(path.join(__dirname, "../public")));
 
-app.use(express.static(path.join(__dirname, "views")));
+app.use(express.static(path.join(__dirname, "../views")));
 
 app.use(express.static(path.join(__dirname, "../public/js")));
 
@@ -37,17 +37,7 @@ app.use(express.static(path.join(__dirname, "../public/js")));
 // =========================
 
 app.get("/", (req, res) => {
-    res.sendFile(
-        path.join(__dirname, "views", "index.html"),
-        (err) => {
-            if (err) {
-                console.error("Homepage error:", err.message);
-                if (!res.headersSent) {
-                    res.status(500).send("Homepage file not found.");
-                }
-            }
-        }
-    );
+    res.sendFile(path.join(__dirname, "../views/index.html"));
 });
 
 // DATABASE CONNECTION
