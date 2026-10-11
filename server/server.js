@@ -22,11 +22,19 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve frontend pages and static files
-app.use(express.static(path.join(__dirname, "views")));
-app.use(express.static(path.join(__dirname, "views")));
-app.use(express.static(path.join(__dirname, "../public/js")));
+// =========================
+// SERVE FRONTEND AND STATIC FILES
+// =========================
+
 app.use("/public", express.static(path.join(__dirname, "../public")));
+
+app.use(express.static(path.join(__dirname, "views")));
+
+app.use(express.static(path.join(__dirname, "../public/js")));
+
+// =========================
+// HOME PAGE
+// =========================
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "views", "index.html"));
