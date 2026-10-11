@@ -1,709 +1,482 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Clubs - ClubConnect</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Clubs - ClubConnect</title>
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
 
     <style>
-
         body {
-            background: #f5f7fb;
+            background: #f4f7fc;
+            color: #202b3c;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background: #0d1b3d !important;
+            padding: 14px 0;
+            box-shadow: 0 3px 14px rgba(13,27,61,.12);
         }
 
         .navbar-brand {
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: .4px;
+        }
+
+        .navbar .nav-link {
+            color: #e8efff !important;
+            font-weight: 600;
+            margin: 0 4px;
+        }
+
+        .navbar .nav-link:hover,
+        .navbar .nav-link.active {
+            color: #9fc5ff !important;
+        }
+
+        .page-hero {
+            background: linear-gradient(120deg, #0d1b3d, #174ea6);
+            color: white;
+            padding: 55px 0;
+        }
+
+        .page-hero h1 {
+            color: white;
+            font-weight: 800;
+        }
+
+        .page-hero p {
+            color: #e4edff;
         }
 
         .club-card {
-            border: none;
+            border: 1px solid #e2e8f0;
             border-radius: 16px;
             overflow: hidden;
-            transition: 0.25s;
+            height: 100%;
+            background: white;
+            box-shadow: 0 5px 20px rgba(13,27,61,.06);
+            transition: .2s;
         }
 
         .club-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(13,27,61,.12);
         }
 
         .club-image {
             height: 210px;
             width: 100%;
             object-fit: cover;
+            background: #eaf2ff;
         }
 
-        .club-description {
-            min-height: 70px;
+        .club-card .card-body {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
         }
 
-        .hero {
-            background: linear-gradient(
-                135deg,
-                #0d6efd,
-                #6610f2
-            );
+        .club-card .card-text {
+            color: #64748b;
+            flex-grow: 1;
+            white-space: pre-line;
+        }
+
+        .category-badge {
+            background: #eaf2ff;
+            color: #174ea6;
+            font-weight: 700;
+            padding: 7px 11px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        .btn-primary {
+            background: #174ea6 !important;
+            border-color: #174ea6 !important;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: #103777 !important;
+        }
+
+        .search-box {
+            border: 1px solid #dbe3ef;
+            border-radius: 12px;
+            background: white;
+            padding: 14px;
+            box-shadow: 0 5px 18px rgba(13,27,61,.04);
+        }
+
+        footer {
+            background: #0d1b3d;
             color: white;
-            border-radius: 18px;
+            margin-top: 35px;
         }
 
+        @media (max-width: 576px) {
+            .page-hero {
+                padding: 38px 0;
+            }
+        }
     </style>
-
 </head>
 
 <body>
 
-
-<!-- =====================================================
-     NAVBAR
-===================================================== -->
-
-<nav class="navbar navbar-dark bg-dark">
-
+<!-- COMMON NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
 
-        <a
-            class="navbar-brand"
-            href="/">
-
-            ClubConnect
-
+        <a class="navbar-brand" href="/index.html">
+            <i class="bi bi-people-fill me-2"></i>ClubConnect
         </a>
 
-        <div class="d-flex gap-2">
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarMenu"
+                aria-controls="navbarMenu"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <a
-                href="/events.html"
-                class="btn btn-outline-light btn-sm">
-
-                Events
-
-            </a>
-
-            <a
-                href="/login.html"
-                class="btn btn-primary btn-sm">
-
-                Login
-
-            </a>
-
+        <div class="collapse navbar-collapse" id="navbarMenu">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="/index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/clubs.html">Clubs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/events.html">Events</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login.html?role=student">Student Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-login.html">Admin Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-light btn-sm ms-lg-2 mt-2 mt-lg-0"
+                       href="/register.html">Register</a>
+                </li>
+            </ul>
         </div>
-
     </div>
-
 </nav>
 
-
-<!-- =====================================================
-     MAIN
-===================================================== -->
-
-<div class="container py-4">
-
-
-    <!-- HERO -->
-
-    <div class="hero p-4 p-md-5 mb-5 shadow-sm">
-
-        <h1 class="fw-bold">
-            Explore College Clubs
-        </h1>
-
+<!-- PAGE HEADER -->
+<header class="page-hero text-center">
+    <div class="container">
+        <span class="badge bg-light text-primary mb-3 px-3 py-2">
+            Discover Your Community
+        </span>
+        <h1 class="display-5">Explore College Clubs</h1>
         <p class="mb-0">
-            Discover clubs, explore activities and
-            become a part of the ClubConnect community.
+            Find your interests, connect with students and become a part of campus life.
         </p>
-
     </div>
+</header>
 
+<!-- CLUB LIST -->
+<main class="container py-5">
 
-    <!-- ALERT -->
-
-    <div
-        id="alertBox"
-        class="alert d-none">
-    </div>
-
-
-    <!-- LOADING -->
-
-    <div
-        id="loading"
-        class="text-center py-5">
-
-        <div
-            class="spinner-border text-primary">
+    <div class="search-box mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-8">
+                <label for="clubSearch" class="form-label fw-semibold">
+                    Search clubs
+                </label>
+                <input type="search" id="clubSearch" class="form-control"
+                       placeholder="Search by club name, category or description...">
+            </div>
+            <div class="col-md-4">
+                <label for="categoryFilter" class="form-label fw-semibold">
+                    Category
+                </label>
+                <select id="categoryFilter" class="form-select">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
         </div>
-
-        <p class="text-muted mt-2">
-            Loading clubs...
-        </p>
-
     </div>
 
+    <div id="message" class="alert d-none" role="alert" aria-live="polite"></div>
 
-    <!-- CLUBS -->
-
-    <div
-        id="clubsContainer"
-        class="row g-4">
-
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h2 class="h4 fw-bold mb-0">Available Clubs</h2>
+        <span class="text-muted" id="clubCount">Loading clubs...</span>
     </div>
 
-</div>
+    <div id="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted mt-2">Loading clubs...</p>
+    </div>
 
+    <div class="row g-4" id="clubsContainer"></div>
+
+    <div id="emptyState" class="text-center py-5 d-none">
+        <i class="bi bi-search text-primary" style="font-size:3rem"></i>
+        <h4 class="mt-3">No clubs found</h4>
+        <p class="text-muted">Try a different search or category.</p>
+    </div>
+
+</main>
+
+<footer class="text-center py-4">
+    <div class="container">
+        <h5 class="fw-bold text-white">ClubConnect</h5>
+        <p class="mb-1">College Club Management System</p>
+        <small>&copy; 2026 ClubConnect. All Rights Reserved.</small>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+"use strict";
 
-let clubs = [];
+const clubsContainer = document.getElementById("clubsContainer");
+const loading = document.getElementById("loading");
+const message = document.getElementById("message");
+const emptyState = document.getElementById("emptyState");
+const clubCount = document.getElementById("clubCount");
+const clubSearch = document.getElementById("clubSearch");
+const categoryFilter = document.getElementById("categoryFilter");
 
+let allClubs = [];
 
-// =====================================================
-// LOAD CLUBS
-// =====================================================
+function showMessage(text, type = "danger") {
+    message.textContent = text;
+    message.className = `alert alert-${type}`;
+    message.classList.remove("d-none");
+}
 
-document.addEventListener(
-    "DOMContentLoaded",
-    loadClubs
-);
+function hideMessage() {
+    message.classList.add("d-none");
+}
 
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
 
-async function loadClubs() {
+function getClubImage(club) {
+    const image = club.image || club.imageUrl || club.photo || "";
+    if (image) return image;
 
+    return "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=900&q=80";
+}
+
+function getToken() {
+    return localStorage.getItem("authToken") ||
+           localStorage.getItem("token") ||
+           localStorage.getItem("accessToken") || "";
+}
+
+function getUser() {
     try {
-
-        const response =
-            await fetch("/api/clubs");
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.message ||
-                "Unable to load clubs."
-            );
-
-        }
-
-
-        clubs =
-            data.clubs || [];
-
-
-        document
-            .getElementById("loading")
-            .classList.add("d-none");
-
-
-        renderClubs();
-
+        return JSON.parse(localStorage.getItem("loggedInUser") || "null");
+    } catch (error) {
+        return null;
     }
-
-    catch (error) {
-
-        document
-            .getElementById("loading")
-            .classList.add("d-none");
-
-
-        showAlert(
-            error.message,
-            "danger"
-        );
-
-    }
-
 }
 
 
-// =====================================================
-// RENDER CLUBS
-// =====================================================
+
+async function requestClubMembership(clubId, encodedClubName, encodedCategory, button) {
+    const user = getUser();
+
+    if (!user || user.role !== "student") {
+        window.location.href = "/login.html?role=student";
+        return;
+    }
+
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+        alert("Your session has expired. Please login again.");
+        window.location.href = "/login.html?role=student";
+        return;
+    }
+
+    const clubName = decodeURIComponent(encodedClubName);
+    const category = decodeURIComponent(encodedCategory);
+
+    try {
+        button.disabled = true;
+        button.textContent = "Sending...";
+
+        const response = await fetch("/api/membership", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                clubName,
+                category
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Unable to send membership request.");
+        }
+
+        alert(data.message || "Membership request sent successfully!");
+        window.location.href = "/student-dashboard.html";
+
+    } catch (error) {
+        alert(error.message || "Something went wrong.");
+
+        button.disabled = false;
+        button.innerHTML = '<i class="bi bi-person-plus me-1"></i>Join Club';
+    }
+}
+
+
+
+function createClubCard(club) {
+    const name = escapeHTML(club.name || club.clubName || "Untitled Club");
+    const category = escapeHTML(club.category || "General");
+    const description = escapeHTML(club.description || "Learn more about this club and its activities.");
+    const image = escapeHTML(getClubImage(club));
+    const clubId = escapeHTML(club._id || club.id || "");
+    const user = getUser();
+
+    let actionButton = "";
+
+   
+
+if (user && user.role === "student") {
+    actionButton = `
+        <button class="btn btn-primary mt-3"
+                type="button"
+                onclick="requestClubMembership(
+                    '${clubId}',
+                    '${encodeURIComponent(club.name || club.clubName || "")}',
+                    '${encodeURIComponent(club.category || "General")}',
+                    this
+                )">
+            <i class="bi bi-person-plus me-1"></i>Join Club
+        </button>`;
+} else {
+    actionButton = `
+        <a class="btn btn-primary mt-3" href="/login.html?role=student">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Login to Join
+        </a>`;
+}
+
+    return `
+        <div class="col-sm-6 col-lg-4">
+            <article class="card club-card">
+                <img src="${image}" class="club-image"
+                     alt="${name}"
+                     loading="lazy"
+                     onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=900&q=80'">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="category-badge">${category}</span>
+                    </div>
+                    <h3 class="h5 fw-bold">${name}</h3>
+                    <p class="card-text">${description}</p>
+                    ${actionButton}
+                </div>
+            </article>
+        </div>`;
+}
+
+function populateCategories() {
+    const categories = [...new Set(
+        allClubs.map(club => String(club.category || "").trim()).filter(Boolean)
+    )];
+
+    categoryFilter.innerHTML = '<option value="">All Categories</option>';
+
+    categories.sort().forEach(category => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+    });
+}
 
 function renderClubs() {
-
-    const container =
-        document.getElementById(
-            "clubsContainer"
-        );
-
-
-    if (clubs.length === 0) {
-
-        container.innerHTML = `
-
-            <div class="col-12">
-
-                <div class="alert alert-info text-center">
-
-                    No clubs are currently available.
-
-                </div>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-        clubs.map(club => {
-
-            const image =
-                club.image ||
-                "../public/images/coding-event.png";
-
-
-            return `
-
-                <div class="col-md-6 col-lg-4">
-
-                    <div
-                        class="card club-card shadow-sm h-100">
-
-
-                        <img
-                            src="${escapeHtml(image)}"
-                            class="club-image"
-                            alt="${escapeHtml(club.name)}"
-                            onerror="this.src='../public/images/coding-event.png'">
-
-
-                        <div
-                            class="card-body d-flex flex-column">
-
-
-                            <div
-                                class="d-flex
-                                       justify-content-between
-                                       align-items-start
-                                       gap-2
-                                       mb-2">
-
-                                <h5 class="fw-bold mb-0">
-
-                                    ${escapeHtml(club.name)}
-
-                                </h5>
-
-                                <span
-                                    class="badge bg-primary">
-
-                                    ${escapeHtml(club.category)}
-
-                                </span>
-
-                            </div>
-
-
-                            <p class="text-muted mb-2">
-
-                                Coordinator:
-                                <strong>
-                                    ${escapeHtml(club.coordinator)}
-                                </strong>
-
-                            </p>
-
-
-                            <div class="mb-3">
-
-                                <span
-                                    class="badge bg-light text-dark border">
-
-                                    👥
-                                    ${club.members || 0}
-                                    Members
-
-                                </span>
-
-                            </div>
-
-
-                            <p class="club-description">
-
-                                ${escapeHtml(
-                                    club.description
-                                )}
-
-                            </p>
-
-
-                            <div
-                                class="mt-auto d-flex gap-2">
-
-
-                                <button
-                                    class="btn btn-primary flex-fill"
-                                    onclick="viewClub('${club._id}')">
-
-                                    View Club
-
-                                </button>
-
-
-                                <button
-                                    class="btn btn-outline-success"
-                                    onclick="joinClub('${club._id}')">
-
-                                    Join
-
-                                </button>
-
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }).join("");
-
-}
-
-
-// =====================================================
-// VIEW CLUB
-// =====================================================
-
-function viewClub(id) {
-
-    window.location.href =
-        `/club-details.html?id=${encodeURIComponent(id)}`;
-
-}
-
-
-// =====================================================
-// JOIN CLUB
-// =====================================================
-
-function joinClub(id) {
-
-    const user =
-        getLoggedInUser();
-
-
-    if (!user) {
-
-        showAlert(
-            "Please login first to join a club.",
-            "warning"
-        );
-
-        setTimeout(
-            () => {
-
-                window.location.href =
-                    "/login.html";
-
-            },
-            1200
-        );
-
-        return;
-
-    }
-
-
-    if (
-        user.role &&
-        user.role.toLowerCase() === "admin"
-    ) {
-
-        showAlert(
-            "Admin account cannot join clubs.",
-            "warning"
-        );
-
-        return;
-
-    }
-
-
-    const club =
-        clubs.find(
-            item => item._id === id
-        );
-
-
-    if (!club) {
-
-        showAlert(
-            "Club not found.",
-            "danger"
-        );
-
-        return;
-
-    }
-
-
-    sendMembershipRequest(
-        user,
-        club
-    );
-
-}
-
-
-// =====================================================
-// SEND MEMBERSHIP REQUEST
-// =====================================================
-
-async function sendMembershipRequest(
-    user,
-    club
-) {
-
-    const studentId =
-        user._id ||
-        user.id ||
-        user.userId;
-
-
-    if (!studentId) {
-
-        showAlert(
-            "Student information not found. Please login again.",
-            "danger"
-        );
-
-        return;
-
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/membership",
-                {
-
-                    method: "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            studentId,
-
-                            clubName:
-                                club.name,
-
-                            category:
-                                club.category
-
-                        })
-
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.message ||
-                "Unable to send request."
-            );
-
-        }
-
-
-        showAlert(
-            data.message ||
-            "Membership request sent successfully!",
-            "success"
-        );
-
-    }
-
-    catch (error) {
-
-        showAlert(
-            error.message,
-            "danger"
-        );
-
-    }
-
-}
-
-
-// =====================================================
-// GET LOGGED-IN USER
-// =====================================================
-
-function getLoggedInUser() {
-
-    const keys = [
-
-        "user",
-        "loggedInUser",
-        "currentUser",
-        "student"
-
-    ];
-
-
-    for (
-        const key of keys
-    ) {
-
-        const value =
-            localStorage.getItem(key);
-
-
-        if (!value) {
-
-            continue;
-
-        }
-
-
-        try {
-
-            const user =
-                JSON.parse(value);
-
-
-            if (user) {
-
-                return user;
-
-            }
-
-        }
-
-        catch (error) {
-
-            console.log(
-                "Invalid localStorage data:",
-                key
-            );
-
-        }
-
-    }
-
-
-    return null;
-
-}
-
-
-// =====================================================
-// ALERT
-// =====================================================
-
-function showAlert(
-    message,
-    type
-) {
-
-    const alertBox =
-        document.getElementById(
-            "alertBox"
-        );
-
-
-    alertBox.className =
-        `alert alert-${type}`;
-
-
-    alertBox.textContent =
-        message;
-
-
-    alertBox.classList.remove(
-        "d-none"
-    );
-
-
-    window.scrollTo({
-
-        top: 0,
-
-        behavior: "smooth"
-
+    const query = clubSearch.value.trim().toLowerCase();
+    const category = categoryFilter.value;
+
+    const filtered = allClubs.filter(club => {
+        const searchable = [
+            club.name,
+            club.clubName,
+            club.category,
+            club.description
+        ].join(" ").toLowerCase();
+
+        return searchable.includes(query) &&
+               (!category || club.category === category);
     });
 
+    clubsContainer.innerHTML = filtered.map(createClubCard).join("");
+    clubCount.textContent = `${filtered.length} club${filtered.length === 1 ? "" : "s"}`;
 
-    setTimeout(
-        () => {
-
-            alertBox.classList.add(
-                "d-none"
-            );
-
-        },
-        4000
-    );
-
+    emptyState.classList.toggle("d-none", filtered.length !== 0);
 }
 
+async function loadClubs() {
+    loading.classList.remove("d-none");
+    clubsContainer.innerHTML = "";
+    hideMessage();
 
-// =====================================================
-// SECURITY
-// =====================================================
+    try {
+        const response = await fetch("/api/clubs");
+        const data = await response.json().catch(() => []);
 
-function escapeHtml(value) {
+        if (!response.ok) {
+            throw new Error(data.message || "Unable to load clubs.");
+        }
 
-    return String(value ?? "")
-        .replace(
-            /[&<>"']/g,
-            function (char) {
+        allClubs = Array.isArray(data)
+            ? data
+            : (data.clubs || data.data || []);
 
-                const entities = {
+        populateCategories();
+        renderClubs();
 
-                    "&": "&amp;",
-                    "<": "&lt;",
-                    ">": "&gt;",
-                    '"': "&quot;",
-                    "'": "&#039;"
-
-                };
-
-                return entities[char];
-
-            }
-        );
-
+    } catch (error) {
+        console.error("Clubs loading error:", error);
+        showMessage("Unable to load clubs right now. Please refresh the page.");
+        clubCount.textContent = "Clubs unavailable";
+    } finally {
+        loading.classList.add("d-none");
+    }
 }
 
+clubSearch.addEventListener("input", renderClubs);
+categoryFilter.addEventListener("change", renderClubs);
+
+document.addEventListener("DOMContentLoaded", loadClubs);
 </script>
 
 </body>
-
 </html>

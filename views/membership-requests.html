@@ -1,870 +1,324 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Membership Requests - ClubConnect</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
 
-    <link rel="stylesheet"
-          href="../public/css/style.css">
-
+    <style>
+        body{background:#f4f7fc;color:#202b3c;font-family:Arial,sans-serif}
+        .navbar{background:#0d1b3d!important;padding:14px 0}
+        .navbar-brand{color:white!important;font-size:23px;font-weight:800}
+        .navbar .nav-link{color:#e8efff!important;font-weight:600}
+        .navbar .nav-link:hover{color:#9fc5ff!important}
+        .page-header{background:linear-gradient(120deg,#0d1b3d,#174ea6);padding:36px 0;color:white}
+        .page-header h1{color:white;font-weight:800}
+        .page-header p{color:#e4edff}
+        .panel{background:white;border:1px solid #e2e8f0;border-radius:15px;padding:24px;box-shadow:0 5px 18px rgba(13,27,61,.05)}
+        h2{color:#0d1b3d;font-weight:750}
+        .form-control,.form-select{min-height:43px;border-radius:8px}
+        .btn{border-radius:8px;font-weight:600}
+        .btn-primary{background:#174ea6!important;border-color:#174ea6!important}
+        .table thead th{background:#eaf2ff;color:#0d1b3d;white-space:nowrap}
+        footer{background:#0d1b3d;color:white;padding:20px 0;margin-top:35px}
+        .status-badge{padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700}
+    </style>
 </head>
 
 <body>
-
-
-<!-- ========================= -->
-<!-- Admin Navbar -->
-<!-- ========================= -->
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-
-        <a class="navbar-brand"
-           href="admin-dashboard.html">
-
-            ClubConnect Admin
-
-        </a>
-
-
-        <button class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarMenu">
-
+        <a class="navbar-brand" href="/index.html"><i class="bi bi-people-fill me-2"></i>ClubConnect</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-
         </button>
-
-
-        <div class="collapse navbar-collapse"
-             id="navbarMenu">
-
-            <ul class="navbar-nav ms-auto">
-
-
-                <li class="nav-item">
-
-                    <a class="nav-link"
-                       href="admin-dashboard.html">
-
-                        Dashboard
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a class="nav-link"
-                       href="manage-clubs.html">
-
-                        Manage Clubs
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a class="nav-link"
-                       href="manage-events.html">
-
-                        Manage Events
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a class="nav-link active"
-                       href="membership-requests.html">
-
-                        Requests
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a class="nav-link"
-                       href="manage-announcements.html">
-
-                        Announcements
-
-                    </a>
-
-                </li>
-
-
-                <li class="nav-item">
-
-                    <a class="nav-link"
-                       href="index.html">
-
-                        Logout
-
-                    </a>
-
-                </li>
-
-
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/clubs.html">Clubs</a></li>
+                <li class="nav-item"><a class="nav-link" href="/events.html">Events</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin-dashboard.html">Dashboard</a></li>
+                <li class="nav-item"><button id="logoutBtn" class="btn btn-outline-light btn-sm ms-lg-2 mt-2 mt-lg-0">Logout</button></li>
             </ul>
-
         </div>
-
     </div>
-
 </nav>
 
+<header class="page-header">
+    <div class="container">
+        <h1 class="h2">Membership Requests</h1>
+        <p class="mb-0">Review student applications and manage club membership status.</p>
+    </div>
+</header>
 
+<main class="container py-4">
+    <div id="message" class="alert d-none" role="alert"></div>
 
-<!-- ========================= -->
-<!-- Membership Requests -->
-<!-- ========================= -->
-
-<section class="container my-5">
-
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-
-        <div>
-
-            <h2>
-                Membership Requests
-            </h2>
-
-            <p class="mb-0">
-                Review student requests to join college clubs.
-            </p>
-
+    <section class="panel">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+            <div>
+                <h2 class="h4 mb-1">All Requests</h2>
+                <p class="text-muted mb-0">Review pending, approved and rejected requests.</p>
+            </div>
+            <button id="refreshBtn" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+            </button>
         </div>
 
-
-        <!-- Excel Export Button -->
-
-        <button class="btn btn-success"
-                onclick="exportMemberships()">
-
-            Export Excel
-
-        </button>
-
-
-    </div>
-
-
-
-    <!-- ========================= -->
-    <!-- Message -->
-    <!-- ========================= -->
-
-    <div id="message"
-         class="alert d-none"
-         role="alert">
-
-    </div>
-
-
-
-    <!-- ========================= -->
-    <!-- Loading -->
-    <!-- ========================= -->
-
-    <div id="loading"
-         class="text-center my-4">
-
-        <div class="spinner-border text-primary"
-             role="status">
-
-            <span class="visually-hidden">
-                Loading...
-            </span>
-
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label for="searchInput" class="form-label">Search</label>
+                <input id="searchInput" type="search" class="form-control" placeholder="Search student or club...">
+            </div>
+            <div class="col-md-6">
+                <label for="statusFilter" class="form-label">Filter by Status</label>
+                <select id="statusFilter" class="form-select">
+                    <option value="">All statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
         </div>
 
-        <p class="mt-2">
-            Loading membership requests...
-        </p>
+        <div class="row g-3 mb-3">
+            <div class="col-sm-4">
+                <div class="p-3 rounded-3" style="background:#fff7e6">
+                    <div class="text-muted">Pending</div>
+                    <div class="fs-3 fw-bold" id="pendingCount">0</div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="p-3 rounded-3" style="background:#e9f8ef">
+                    <div class="text-muted">Approved</div>
+                    <div class="fs-3 fw-bold text-success" id="approvedCount">0</div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="p-3 rounded-3" style="background:#fff0f0">
+                    <div class="text-muted">Rejected</div>
+                    <div class="fs-3 fw-bold text-danger" id="rejectedCount">0</div>
+                </div>
+            </div>
+        </div>
 
-    </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Club</th>
+                        <th>Category</th>
+                        <th>Request Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="requestsTable">
+                    <tr><td colspan="6" class="text-center py-4">Loading requests...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
 
-
-
-    <!-- ========================= -->
-    <!-- Membership Table -->
-    <!-- ========================= -->
-
-    <div class="table-responsive">
-
-        <table class="table table-bordered table-striped">
-
-
-            <thead class="table-primary">
-
-                <tr>
-
-                    <th>
-                        Student Name
-                    </th>
-
-                    <th>
-                        Enrollment No.
-                    </th>
-
-                    <th>
-                        Club
-                    </th>
-
-                    <th>
-                        Category
-                    </th>
-
-                    <th>
-                        Request Date
-                    </th>
-
-                    <th>
-                        Status
-                    </th>
-
-                    <th>
-                        Action
-                    </th>
-
-                </tr>
-
-            </thead>
-
-
-
-            <tbody id="requestsTableBody">
-
-                <!-- MongoDB data will be loaded here -->
-
-            </tbody>
-
-
-        </table>
-
-    </div>
-
-
-</section>
-
-
-
-<!-- ========================= -->
-<!-- Footer -->
-<!-- ========================= -->
-
-<footer class="bg-dark text-white text-center p-3">
-
-
-    <p class="mb-1">
-
-        ClubConnect - Admin Panel
-
-    </p>
-
-
-    <p class="mb-0">
-
-        &copy; 2026 ClubConnect.
-        All Rights Reserved.
-
-    </p>
-
-
+<footer class="text-center">
+    <div class="container"><small>&copy; 2026 ClubConnect. All Rights Reserved.</small></div>
 </footer>
 
-
-
-<!-- ========================= -->
-<!-- Bootstrap JavaScript -->
-<!-- ========================= -->
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
-
-
-<!-- ========================= -->
-<!-- Membership Request JS -->
-<!-- ========================= -->
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+"use strict";
 
+const token = localStorage.getItem("authToken") || localStorage.getItem("token");
+const table = document.getElementById("requestsTable");
+const message = document.getElementById("message");
+let requests = [];
 
-// =====================================================
-// LOAD MEMBERSHIP REQUESTS
-// =====================================================
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, c => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[c]);
+}
 
-async function loadMembershipRequests() {
+function showMessage(text, type = "danger") {
+    message.textContent = text;
+    message.className = "alert alert-" + type;
+}
 
+function headers(json = true) {
+    const result = {"Authorization": "Bearer " + token};
+    if (json) result["Content-Type"] = "application/json";
+    return result;
+}
 
-    const tableBody =
-        document.getElementById(
-            "requestsTableBody"
-        );
+async function apiRequest(url, options = {}) {
+    const response = await fetch(url, options);
+    const data = await response.json().catch(() => ({}));
 
+    if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUser");
+        window.location.replace("/admin-login.html");
+        throw new Error("Admin session expired.");
+    }
 
-    const loading =
-        document.getElementById(
-            "loading"
-        );
+    if (!response.ok) {
+        throw new Error(data.message || "Request failed.");
+    }
 
+    return data;
+}
+
+function studentName(item) {
+    const student = item.student;
+    if (student && typeof student === "object") {
+        return student.name || student.fullName || student.email || "Student";
+    }
+    return item.studentName || item.name || "Student";
+}
+
+function clubName(item) {
+    const club = item.club;
+    if (club && typeof club === "object") {
+        return club.clubName || club.name || item.clubName || "Club";
+    }
+    return item.clubName || item.club || "Club";
+}
+
+function renderRequests() {
+    const query = document.getElementById("searchInput").value.toLowerCase().trim();
+    const status = document.getElementById("statusFilter").value;
+
+    const filtered = requests.filter(item => {
+        const searchable = [
+            studentName(item),
+            item.student?.email,
+            clubName(item),
+            item.category,
+            item.status
+        ].join(" ").toLowerCase();
+
+        return searchable.includes(query) &&
+            (!status || String(item.status || "Pending").toLowerCase() === status);
+    });
+
+    if (!filtered.length) {
+        table.innerHTML = '<tr><td colspan="6" class="text-center py-4">No membership requests found.</td></tr>';
+        return;
+    }
+
+    table.innerHTML = filtered.map(item => {
+        const id = item._id || item.id;
+        const currentStatus = String(item.status || "Pending");
+        const normalized = currentStatus.toLowerCase();
+        const badgeClass = normalized === "approved" ? "bg-success" :
+            normalized === "rejected" ? "bg-danger" : "bg-warning text-dark";
+
+        const actions = normalized === "pending"
+            ? `<button class="btn btn-sm btn-success me-1" data-action="approve" data-id="${escapeHTML(id)}">Approve</button>
+               <button class="btn btn-sm btn-outline-danger" data-action="reject" data-id="${escapeHTML(id)}">Reject</button>`
+            : `<span class="text-muted small">No action</span>`;
+
+        return `<tr>
+            <td><strong>${escapeHTML(studentName(item))}</strong><br>
+                <small class="text-muted">${escapeHTML(item.student?.email || item.email || "")}</small></td>
+            <td>${escapeHTML(clubName(item))}</td>
+            <td>${escapeHTML(item.category || item.club?.category || "—")}</td>
+            <td>${escapeHTML(item.requestDate ? new Date(item.requestDate).toLocaleDateString("en-IN") : item.createdAt ? new Date(item.createdAt).toLocaleDateString("en-IN") : "—")}</td>
+            <td><span class="badge ${badgeClass}">${escapeHTML(currentStatus)}</span></td>
+            <td class="text-nowrap">${actions}</td>
+        </tr>`;
+    }).join("");
+}
+
+function updateCounts() {
+    document.getElementById("pendingCount").textContent =
+        requests.filter(item => String(item.status || "Pending").toLowerCase() === "pending").length;
+    document.getElementById("approvedCount").textContent =
+        requests.filter(item => String(item.status || "").toLowerCase() === "approved").length;
+    document.getElementById("rejectedCount").textContent =
+        requests.filter(item => String(item.status || "").toLowerCase() === "rejected").length;
+}
+
+async function loadRequests() {
+    table.innerHTML = '<tr><td colspan="6" class="text-center py-4">Loading requests...</td></tr>';
 
     try {
-
-
-        const response =
-            await fetch(
-                "/api/admin/memberships"
-            );
-
-
-        const data =
-            await response.json();
-
-
-        loading.style.display =
-            "none";
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.message ||
-                "Unable to load membership requests."
-            );
-
-        }
-
-
-        tableBody.innerHTML = "";
-
-
-
-        // No requests
-
-        if (
-            !data.memberships ||
-            data.memberships.length === 0
-        ) {
-
-
-            tableBody.innerHTML = `
-
-                <tr>
-
-                    <td colspan="7"
-                        class="text-center">
-
-                        No membership requests found.
-
-                    </td>
-
-                </tr>
-
-            `;
-
-
-            return;
-
-        }
-
-
-
-        // Display every membership
-
-        data.memberships.forEach(
-            (membership) => {
-
-
-                const row =
-                    document.createElement(
-                        "tr"
-                    );
-
-
-                let studentName =
-                    "";
-
-                let enrollment =
-                    "";
-
-
-
-                if (membership.student) {
-
-                    studentName =
-                        membership.student.name ||
-                        "";
-
-                    enrollment =
-                        membership.student.enrollment ||
-                        "";
-
-                }
-
-
-
-                // Request date
-
-                const requestDate =
-                    membership.requestDate
-                        ? new Date(
-                            membership.requestDate
-                        ).toLocaleString()
-                        : "";
-
-
-
-                // Status badge
-
-                let statusBadge =
-                    "";
-
-
-
-                if (
-                    membership.status ===
-                    "Approved"
-                ) {
-
-
-                    statusBadge = `
-
-                        <span class="badge bg-success">
-
-                            Approved
-
-                        </span>
-
-                    `;
-
-
-                }
-
-                else if (
-                    membership.status ===
-                    "Rejected"
-                ) {
-
-
-                    statusBadge = `
-
-                        <span class="badge bg-danger">
-
-                            Rejected
-
-                        </span>
-
-                    `;
-
-
-                }
-
-                else {
-
-
-                    statusBadge = `
-
-                        <span class="badge bg-warning text-dark">
-
-                            Pending
-
-                        </span>
-
-                    `;
-
-                }
-
-
-
-                // Action buttons
-
-                let actionButtons =
-                    "";
-
-
-
-                if (
-                    membership.status ===
-                    "Pending"
-                ) {
-
-
-                    actionButtons = `
-
-                        <button
-                            class="btn btn-success btn-sm me-1"
-                            onclick="updateMembershipStatus(
-                                '${membership._id}',
-                                'Approved'
-                            )">
-
-                            Approve
-
-                        </button>
-
-
-                        <button
-                            class="btn btn-danger btn-sm"
-                            onclick="updateMembershipStatus(
-                                '${membership._id}',
-                                'Rejected'
-                            )">
-
-                            Reject
-
-                        </button>
-
-                    `;
-
-
-                }
-
-                else {
-
-
-                    actionButtons = `
-
-                        <span class="text-muted">
-
-                            No Action
-
-                        </span>
-
-                    `;
-
-                }
-
-
-
-                // Create row
-
-                row.innerHTML = `
-
-                    <td>
-
-                        ${studentName}
-
-                    </td>
-
-
-                    <td>
-
-                        ${enrollment}
-
-                    </td>
-
-
-                    <td>
-
-                        ${membership.clubName || ""}
-
-                    </td>
-
-
-                    <td>
-
-                        ${membership.category || ""}
-
-                    </td>
-
-
-                    <td>
-
-                        ${requestDate}
-
-                    </td>
-
-
-                    <td>
-
-                        ${statusBadge}
-
-                    </td>
-
-
-                    <td>
-
-                        ${actionButtons}
-
-                    </td>
-
-                `;
-
-
-
-                tableBody.appendChild(
-                    row
-                );
-
-
+        const data = await apiRequest("/api/admin/memberships", {
+            headers: headers(false)
+        });
+
+        requests = Array.isArray(data) ? data : (data.memberships || data.requests || data.data || []);
+        updateCounts();
+        renderRequests();
+        message.classList.add("d-none");
+    } catch (error) {
+        console.error(error);
+        table.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-4">Unable to load membership requests. Verify the backend route.</td></tr>';
+        showMessage(error.message || "Unable to load requests.");
+    }
+}
+
+async function updateStatus(id, status, button) {
+    if (!confirm(`Are you sure you want to ${status.toLowerCase()} this request?`)) return;
+
+    button.disabled = true;
+
+    try {
+        const data = await apiRequest(
+            `/api/admin/memberships/${encodeURIComponent(id)}`,
+            {
+                method: "PUT",
+                headers: headers(),
+                body: JSON.stringify({status})
             }
         );
 
-
+        showMessage(data.message || `Membership ${status.toLowerCase()} successfully.`, "success");
+        await loadRequests();
+    } catch (error) {
+        showMessage(error.message || "Unable to update membership status.");
+        button.disabled = false;
     }
-
-    catch (error) {
-
-
-        console.error(
-            "Load Membership Error:",
-            error
-        );
-
-
-        loading.style.display =
-            "none";
-
-
-        tableBody.innerHTML = `
-
-            <tr>
-
-                <td colspan="7"
-                    class="text-center text-danger">
-
-                    Unable to load membership requests.
-
-                </td>
-
-            </tr>
-
-        `;
-
-
-        showMessage(
-            error.message,
-            "danger"
-        );
-
-
-    }
-
 }
 
+table.addEventListener("click", function(event) {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
 
+    const status = button.dataset.action === "approve" ? "Approved" : "Rejected";
+    updateStatus(button.dataset.id, status, button);
+});
 
-// =====================================================
-// APPROVE / REJECT MEMBERSHIP
-// =====================================================
+document.getElementById("refreshBtn").addEventListener("click", loadRequests);
+document.getElementById("searchInput").addEventListener("input", renderRequests);
+document.getElementById("statusFilter").addEventListener("change", renderRequests);
 
-async function updateMembershipStatus(
-    membershipId,
-    status
-) {
+document.getElementById("logoutBtn").addEventListener("click", function() {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("loggedInUser");
+    window.location.replace("/index.html");
+});
 
-
-    const actionName =
-        status === "Approved"
-            ? "approve"
-            : "reject";
-
-
-
-    const confirmation =
-        confirm(
-            `Are you sure you want to ${actionName} this membership request?`
-        );
-
-
-
-    if (!confirmation) {
-
-        return;
-
+try {
+    const user = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+    if (!token || !user || user.role !== "admin") {
+        window.location.replace("/admin-login.html");
+    } else {
+        loadRequests();
     }
-
-
-
-    try {
-
-
-        const response =
-            await fetch(
-
-                `/api/admin/memberships/${membershipId}`,
-
-                {
-
-                    method: "PUT",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            status:
-                                status
-
-                        })
-
-                }
-
-            );
-
-
-
-        const data =
-            await response.json();
-
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.message ||
-                "Unable to update membership request."
-            );
-
-        }
-
-
-
-        showMessage(
-
-            data.message ||
-            `Membership request ${status.toLowerCase()} successfully.`,
-
-            "success"
-
-        );
-
-
-
-        // Reload table
-
-        loadMembershipRequests();
-
-
-    }
-
-    catch (error) {
-
-
-        console.error(
-            "Membership Status Error:",
-            error
-        );
-
-
-        showMessage(
-            error.message,
-            "danger"
-        );
-
-
-    }
-
+} catch (error) {
+    window.location.replace("/admin-login.html");
 }
-
-
-
-// =====================================================
-// SHOW MESSAGE
-// =====================================================
-
-function showMessage(
-    message,
-    type
-) {
-
-
-    const messageBox =
-        document.getElementById(
-            "message"
-        );
-
-
-    messageBox.className =
-        `alert alert-${type}`;
-
-
-    messageBox.textContent =
-        message;
-
-
-    messageBox.classList.remove(
-        "d-none"
-    );
-
-
-
-    setTimeout(
-        () => {
-
-            messageBox.classList.add(
-                "d-none"
-            );
-
-        },
-        3000
-    );
-
-}
-
-
-
-// =====================================================
-// EXCEL EXPORT
-// =====================================================
-
-function exportMemberships() {
-
-
-    window.location.href =
-        "/api/export/memberships";
-
-
-}
-
-
-
-// =====================================================
-// PAGE LOAD
-// =====================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        loadMembershipRequests();
-
-    }
-);
-
-
 </script>
-
-
 </body>
-
 </html>

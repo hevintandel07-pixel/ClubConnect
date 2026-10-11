@@ -1,459 +1,426 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - ClubConnect</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
 
-    <title>Register - ClubConnect</title>
+    <style>
+        body {
+            background: #f4f7fc;
+            color: #202b3c;
+            font-family: Arial, sans-serif;
+        }
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+        .navbar {
+            background: #0d1b3d !important;
+            padding: 14px 0;
+            box-shadow: 0 3px 14px rgba(13,27,61,.12);
+        }
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../public/css/style.css">
+        .navbar-brand {
+            color: white !important;
+            font-size: 23px;
+            font-weight: 800;
+        }
 
+        .navbar .nav-link {
+            color: #e8efff !important;
+            font-weight: 600;
+            margin: 0 4px;
+        }
+
+        .navbar .nav-link:hover,
+        .navbar .nav-link.active {
+            color: #9fc5ff !important;
+        }
+
+        .register-wrapper {
+            padding: 45px 15px;
+        }
+
+        .register-card {
+            max-width: 760px;
+            margin: auto;
+            padding: 35px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(13,27,61,.08);
+        }
+
+        .register-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eaf2ff;
+            color: #174ea6;
+            border-radius: 17px;
+            font-size: 30px;
+        }
+
+        h1, h2 {
+            color: #0d1b3d;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            color: #64748b;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .form-control, .form-select {
+            min-height: 45px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #174ea6;
+            box-shadow: 0 0 0 3px rgba(23,78,166,.12);
+        }
+
+        .btn-register {
+            width: 100%;
+            min-height: 47px;
+            background: #174ea6;
+            border: none;
+            border-radius: 9px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .btn-register:hover {
+            background: #103777;
+            color: white;
+        }
+
+        .btn-register:disabled {
+            opacity: .7;
+        }
+
+        .login-link {
+            color: #174ea6;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background: #0d1b3d;
+            color: white;
+            padding: 20px 0;
+        }
+
+        @media (max-width: 576px) {
+            .register-card {
+                padding: 23px 18px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-
-        <a class="navbar-brand" href="index.html">
-            ClubConnect
+        <a class="navbar-brand" href="/index.html">
+            <i class="bi bi-people-fill me-2"></i>ClubConnect
         </a>
 
-        <button class="navbar-toggler"
-                type="button"
+        <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#navbarMenu">
-
+                data-bs-target="#navbarMenu"
+                aria-controls="navbarMenu"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-
         </button>
 
         <div class="collapse navbar-collapse" id="navbarMenu">
-
-            <ul class="navbar-nav ms-auto">
-
+            <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="index.html">
-                        Home
-                    </a>
+                    <a class="nav-link" href="/index.html">Home</a>
                 </li>
-
                 <li class="nav-item">
-                    <a class="nav-link" href="clubs.html">
-                        Clubs
-                    </a>
+                    <a class="nav-link" href="/clubs.html">Clubs</a>
                 </li>
-
                 <li class="nav-item">
-                    <a class="nav-link" href="events.html">
-                        Events
-                    </a>
+                    <a class="nav-link" href="/events.html">Events</a>
                 </li>
-
                 <li class="nav-item">
-                    <a class="nav-link" href="login.html">
-                        Login
-                    </a>
+                    <a class="nav-link" href="/login.html?role=student">Student Login</a>
                 </li>
-
                 <li class="nav-item">
-                    <a class="nav-link active" href="register.html">
-                        Register
-                    </a>
+                    <a class="nav-link" href="/admin-login.html">Admin Login</a>
                 </li>
-
+                <li class="nav-item">
+                    <a class="btn btn-light btn-sm ms-lg-2 mt-2 mt-lg-0 active"
+                       href="/register.html">Register</a>
+                </li>
             </ul>
-
         </div>
-
     </div>
-
 </nav>
 
+<!-- REGISTRATION FORM -->
+<main class="register-wrapper">
+    <section class="register-card">
 
-<!-- Registration Section -->
-<section class="container login-container">
-
-    <h2 class="text-center mb-4">
-        Student Registration
-    </h2>
-
-    <form id="registerForm">
-
-        <!-- Name -->
-        <div class="mb-3">
-
-            <label for="name" class="form-label">
-                Full Name
-            </label>
-
-            <input type="text"
-                   class="form-control"
-                   id="name"
-                   placeholder="Enter your full name"
-                   required>
-
+        <div class="register-icon">
+            <i class="bi bi-person-plus-fill"></i>
         </div>
 
+        <h1 class="h3 text-center mb-2">Create Your Account</h1>
+        <p class="subtitle text-center mb-4">
+            Join ClubConnect and explore your college clubs and events.
+        </p>
 
-        <!-- Enrollment -->
-        <div class="mb-3">
+        <div id="message" class="alert d-none" role="alert" aria-live="polite"></div>
 
-            <label for="enrollment" class="form-label">
-                Enrollment Number
-            </label>
+        <form id="registerForm">
 
-            <input type="text"
-                   class="form-control"
-                   id="enrollment"
-                   placeholder="Enter enrollment number"
-                   required>
+            <h2 class="h6 mb-3">Personal Information</h2>
 
-        </div>
+            <div class="row g-3">
 
+                <div class="col-md-6">
+                    <label for="name" class="form-label">Full Name *</label>
+                    <input type="text" id="name" name="name"
+                           class="form-control"
+                           placeholder="Enter your full name"
+                           autocomplete="name" required>
+                </div>
 
-        <!-- Email -->
-        <div class="mb-3">
+                <div class="col-md-6">
+                    <label for="enrollment" class="form-label">Enrollment Number *</label>
+                    <input type="text" id="enrollment" name="enrollment"
+                           class="form-control"
+                           placeholder="Enter enrollment number"
+                           required>
+                </div>
 
-            <label for="email" class="form-label">
-                Email
-            </label>
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email Address *</label>
+                    <input type="email" id="email" name="email"
+                           class="form-control"
+                           placeholder="Enter your email"
+                           autocomplete="email" required>
+                </div>
 
-            <input type="email"
-                   class="form-control"
-                   id="email"
-                   placeholder="Enter your email"
-                   required>
+                <div class="col-md-6">
+                    <label for="mobile" class="form-label">Mobile Number</label>
+                    <input type="tel" id="mobile" name="mobile"
+                           class="form-control"
+                           placeholder="Enter mobile number"
+                           autocomplete="tel"
+                           pattern="[0-9+\-\s()]{10,15}"
+                           title="Enter a valid mobile number">
+                </div>
 
-        </div>
+                <div class="col-md-6">
+                    <label for="department" class="form-label">Department *</label>
+                    <select id="department" name="department"
+                            class="form-select" required>
+                        <option value="">Select department</option>
+                        <option value="Computer Engineering">Computer Engineering</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        <option value="Civil Engineering">Civil Engineering</option>
+                        <option value="Electrical Engineering">Electrical Engineering</option>
+                        <option value="Electronics Engineering">Electronics Engineering</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
 
+                <div class="col-md-6">
+                    <label for="semester" class="form-label">Current Semester *</label>
+                    <select id="semester" name="semester"
+                            class="form-select" required>
+                        <option value="">Select semester</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </div>
 
-        <!-- Department -->
-        <div class="mb-3">
+            </div>
 
-            <label for="department" class="form-label">
-                Department
-            </label>
+            <hr class="my-4">
 
-            <select class="form-select"
-                    id="department"
-                    required>
+            <h2 class="h6 mb-3">Account Security</h2>
 
-                <option value="">
-                    Select Department
-                </option>
+            <div class="row g-3">
 
-                <option value="Computer Engineering">
-                    Computer Engineering
-                </option>
+                <div class="col-md-6">
+                    <label for="password" class="form-label">Password *</label>
+                    <input type="password" id="password" name="password"
+                           class="form-control"
+                           placeholder="Minimum 8 characters"
+                           minlength="8"
+                           autocomplete="new-password"
+                           required>
+                    <small class="text-muted">Use at least 8 characters.</small>
+                </div>
 
-                <option value="Information Technology">
-                    Information Technology
-                </option>
+                <div class="col-md-6">
+                    <label for="confirmPassword" class="form-label">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword"
+                           class="form-control"
+                           placeholder="Re-enter password"
+                           minlength="8"
+                           autocomplete="new-password"
+                           required>
+                </div>
 
-                <option value="Electronics Engineering">
-                    Electronics Engineering
-                </option>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input type="checkbox" id="showPasswords"
+                               class="form-check-input">
+                        <label for="showPasswords" class="form-check-label">
+                            Show passwords
+                        </label>
+                    </div>
+                </div>
 
-                <option value="Electrical Engineering">
-                    Electrical Engineering
-                </option>
+            </div>
 
-                <option value="Mechanical Engineering">
-                    Mechanical Engineering
-                </option>
-
-                <option value="Civil Engineering">
-                    Civil Engineering
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <!-- Semester -->
-        <div class="mb-3">
-
-            <label for="semester" class="form-label">
-                Semester
-            </label>
-
-            <select class="form-select"
-                    id="semester"
-                    required>
-
-                <option value="">
-                    Select Semester
-                </option>
-
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-
-            </select>
-
-        </div>
-
-
-        <!-- Password -->
-        <div class="mb-3">
-
-            <label for="password" class="form-label">
-                Password
-            </label>
-
-            <input type="password"
-                   class="form-control"
-                   id="password"
-                   placeholder="Create password"
-                   minlength="6"
-                   required>
-
-            <small class="text-muted">
-                Password must contain at least 6 characters.
-            </small>
-
-        </div>
-
-
-        <!-- Confirm Password -->
-        <div class="mb-3">
-
-            <label for="confirmPassword" class="form-label">
-                Confirm Password
-            </label>
-
-            <input type="password"
-                   class="form-control"
-                   id="confirmPassword"
-                   placeholder="Confirm password"
-                   minlength="6"
-                   required>
-
-        </div>
-
-
-        <!-- Register Button -->
-        <div class="d-grid">
-
-            <button type="submit"
-                    id="registerButton"
-                    class="btn btn-primary">
-
-                Register
-
+            <button type="submit" id="registerButton"
+                    class="btn btn-register mt-4">
+                <i class="bi bi-person-check-fill me-2"></i>Create Account
             </button>
 
-        </div>
+        </form>
 
-    </form>
+        <p class="text-center mt-4 mb-0">
+            Already have an account?
+            <a href="/login.html?role=student" class="login-link">Login here</a>
+        </p>
 
+    </section>
+</main>
 
-    <!-- Login Link -->
-    <p class="text-center mt-3 mb-0">
-
-        Already have an account?
-
-        <a href="login.html">
-            Login Here
-        </a>
-
-    </p>
-
-</section>
-
-
-<!-- Footer -->
-<footer class="bg-dark text-white text-center p-3">
-
-    <p class="mb-1">
-        ClubConnect - College Club Management System
-    </p>
-
-    <p class="mb-0">
-        &copy; 2026 ClubConnect. All Rights Reserved.
-    </p>
-
+<footer class="text-center">
+    <div class="container">
+        <small>&copy; 2026 ClubConnect. All Rights Reserved.</small>
+    </div>
 </footer>
 
-
-<!-- Bootstrap JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+"use strict";
 
-const registerForm =
-    document.getElementById("registerForm");
+const registerForm = document.getElementById("registerForm");
+const registerButton = document.getElementById("registerButton");
+const message = document.getElementById("message");
+const passwordInput = document.getElementById("password");
+const confirmPasswordInput = document.getElementById("confirmPassword");
 
-const registerButton =
-    document.getElementById("registerButton");
+function showMessage(text, type = "danger") {
+    message.textContent = text;
+    message.className = `alert alert-${type}`;
+    message.classList.remove("d-none");
+}
 
+document.getElementById("showPasswords").addEventListener("change", function () {
+    const type = this.checked ? "text" : "password";
+    passwordInput.type = type;
+    confirmPasswordInput.type = type;
+});
 
-registerForm.addEventListener(
-    "submit",
-    async function (event) {
+registerForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    message.classList.add("d-none");
 
-        event.preventDefault();
+    const name = document.getElementById("name").value.trim();
+    const enrollment = document.getElementById("enrollment").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const mobile = document.getElementById("mobile").value.trim();
+    const department = document.getElementById("department").value;
+    const semester = document.getElementById("semester").value;
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
 
-
-        const name =
-            document.getElementById("name").value.trim();
-
-        const enrollment =
-            document.getElementById("enrollment").value.trim();
-
-        const email =
-            document.getElementById("email").value.trim();
-
-        const department =
-            document.getElementById("department").value;
-
-        const semester =
-            document.getElementById("semester").value;
-
-        const password =
-            document.getElementById("password").value;
-
-        const confirmPassword =
-            document.getElementById("confirmPassword").value;
-
-
-        // Check password
-        if (password !== confirmPassword) {
-
-            alert("Passwords do not match.");
-            return;
-
-        }
-
-
-        // Check password length
-        if (password.length < 6) {
-
-            alert(
-                "Password must contain at least 6 characters."
-            );
-
-            return;
-
-        }
-
-
-        registerButton.disabled = true;
-        registerButton.innerText = "Registering...";
-
-
-        try {
-
-            const response = await fetch(
-                "/api/register",
-                {
-
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify({
-
-                        name: name,
-                        enrollment: enrollment,
-                        email: email,
-                        department: department,
-                        semester: Number(semester),
-                        password: password
-
-                    })
-
-                }
-            );
-
-
-            const data =
-                await response.json();
-
-
-            if (response.ok) {
-
-                alert(
-                    data.message ||
-                    "Registration successful!"
-                );
-
-
-                // Clear old login information
-                localStorage.removeItem(
-                    "loggedInUser"
-                );
-
-                localStorage.removeItem("user");
-
-                localStorage.removeItem(
-                    "currentUser"
-                );
-
-                localStorage.removeItem(
-                    "student"
-                );
-
-
-                // Redirect to login
-                window.location.href =
-                    "login.html";
-
-
-            } else {
-
-                alert(
-                    data.message ||
-                    "Registration failed."
-                );
-
-            }
-
-
-        } catch (error) {
-
-            console.error(
-                "Registration Error:",
-                error
-            );
-
-            alert(
-                "Unable to connect to server. Please try again."
-            );
-
-        } finally {
-
-            registerButton.disabled = false;
-            registerButton.innerText = "Register";
-
-        }
-
+    if (password.length < 8) {
+        showMessage("Password must contain at least 8 characters.");
+        return;
     }
-);
 
+    if (password !== confirmPassword) {
+        showMessage("Passwords do not match. Please check again.");
+        confirmPasswordInput.focus();
+        return;
+    }
+
+    registerButton.disabled = true;
+    registerButton.innerHTML =
+        '<span class="spinner-border spinner-border-sm me-2"></span>Creating account...';
+
+    try {
+        const response = await fetch("/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name,
+                enrollment,
+                email,
+                mobile,
+                department,
+                semester,
+                password,
+                confirmPassword
+            })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(data.message || "Registration failed. Please try again.");
+        }
+
+        showMessage(
+            data.message || "Account created successfully! Redirecting to login...",
+            "success"
+        );
+
+        registerForm.reset();
+
+        setTimeout(function () {
+            window.location.href = "/login.html?role=student";
+        }, 1200);
+
+    } catch (error) {
+        showMessage(error.message || "Unable to create your account.");
+    } finally {
+        registerButton.disabled = false;
+        registerButton.innerHTML =
+            '<i class="bi bi-person-check-fill me-2"></i>Create Account';
+    }
+});
 </script>
 
 </body>
-
 </html>

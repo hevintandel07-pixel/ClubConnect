@@ -1,328 +1,413 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - ClubConnect</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
 
-    <title>Login - ClubConnect</title>
+    <style>
+        body {
+            background: #f4f7fc;
+            color: #202b3c;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+        .navbar {
+            background: #0d1b3d !important;
+            padding: 14px 0;
+            box-shadow: 0 3px 14px rgba(13, 27, 61, .12);
+        }
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../public/css/style.css">
+        .navbar-brand {
+            color: #fff !important;
+            font-size: 23px;
+            font-weight: 800;
+        }
 
+        .navbar .nav-link {
+            color: #e8efff !important;
+            font-weight: 600;
+            margin: 0 4px;
+        }
+
+        .navbar .nav-link:hover,
+        .navbar .nav-link.active {
+            color: #9fc5ff !important;
+        }
+
+        .btn-nav {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: .2s;
+        }
+
+        .btn-admin {
+            background: #174ea6;
+            color: #fff !important;
+            border: 1px solid #174ea6;
+        }
+
+        .btn-admin:hover {
+            background: #103777;
+            border-color: #103777;
+        }
+
+        .btn-register {
+            background: #fff;
+            color: #174ea6 !important;
+            border: 1px solid #fff;
+        }
+
+        .btn-register:hover {
+            background: #eaf2ff;
+        }
+
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 45px 15px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 460px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 36px;
+            box-shadow: 0 12px 35px rgba(13, 27, 61, .09);
+        }
+
+        .login-icon {
+            width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            border-radius: 18px;
+            background: #eaf2ff;
+            color: #174ea6;
+            font-size: 32px;
+        }
+
+        .login-card h1 {
+            color: #0d1b3d;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            color: #64748b;
+        }
+
+        .form-label {
+            color: #202b3c;
+            font-weight: 600;
+        }
+
+        .form-control {
+            min-height: 46px;
+            border-radius: 9px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .form-control:focus {
+            border-color: #174ea6;
+            box-shadow: 0 0 0 3px rgba(23, 78, 166, .12);
+        }
+
+        .input-group .form-control {
+            border-radius: 9px 0 0 9px;
+        }
+
+        .input-group .btn {
+            border-radius: 0 9px 9px 0;
+        }
+
+        .btn-login {
+            width: 100%;
+            min-height: 47px;
+            background: #174ea6;
+            border: none;
+            border-radius: 9px;
+            color: #fff;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .btn-login:hover {
+            background: #103777;
+            color: #fff;
+        }
+
+        .btn-login:disabled {
+            opacity: .7;
+        }
+
+        .login-links a {
+            color: #174ea6;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-links a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background: #0d1b3d;
+            color: #fff;
+            padding: 18px 0;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 25px 20px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-
-        <a class="navbar-brand" href="index.html">
-            ClubConnect
+        <a class="navbar-brand" href="/index.html">
+            <i class="bi bi-people-fill me-2"></i>ClubConnect
         </a>
 
         <button class="navbar-toggler"
                 type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#navbarMenu">
-
+                data-bs-target="#navbarMenu"
+                aria-controls="navbarMenu"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-
         </button>
 
         <div class="collapse navbar-collapse" id="navbarMenu">
-
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="/index.html">Home</a>
+                </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="index.html">
-                        Home
+                    <a class="nav-link" href="/clubs.html">Clubs</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/events.html">Events</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="/login.html?role=student">
+                        Student Login
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="clubs.html">
-                        Clubs
+                    <a class="btn-nav btn-admin ms-lg-2 mt-2 mt-lg-0"
+                       href="/admin-login.html">
+                        <i class="bi bi-shield-lock me-1"></i>Admin Login
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="events.html">
-                        Events
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link active" href="login.html">
-                        Login
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="register.html">
+                    <a class="btn-nav btn-register ms-lg-2 mt-2 mt-lg-0"
+                       href="/register.html">
                         Register
                     </a>
                 </li>
-
             </ul>
-
         </div>
-
     </div>
-
 </nav>
 
+<main class="login-wrapper">
+    <section class="login-card">
 
-<!-- Login Section -->
-<section class="container login-container">
-
-    <h2 class="text-center mb-4">
-        ClubConnect Login
-    </h2>
-
-    <form id="loginForm">
-
-        <!-- Email -->
-        <div class="mb-3">
-
-            <label for="email" class="form-label">
-                Email
-            </label>
-
-            <input type="email"
-                   class="form-control"
-                   id="email"
-                   name="email"
-                   placeholder="Enter your email"
-                   required>
-
+        <div class="login-icon">
+            <i class="bi bi-person-fill-lock"></i>
         </div>
 
+        <h1 class="h3 text-center mb-2">Student Login</h1>
 
-        <!-- Password -->
-        <div class="mb-3">
+        <p class="subtitle text-center mb-4">
+            Sign in to access your ClubConnect account.
+        </p>
 
-            <label for="password" class="form-label">
-                Password
-            </label>
+        <div id="message"
+             class="alert d-none"
+             role="alert"
+             aria-live="polite"></div>
 
-            <input type="password"
-                   class="form-control"
-                   id="password"
-                   name="password"
-                   placeholder="Enter your password"
-                   required>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
 
-        </div>
+                <input type="email"
+                       class="form-control"
+                       id="email"
+                       name="email"
+                       placeholder="Enter your registered email"
+                       autocomplete="email"
+                       required>
+            </div>
 
+            <div class="mb-4">
+                <label for="password" class="form-label">Password</label>
 
-        <!-- Login Button -->
-        <div class="d-grid">
+                <div class="input-group">
+                    <input type="password"
+                           class="form-control"
+                           id="password"
+                           name="password"
+                           placeholder="Enter your password"
+                           autocomplete="current-password"
+                           required>
 
-            <button type="submit"
-                    id="loginButton"
-                    class="btn btn-primary">
+                    <button class="btn btn-outline-secondary"
+                            type="button"
+                            id="togglePassword"
+                            aria-label="Show password">
+                        <i class="bi bi-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+            </div>
 
-                Login
-
+            <button type="submit" class="btn btn-login" id="loginButton">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
             </button>
+        </form>
 
+        <div class="login-links text-center mt-4">
+            <p class="mb-2">
+                Don't have an account?
+                <a href="/register.html">Register here</a>
+            </p>
+
+            <p class="mb-0">
+                Are you an administrator?
+                <a href="/admin-login.html">Admin Login</a>
+            </p>
         </div>
 
-    </form>
+    </section>
+</main>
 
-
-    <!-- Register Link -->
-    <p class="text-center mt-3 mb-0">
-
-        Don't have an account?
-
-        <a href="register.html">
-            Register Here
-        </a>
-
-    </p>
-
-</section>
-
-
-<!-- Footer -->
-<footer class="bg-dark text-white text-center p-3">
-
-    <p class="mb-1">
-        ClubConnect - College Club Management System
-    </p>
-
-    <p class="mb-0">
-        &copy; 2026 ClubConnect. All Rights Reserved.
-    </p>
-
+<footer class="text-center">
+    <div class="container">
+        <small>&copy; 2026 ClubConnect. All Rights Reserved.</small>
+    </div>
 </footer>
 
-
-<!-- Bootstrap JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+"use strict";
 
 const loginForm = document.getElementById("loginForm");
 const loginButton = document.getElementById("loginButton");
+const message = document.getElementById("message");
+const passwordInput = document.getElementById("password");
+const togglePassword = document.getElementById("togglePassword");
+const eyeIcon = document.getElementById("eyeIcon");
+
+function showMessage(text, type = "danger") {
+    message.textContent = text;
+    message.className = `alert alert-${type}`;
+    message.classList.remove("d-none");
+}
+
+togglePassword.addEventListener("click", function () {
+    const showPassword = passwordInput.type === "password";
+
+    passwordInput.type = showPassword ? "text" : "password";
+    eyeIcon.className = showPassword ? "bi bi-eye-slash" : "bi bi-eye";
+
+    togglePassword.setAttribute(
+        "aria-label",
+        showPassword ? "Hide password" : "Show password"
+    );
+});
 
 loginForm.addEventListener("submit", async function (event) {
-
     event.preventDefault();
 
-    const email =
-        document.getElementById("email").value.trim();
-
-    const password =
-        document.getElementById("password").value;
-
-
-    if (!email || !password) {
-
-        alert("Please enter email and password.");
-        return;
-
-    }
-
-
+    message.classList.add("d-none");
     loginButton.disabled = true;
-    loginButton.innerText = "Logging in...";
+    loginButton.innerHTML =
+        '<span class="spinner-border spinner-border-sm me-2"></span>Logging in...';
 
+    const email = document.getElementById("email").value.trim();
+    const password = passwordInput.value;
 
     try {
-
         const response = await fetch("/api/login", {
-
             method: "POST",
-
             headers: {
                 "Content-Type": "application/json"
             },
-
             body: JSON.stringify({
-
                 email: email,
-                password: password
-
+                password: password,
+                expectedRole: "student"
             })
-
         });
 
+        const data = await response.json().catch(() => ({}));
 
-        const data = await response.json();
-
-
-        if (response.ok) {
-
-            /*
-             * Clear old login information
-             * before saving the new user.
-             */
-            localStorage.removeItem("loggedInUser");
-            localStorage.removeItem("user");
-            localStorage.removeItem("currentUser");
-            localStorage.removeItem("student");
-
-
-            /*
-             * Save logged-in user.
-             */
-            if (data.user) {
-
-                localStorage.setItem(
-                    "loggedInUser",
-                    JSON.stringify(data.user)
-                );
-
-                /*
-                 * Keep multiple keys for compatibility
-                 * with existing ClubConnect pages.
-                 */
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(data.user)
-                );
-
-                localStorage.setItem(
-                    "currentUser",
-                    JSON.stringify(data.user)
-                );
-
-                localStorage.setItem(
-                    "student",
-                    JSON.stringify(data.user)
-                );
-
-            }
-
-
-            alert(data.message || "Login successful!");
-
-
-            /*
-             * Admin → Admin Dashboard
-             * Student → Student Dashboard
-             */
-            if (
-                data.user &&
-                data.user.role &&
-                data.user.role.toLowerCase() === "admin"
-            ) {
-
-                window.location.href =
-                    "admin-dashboard.html";
-
-            } else {
-
-                window.location.href =
-                    "student-dashboard.html";
-
-            }
-
-
-        } else {
-
-            alert(
-                data.message ||
-                "Invalid email or password."
+        if (!response.ok) {
+            throw new Error(
+                data.message || "Login failed. Please check your details."
             );
-
         }
 
+        if (!data.token || !data.user) {
+            throw new Error("The server returned an unexpected response.");
+        }
+
+        if (data.user.role !== "student") {
+            throw new Error(
+                "This login is for students only. Please use Admin Login."
+            );
+        }
+
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("loggedInUser", JSON.stringify(data.user));
+
+        showMessage(
+            "Login successful! Redirecting to your dashboard...",
+            "success"
+        );
+
+        window.location.href = "/student-dashboard.html";
+
     } catch (error) {
-
-        console.error(
-            "Login Error:",
-            error
+        showMessage(
+            error.message || "Unable to log in. Please try again."
         );
-
-        alert(
-            "Unable to connect to server. Please try again."
-        );
-
-    } finally {
 
         loginButton.disabled = false;
-        loginButton.innerText = "Login";
-
+        loginButton.innerHTML =
+            '<i class="bi bi-box-arrow-in-right me-2"></i>Login';
     }
-
 });
-
 </script>
 
 </body>
-
 </html>

@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Students - ClubConnect</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        body{background:#f4f7fc;color:#202b3c;font-family:Arial,sans-serif}
+        .navbar{background:#0d1b3d!important;padding:14px 0}
+        .navbar-brand{color:white!important;font-size:23px;font-weight:800}
+        .navbar .nav-link{color:#e8efff!important;font-weight:600}
+        .navbar .nav-link:hover{color:#9fc5ff!important}
+        .page-header{background:linear-gradient(120deg,#0d1b3d,#174ea6);padding:36px 0;color:white}
+        .page-header h1{color:white;font-weight:800}
+        .page-header p{color:#e4edff}
+        .panel{background:white;border:1px solid #e2e8f0;border-radius:15px;padding:24px;box-shadow:0 5px 18px rgba(13,27,61,.05)}
+        .form-control,.form-select{min-height:44px;border-radius:8px}
+        .btn{border-radius:8px;font-weight:600}
+        .table thead th{background:#eaf2ff;color:#0d1b3d;white-space:nowrap}
+        footer{background:#0d1b3d;color:white;padding:20px 0;margin-top:35px}
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/index.html"><i class="bi bi-people-fill me-2"></i>ClubConnect</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/clubs.html">Clubs</a></li>
+                <li class="nav-item"><a class="nav-link" href="/events.html">Events</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin-dashboard.html">Dashboard</a></li>
+                <li class="nav-item"><button id="logoutBtn" class="btn btn-outline-light btn-sm ms-lg-2 mt-2 mt-lg-0">Logout</button></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<header class="page-header">
+    <div class="container">
+        <h1 class="h2">Manage Students</h1>
+        <p class="mb-0">View registered student accounts and their information.</p>
+    </div>
+</header>
+
+<main class="container py-4">
+    <div id="message" class="alert d-none" role="alert"></div>
+
+    <section class="panel">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+            <div>
+                <h2 class="h4 mb-1" style="color:#0d1b3d">Registered Students</h2>
+                <p class="text-muted mb-0">Search student details in the system.</p>
+            </div>
+            <button id="refreshBtn" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+            </button>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-8">
+                <label for="searchInput" class="form-label">Search students</label>
+                <input id="searchInput" type="search" class="form-control"
+                       placeholder="Search by name, enrollment, email or department...">
+            </div>
+            <div class="col-md-4">
+                <label for="departmentFilter" class="form-label">Filter by department</label>
+                <select id="departmentFilter" class="form-select">
+                    <option value="">All Departments</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-muted small" id="studentCount">Loading students...</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Enrollment</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Department</th>
+                        <th>Semester</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTable">
+                    <tr><td colspan="6" class="text-center py-4">Loading students...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer class="text-center">
+    <div class="container"><small>&copy; 2026 ClubConnect. All Rights Reserved.</small></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+"use strict";
+
+const token = localStorage.getItem("authToken") || localStorage.getItem("token");
+const table = document.getElementById("studentsTable");
+const message = document.getElementById("message");
+let students = [];
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, c => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[c]);
+}
+
+function showMessage(text, type = "danger") {
+    message.textContent = text;
+    message.className = "alert alert-" + type;
+}
+
+async function apiRequest(url) {
+    const response = await fetch(url, {
+        headers: {"Authorization": "Bearer " + token}
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUser");
+        window.location.replace("/admin-login.html");
+        throw new Error("Admin session expired.");
+    }
+
+    if (!response.ok) {
+        throw new Error(data.message || "Unable to load students.");
+    }
+
+    return data;
+}
+
+function populateDepartments() {
+    const select = document.getElementById("departmentFilter");
+    const currentValue = select.value;
+
+    const departments = [...new Set(
+        students.map(student => student.department).filter(Boolean)
+    )].sort();
+
+    select.innerHTML = '<option value="">All Departments</option>' +
+        departments.map(department =>
+            `<option value="${escapeHTML(department)}">${escapeHTML(department)}</option>`
+        ).join("");
+
+    if (departments.includes(currentValue)) select.value = currentValue;
+}
+
+function renderStudents() {
+    const query = document.getElementById("searchInput").value.toLowerCase().trim();
+    const department = document.getElementById("departmentFilter").value;
+
+    const filtered = students.filter(student => {
+        const searchable = [
+            student.name,
+            student.enrollment,
+            student.email,
+            student.mobile,
+            student.department,
+            student.semester
+        ].join(" ").toLowerCase();
+
+        return searchable.includes(query) &&
+            (!department || student.department === department);
+    });
+
+    document.getElementById("studentCount").textContent =
+        `${filtered.length} student${filtered.length === 1 ? "" : "s"} found`;
+
+    if (!filtered.length) {
+        table.innerHTML = '<tr><td colspan="6" class="text-center py-4">No students found.</td></tr>';
+        return;
+    }
+
+    table.innerHTML = filtered.map(student => `
+        <tr>
+            <td class="fw-semibold">${escapeHTML(student.name || "—")}</td>
+            <td>${escapeHTML(student.enrollment || "—")}</td>
+            <td>${escapeHTML(student.email || "—")}</td>
+            <td>${escapeHTML(student.mobile || "—")}</td>
+            <td>${escapeHTML(student.department || "—")}</td>
+            <td>${escapeHTML(student.semester || "—")}</td>
+        </tr>
+    `).join("");
+}
+
+async function loadStudents() {
+    table.innerHTML = '<tr><td colspan="6" class="text-center py-4">Loading students...</td></tr>';
+    document.getElementById("studentCount").textContent = "Loading students...";
+
+    try {
+        const data = await apiRequest("/api/admin/students");
+
+        students = Array.isArray(data)
+            ? data
+            : (data.students || data.users || data.data || []);
+
+        populateDepartments();
+        renderStudents();
+        message.classList.add("d-none");
+    } catch (error) {
+        console.error(error);
+        table.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-4">Unable to load student records. Check the backend API route.</td></tr>';
+        document.getElementById("studentCount").textContent = "Students unavailable";
+        showMessage(error.message || "Unable to load student records.");
+    }
+}
+
+document.getElementById("refreshBtn").addEventListener("click", loadStudents);
+document.getElementById("searchInput").addEventListener("input", renderStudents);
+document.getElementById("departmentFilter").addEventListener("change", renderStudents);
+
+document.getElementById("logoutBtn").addEventListener("click", function() {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("loggedInUser");
+    window.location.replace("/index.html");
+});
+
+try {
+    const user = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+
+    if (!token || !user || user.role !== "admin") {
+        window.location.replace("/admin-login.html");
+    } else {
+        loadStudents();
+    }
+} catch (error) {
+    window.location.replace("/admin-login.html");
+}
+</script>
+</body>
+</html>

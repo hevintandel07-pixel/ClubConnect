@@ -1,23 +1,16 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Club Details - ClubConnect</title>
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-
         body {
             background: #f5f7fb;
+            font-family: Arial, sans-serif;
         }
 
         .navbar {
@@ -25,19 +18,19 @@
         }
 
         .navbar-brand {
-            font-size: 28px;
-            font-weight: 700;
+            color: white;
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .navbar-brand:hover {
+            color: white;
         }
 
         .navbar a {
             color: white;
             text-decoration: none;
-            margin-left: 25px;
-            font-size: 18px;
-        }
-
-        .navbar a:hover {
-            text-decoration: underline;
+            margin-left: 20px;
         }
 
         .club-image {
@@ -45,20 +38,25 @@
             height: 390px;
             object-fit: cover;
             border-radius: 12px;
+            background: #e9ecef;
         }
 
         .club-title {
             color: #183b68;
-            font-size: 42px;
-            font-weight: 500;
+            font-size: 38px;
+            font-weight: 700;
         }
 
         .details-box {
-            padding: 20px 10px;
+            padding: 20px;
         }
 
-        .activity-list li {
-            margin-bottom: 8px;
+        .info-card {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px #0000000a;
         }
 
         .btn-join {
@@ -67,12 +65,15 @@
             border: none;
             padding: 12px 22px;
             border-radius: 8px;
-            font-size: 18px;
         }
 
         .btn-join:hover {
             background: #157347;
             color: white;
+        }
+
+        .btn-join:disabled {
+            opacity: 0.7;
         }
 
         .btn-back {
@@ -81,802 +82,352 @@
             border: none;
             padding: 12px 22px;
             border-radius: 8px;
-            font-size: 18px;
+        }
+
+        .btn-back:hover {
+            background: #565e64;
+            color: white;
         }
 
         .loading {
-            min-height: 500px;
+            min-height: 350px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
+        footer {
+            background: #183b68;
+            color: white;
+            padding: 18px;
+            text-align: center;
+            margin-top: 50px;
+        }
     </style>
-
 </head>
-
 
 <body>
 
-
-<!-- =====================================================
-     NAVBAR
-===================================================== -->
-
 <nav class="navbar navbar-expand-lg">
-
     <div class="container">
+        <a class="navbar-brand" href="/">ClubConnect</a>
 
-        <a
-            class="navbar-brand"
-            href="/">
-
-            ClubConnect
-
-        </a>
-
-
-        <div>
-
-            <a href="/">
-                Home
-            </a>
-
-            <a href="/clubs.html">
-                Clubs
-            </a>
-
-            <a href="/events.html">
-                Events
-            </a>
-
-            <a href="/login.html">
-                Login
-            </a>
-
-            <a href="/register.html">
-                Register
-            </a>
-
+        <div class="d-flex flex-wrap align-items-center">
+            <a href="/">Home</a>
+            <a href="/clubs.html">Clubs</a>
+            <a href="/events.html">Events</a>
+            <a href="/login.html" id="loginLink">Login</a>
+            <a href="/register.html" id="registerLink">Register</a>
+            <a href="#" id="logoutLink" class="d-none">Logout</a>
         </div>
-
     </div>
-
 </nav>
 
+<main class="container py-5">
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
+    <div id="alertBox" class="alert d-none" role="alert"></div>
 
-<div class="container py-5">
-
-
-    <!-- ALERT -->
-
-    <div
-        id="alertBox"
-        class="alert d-none"
-        role="alert">
-    </div>
-
-
-    <!-- LOADING -->
-
-    <div
-        id="loading"
-        class="loading">
-
+    <div id="loading" class="loading">
         <div class="text-center">
-
-            <div
-                class="spinner-border text-primary"
-                style="width: 3rem; height: 3rem;">
-            </div>
-
-            <p class="mt-3 text-muted">
-                Loading club details...
-            </p>
-
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-3">Loading club details...</p>
         </div>
-
     </div>
 
-
-    <!-- CLUB DETAILS -->
-
-    <div
-        id="clubDetails"
-        class="row align-items-center g-4 d-none">
-
-
-        <!-- IMAGE -->
+    <div id="clubDetails" class="row align-items-center g-4 d-none">
 
         <div class="col-lg-5">
-
-            <img
-                id="clubImage"
-                class="club-image"
-                src=""
-                alt="Club Image">
-
+            <img id="clubImage"
+                 class="club-image"
+                 src="https://placehold.co/800x600?text=ClubConnect"
+                 alt="Club image">
         </div>
-
-
-        <!-- INFORMATION -->
 
         <div class="col-lg-7 details-box">
 
-            <h1
-                id="clubName"
-                class="club-title">
+            <h1 id="clubName" class="club-title"></h1>
 
-            </h1>
+            <p id="clubDescription" class="fs-5 text-secondary"></p>
 
+            <div class="info-card">
+                <strong>Category:</strong>
+                <span id="clubCategory">Not specified</span>
+            </div>
 
-            <p
-                id="clubDescription"
-                class="fs-5">
+            <div class="info-card">
+                <strong>Club Coordinator:</strong>
+                <span id="clubCoordinator">Not specified</span>
+            </div>
 
-            </p>
+            <div class="info-card">
+                <strong>Members:</strong>
+                <span id="clubMembers">0</span>
+            </div>
 
-
-            <p class="fs-5">
-
-                <strong>
-                    Category:
-                </strong>
-
-                <span id="clubCategory">
-                </span>
-
-            </p>
-
-
-            <p class="fs-5">
-
-                <strong>
-                    Club Coordinator:
-                </strong>
-
-                <span id="clubCoordinator">
-                </span>
-
-            </p>
-
-
-            <p class="fs-5">
-
-                <strong>
-                    Members:
-                </strong>
-
-                <span id="clubMembers">
-                    0
-                </span>
-
-            </p>
-
-
-            <h5 class="mt-4">
-                Activities:
-            </h5>
-
-
-            <ul class="activity-list">
-
-                <li>
-                    Club Activities
-                </li>
-
-                <li>
-                    Workshops
-                </li>
-
-                <li>
-                    Competitions
-                </li>
-
-                <li>
-                    Technical / Cultural Events
-                </li>
-
+            <h5 class="mt-4">Activities</h5>
+            <ul>
+                <li>Club activities and group discussions</li>
+                <li>Workshops and learning sessions</li>
+                <li>Competitions and technical events</li>
+                <li>Student development activities</li>
             </ul>
 
-
-            <!-- BUTTONS -->
-
             <div class="mt-4 d-flex gap-2 flex-wrap">
-
-                <button
-                    id="joinButton"
-                    class="btn-join"
-                    onclick="joinClub()">
-
+                <button id="joinButton" class="btn-join" type="button">
                     Join Club
-
                 </button>
 
-
-                <button
-                    class="btn-back"
-                    onclick="goBack()">
-
+                <button class="btn-back" type="button" onclick="goBack()">
                     Back to Clubs
-
                 </button>
-
             </div>
 
         </div>
-
     </div>
 
+    <div id="errorBox" class="alert alert-danger d-none"></div>
 
-    <!-- ERROR -->
+</main>
 
-    <div
-        id="errorBox"
-        class="alert alert-danger d-none">
-
-    </div>
-
-</div>
-
+<footer>
+    <p class="mb-0">© 2026 ClubConnect | Connecting Students Through Clubs</p>
+</footer>
 
 <script>
+    let currentClub = null;
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const clubId = urlParams.get("id");
 
-// =====================================================
-// GLOBAL CLUB
-// =====================================================
+    document.addEventListener("DOMContentLoaded", () => {
+        updateNavbar();
 
-let currentClub = null;
+        document.getElementById("joinButton")
+            .addEventListener("click", joinClub);
 
-
-// =====================================================
-// GET CLUB ID FROM URL
-// =====================================================
-
-const urlParams =
-    new URLSearchParams(
-        window.location.search
-    );
-
-
-const clubId =
-    urlParams.get("id");
-
-
-// =====================================================
-// PAGE LOAD
-// =====================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+        document.getElementById("logoutLink")
+            .addEventListener("click", logout);
 
         if (!clubId) {
-
-            showError(
-                "Club ID is missing."
-            );
-
+            hideLoading();
+            showError("Club ID is missing. Please return to the Clubs page.");
             return;
-
         }
 
         loadClub();
-
-    }
-);
-
-
-// =====================================================
-// LOAD CLUB
-// =====================================================
-
-async function loadClub() {
-
-    try {
-
-        const response =
-            await fetch(
-                `/api/clubs/${clubId}`
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.message ||
-                "Unable to load club."
-            );
-
-        }
-
-
-        currentClub =
-            data.club;
-
-
-        document
-            .getElementById("loading")
-            .classList.add("d-none");
-
-
-        document
-            .getElementById("clubDetails")
-            .classList.remove("d-none");
-
-
-        displayClub(
-            currentClub
-        );
-
-    }
-
-    catch (error) {
-
-        document
-            .getElementById("loading")
-            .classList.add("d-none");
-
-
-        showError(
-            error.message
-        );
-
-    }
-
-}
-
-
-// =====================================================
-// DISPLAY CLUB
-// =====================================================
-
-function displayClub(club) {
-
-
-    document.getElementById(
-        "clubName"
-    ).textContent =
-        club.name;
-
-
-    document.getElementById(
-        "clubDescription"
-    ).textContent =
-        club.description;
-
-
-    document.getElementById(
-        "clubCategory"
-    ).textContent =
-        club.category;
-
-
-    document.getElementById(
-        "clubCoordinator"
-    ).textContent =
-        club.coordinator;
-
-
-    document.getElementById(
-        "clubMembers"
-    ).textContent =
-        club.members || 0;
-
-
-    const image =
-        club.image ||
-        "../public/images/coding-event.png";
-
-
-    const imageElement =
-        document.getElementById(
-            "clubImage"
-        );
-
-
-    imageElement.src =
-        image;
-
-
-    imageElement.alt =
-        club.name;
-
-
-    imageElement.onerror =
-        function () {
-
-            this.src =
-                "../public/images/coding-event.png";
-
-        };
-
-}
-
-
-// =====================================================
-// JOIN CLUB
-// =====================================================
-
-async function joinClub() {
-
-
-    // -----------------------------------------
-    // GET LOGGED-IN USER
-    // -----------------------------------------
-
-    const user =
-        getLoggedInUser();
-
-
-    console.log(
-        "Logged in user:",
-        user
-    );
-
-
-    // -----------------------------------------
-    // NOT LOGGED IN
-    // -----------------------------------------
-
-    if (!user) {
-
-        showAlert(
-            "Please login first to join this club.",
-            "warning"
-        );
-
-
-        setTimeout(
-            function () {
-
-                window.location.href =
-                    "/login.html";
-
-            },
-            1200
-        );
-
-
-        return;
-
-    }
-
-
-    // -----------------------------------------
-    // GET STUDENT ID
-    // -----------------------------------------
-
-    const studentId =
-        user.id ||
-        user._id ||
-        user.userId;
-
-
-    console.log(
-        "Student ID:",
-        studentId
-    );
-
-
-    if (!studentId) {
-
-        showAlert(
-            "Student ID not found. Please logout and login again.",
-            "danger"
-        );
-
-        return;
-
-    }
-
-
-    // -----------------------------------------
-    // CHECK CLUB
-    // -----------------------------------------
-
-    if (!currentClub) {
-
-        showAlert(
-            "Club information is not available.",
-            "danger"
-        );
-
-        return;
-
-    }
-
-
-    // -----------------------------------------
-    // DISABLE BUTTON
-    // -----------------------------------------
-
-    const button =
-        document.getElementById(
-            "joinButton"
-        );
-
-
-    button.disabled = true;
-
-    button.textContent =
-        "Sending...";
-
-
-    try {
-
-
-        // -----------------------------------------
-        // SEND REQUEST
-        // -----------------------------------------
-
-        const response =
-            await fetch(
-                "/api/membership",
-                {
-
-                    method: "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            studentId:
-                                studentId,
-
-                            clubName:
-                                currentClub.name,
-
-                            category:
-                                currentClub.category
-
-                        })
-
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        console.log(
-            "Membership response:",
-            data
-        );
-
-
-        // -----------------------------------------
-        // ERROR
-        // -----------------------------------------
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.message ||
-                "Unable to send membership request."
-            );
-
-        }
-
-
-        // -----------------------------------------
-        // SUCCESS
-        // -----------------------------------------
-
-        showAlert(
-            "✅ " +
-            (
-                data.message ||
-                "Membership request sent successfully!"
-            ),
-            "success"
-        );
-
-
-        button.textContent =
-            "Request Sent";
-
-
-        button.disabled = true;
-
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Join Club Error:",
-            error
-        );
-
-
-        showAlert(
-            error.message,
-            "danger"
-        );
-
-
-        button.disabled = false;
-
-        button.textContent =
-            "Join Club";
-
-    }
-
-}
-
-
-// =====================================================
-// GET LOGGED-IN USER
-// =====================================================
-
-function getLoggedInUser() {
-
-
-    const keys = [
-
-        "loggedInUser",
-        "user",
-        "currentUser",
-        "student"
-
-    ];
-
-
-    for (
-        const key of keys
-    ) {
-
-
-        const value =
-            localStorage.getItem(
-                key
-            );
-
-
-        if (!value) {
-
-            continue;
-
-        }
-
-
-        try {
-
-            const user =
-                JSON.parse(value);
-
-
-            if (user) {
-
-                return user;
-
-            }
-
-        }
-
-        catch (error) {
-
-            console.log(
-                "Invalid localStorage data:",
-                key
-            );
-
-        }
-
-    }
-
-
-    return null;
-
-}
-
-
-// =====================================================
-// ALERT
-// =====================================================
-
-function showAlert(
-    message,
-    type
-) {
-
-
-    const alertBox =
-        document.getElementById(
-            "alertBox"
-        );
-
-
-    alertBox.className =
-        `alert alert-${type}`;
-
-
-    alertBox.textContent =
-        message;
-
-
-    alertBox.classList.remove(
-        "d-none"
-    );
-
-
-    window.scrollTo({
-
-        top: 0,
-
-        behavior: "smooth"
-
     });
 
+    function getLoggedInUser() {
+        const keys = ["loggedInUser", "user", "currentUser", "student"];
 
-    setTimeout(
-        function () {
+        for (const key of keys) {
+            const value = localStorage.getItem(key);
 
-            alertBox.classList.add(
-                "d-none"
+            if (!value) continue;
+
+            try {
+                const user = JSON.parse(value);
+                if (user) return user;
+            } catch (error) {
+                console.warn("Invalid user data in localStorage:", key);
+            }
+        }
+
+        return null;
+    }
+
+    function getAuthToken() {
+        return localStorage.getItem("token") ||
+               localStorage.getItem("authToken") ||
+               localStorage.getItem("accessToken") ||
+               "";
+    }
+
+    function updateNavbar() {
+        const user = getLoggedInUser();
+
+        document.getElementById("loginLink")
+            .classList.toggle("d-none", !!user);
+
+        document.getElementById("registerLink")
+            .classList.toggle("d-none", !!user);
+
+        document.getElementById("logoutLink")
+            .classList.toggle("d-none", !user);
+    }
+
+    function logout(event) {
+        event.preventDefault();
+
+        [
+            "loggedInUser",
+            "user",
+            "currentUser",
+            "student",
+            "token",
+            "authToken",
+            "accessToken"
+        ].forEach(key => localStorage.removeItem(key));
+
+        window.location.href = "/login.html";
+    }
+
+    async function loadClub() {
+        try {
+            const response = await fetch(
+                `/api/clubs/${encodeURIComponent(clubId)}`
             );
 
-        },
-        5000
-    );
+            const data = await response.json();
 
-}
+            if (!response.ok) {
+                throw new Error(data.message || "Unable to load club details.");
+            }
 
+            // Supports either { club: {...} } or a direct club object.
+            currentClub = data.club || data;
 
-// =====================================================
-// ERROR
-// =====================================================
+            if (!currentClub || !currentClub.name) {
+                throw new Error("Club details were not returned by the server.");
+            }
 
-function showError(
-    message
-) {
+            displayClub(currentClub);
 
+            document.getElementById("loading").classList.add("d-none");
+            document.getElementById("clubDetails").classList.remove("d-none");
 
-    document.getElementById(
-        "errorBox"
-    ).textContent =
-        message;
+        } catch (error) {
+            hideLoading();
+            showError(error.message || "Unable to load club details.");
+        }
+    }
 
+    function displayClub(club) {
+        document.getElementById("clubName").textContent =
+            club.name || "Unnamed Club";
 
-    document.getElementById(
-        "errorBox"
-    ).classList.remove(
-        "d-none"
-    );
+        document.getElementById("clubDescription").textContent =
+            club.description || "No description is available for this club.";
 
-}
+        document.getElementById("clubCategory").textContent =
+            club.category || "Not specified";
 
+        document.getElementById("clubCoordinator").textContent =
+            club.coordinator || "Not specified";
 
-// =====================================================
-// BACK
-// =====================================================
+        document.getElementById("clubMembers").textContent =
+            club.members ?? 0;
 
-function goBack() {
+        const image = document.getElementById("clubImage");
 
-    window.location.href =
-        "/clubs.html";
+        image.src = club.image || "https://placehold.co/800x600?text=ClubConnect";
+        image.alt = (club.name || "Club") + " image";
 
-}
+        image.onerror = function () {
+            this.onerror = null;
+            this.src = "https://placehold.co/800x600?text=ClubConnect";
+        };
+    }
 
+    async function joinClub() {
+        const user = getLoggedInUser();
+
+        if (!user) {
+            showAlert("Please log in first to request club membership.", "warning");
+
+            setTimeout(() => {
+                window.location.href = "/login.html";
+            }, 1000);
+
+            return;
+        }
+
+        const studentId = user.id || user._id || user.userId;
+
+        if (!studentId) {
+            showAlert(
+                "Your login details are incomplete. Please log out and log in again.",
+                "danger"
+            );
+            return;
+        }
+
+        if (!currentClub) {
+            showAlert("Club details are not available.", "danger");
+            return;
+        }
+
+        const button = document.getElementById("joinButton");
+        button.disabled = true;
+        button.textContent = "Sending Request...";
+
+        try {
+            const token = getAuthToken();
+
+            const headers = {
+                "Content-Type": "application/json"
+            };
+
+            if (token) {
+                headers.Authorization = `Bearer ${token}`;
+            }
+
+            const response = await fetch("/api/membership", {
+                method: "POST",
+                headers,
+                body: JSON.stringify({
+                    studentId: studentId,
+                    clubName: currentClub.name,
+                    category: currentClub.category || ""
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Unable to send membership request."
+                );
+            }
+
+            showAlert(
+                data.message || "Membership request submitted successfully!",
+                "success"
+            );
+
+            button.textContent = "Request Sent";
+
+        } catch (error) {
+            showAlert(error.message || "Something went wrong.", "danger");
+            button.disabled = false;
+            button.textContent = "Join Club";
+        }
+    }
+
+    function showAlert(message, type) {
+        const alertBox = document.getElementById("alertBox");
+
+        alertBox.className = `alert alert-${type}`;
+        alertBox.textContent = message;
+        alertBox.classList.remove("d-none");
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showError(message) {
+        const errorBox = document.getElementById("errorBox");
+        errorBox.textContent = message;
+        errorBox.classList.remove("d-none");
+    }
+
+    function hideLoading() {
+        document.getElementById("loading").classList.add("d-none");
+    }
+
+    function goBack() {
+        window.location.href = "/clubs.html";
+    }
 </script>
 
 </body>
-
 </html>

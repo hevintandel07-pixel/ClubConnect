@@ -29,10 +29,11 @@ const eventRegistrationSchema = new mongoose.Schema({
         default: "Registered"
     }
 
+}, {
+    timestamps: true
 });
 
-
-// Prevent duplicate registration
+// Prevent duplicate registration for the same student and event
 eventRegistrationSchema.index(
     {
         student: 1,
@@ -43,12 +44,9 @@ eventRegistrationSchema.index(
     }
 );
 
-
-const EventRegistration =
-    mongoose.model(
-        "EventRegistration",
-        eventRegistrationSchema
-    );
-
+const EventRegistration = mongoose.model(
+    "EventRegistration",
+    eventRegistrationSchema
+);
 
 module.exports = EventRegistration;

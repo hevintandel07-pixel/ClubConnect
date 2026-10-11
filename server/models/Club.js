@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 const clubSchema = new mongoose.Schema({
@@ -36,9 +37,6 @@ const clubSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const Club = mongoose.model(
-    "Club",
-    clubSchema
-);
+const Club = mongoose.model("Club", clubSchema);
 
 module.exports = Club;

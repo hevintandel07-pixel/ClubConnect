@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 // Membership Schema
@@ -13,12 +14,14 @@ const membershipSchema = new mongoose.Schema({
     // Club information
     clubName: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
 
     category: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
 
     // Membership request status
@@ -34,7 +37,15 @@ const membershipSchema = new mongoose.Schema({
         default: Date.now
     }
 
+}, {
+    timestamps: true
 });
+
+// Prevent duplicate requests for the same student and club
+membershipSchema.index(
+    { student: 1, clubName: 1 },
+    { unique: true }
+);
 
 // Create Membership Model
 const Membership = mongoose.model(

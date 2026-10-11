@@ -1,51 +1,49 @@
+
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-
+const userSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
+      trim: true
     },
-
     enrollment: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
+      required: true,
+      unique: true,
+      trim: true
     },
-
     email: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true
     },
-
     department: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
+      trim: true
     },
-
     semester: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
+      min: 1,
+      max: 8
     },
-
     password: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
-
     role: {
-        type: String,
-        default: "student"
+      type: String,
+      enum: ["student", "admin"],
+      default: "student",
+      required: true
     }
-
-}, {
-    timestamps: true
-});
-
-const User = mongoose.model(
-    "User",
-    userSchema
+  },
+  { timestamps: true }
 );
 
-module.exports = User;
+module.exports = mongoose.model("User", userSchema);

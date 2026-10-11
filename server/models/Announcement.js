@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 const announcementSchema = new mongoose.Schema({
@@ -16,7 +17,11 @@ const announcementSchema = new mongoose.Schema({
 
     date: {
         type: Date,
-        required: true
+        required: true,
+        validate: {
+            validator: value => !Number.isNaN(value.getTime()),
+            message: "Please enter a valid announcement date."
+        }
     },
 
     message: {
