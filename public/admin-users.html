@@ -1,18 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Admins - ClubConnect</title>
 
-    <title>Manage Students - ClubConnect</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-          rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
 
     <style>
@@ -67,10 +62,24 @@
             font-weight: 600;
         }
 
+        .btn-primary {
+            background: #0d6efd;
+            border-color: #0d6efd;
+        }
+
         .table thead th {
             background: #eaf2ff;
             color: #0d1b3d;
             white-space: nowrap;
+        }
+
+        .admin-badge {
+            background: #eaf2ff;
+            color: #174ea6;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
         }
 
         footer {
@@ -86,141 +95,127 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-
         <a class="navbar-brand" href="/index.html">
             <i class="bi bi-people-fill me-2"></i>ClubConnect
         </a>
 
-        <button class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navMenu"
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navMenu"
                 aria-label="Toggle navigation">
-
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav ms-auto align-items-lg-center">
-
                 <li class="nav-item">
                     <a class="nav-link" href="/index.html">Home</a>
                 </li>
-
                 <li class="nav-item">
                     <a class="nav-link" href="/clubs.html">Clubs</a>
                 </li>
-
                 <li class="nav-item">
                     <a class="nav-link" href="/events.html">Events</a>
                 </li>
-
                 <li class="nav-item">
                     <a class="nav-link" href="/admin-dashboard.html">Dashboard</a>
                 </li>
-
                 <li class="nav-item">
                     <button id="logoutBtn"
                             class="btn btn-outline-light btn-sm ms-lg-2 mt-2 mt-lg-0">
                         Logout
                     </button>
                 </li>
-
             </ul>
         </div>
-
     </div>
 </nav>
 
 <header class="page-header">
     <div class="container">
-        <h1 class="h2">Manage Students</h1>
+        <h1 class="h2">
+            <i class="bi bi-shield-lock me-2"></i>Manage Admins
+        </h1>
         <p class="mb-0">
-            View registered student accounts and their information.
+            View registered administrator accounts and their information.
         </p>
     </div>
 </header>
 
 <main class="container py-4">
-
     <div id="message" class="alert d-none" role="alert"></div>
 
     <section class="panel">
-
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
             <div>
                 <h2 class="h4 mb-1" style="color:#0d1b3d">
-                    Registered Students
+                    Administrator Accounts
                 </h2>
-
                 <p class="text-muted mb-0">
-                    Search and view registered student details.
+                    Search and view registered administrator details.
                 </p>
             </div>
 
-            <button id="refreshBtn" class="btn btn-outline-primary">
-                <i class="bi bi-arrow-clockwise me-1"></i>Refresh
-            </button>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="/admin-dashboard.html" class="btn btn-primary">
+                    <i class="bi bi-arrow-left me-1"></i>Dashboard
+                </a>
+
+                <button id="refreshBtn" class="btn btn-primary">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                </button>
+            </div>
         </div>
 
         <div class="row g-3 mb-3">
-
             <div class="col-md-8">
                 <label for="searchInput" class="form-label">
-                    Search Students
+                    Search Administrators
                 </label>
-
                 <input id="searchInput"
                        type="search"
                        class="form-control"
-                       placeholder="Search by name, enrollment, email or department...">
+                       placeholder="Search by name, email or role...">
             </div>
 
             <div class="col-md-4">
-                <label for="departmentFilter" class="form-label">
-                    Filter by Department
+                <label for="roleFilter" class="form-label">
+                    Filter by Role
                 </label>
-
-                <select id="departmentFilter" class="form-select">
-                    <option value="">All Departments</option>
+                <select id="roleFilter" class="form-select">
+                    <option value="">All Roles</option>
+                    <option value="admin">Admin</option>
+                    <option value="superadmin">Super Admin</option>
                 </select>
             </div>
-
         </div>
 
         <div class="mb-2">
-            <span class="text-muted small" id="studentCount">
-                Loading students...
+            <span class="text-muted small" id="adminCount">
+                Loading administrators...
             </span>
         </div>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle">
-
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Enrollment</th>
                         <th>Email</th>
-                        <th>Mobile</th>
-                        <th>Department</th>
-                        <th>Semester</th>
+                        <th>Role</th>
+                        <th>Account Created</th>
                     </tr>
                 </thead>
 
-                <tbody id="studentsTable">
+                <tbody id="adminsTable">
                     <tr>
-                        <td colspan="6" class="text-center py-4">
-                            Loading students...
+                        <td colspan="4" class="text-center py-4">
+                            Loading administrators...
                         </td>
                     </tr>
                 </tbody>
-
             </table>
         </div>
-
     </section>
-
 </main>
 
 <footer class="text-center">
@@ -230,13 +225,14 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 "use strict";
 
-const table = document.getElementById("studentsTable");
+const table = document.getElementById("adminsTable");
 const message = document.getElementById("message");
 
-let students = [];
+let admins = [];
 
 function getToken() {
     return localStorage.getItem("authToken") ||
@@ -304,129 +300,120 @@ async function apiRequest(url) {
     }
 
     if (!response.ok) {
-        throw new Error(data.message || "Unable to load students.");
+        throw new Error(
+            data.message || "Unable to load administrators."
+        );
     }
 
     return data;
 }
 
-function populateDepartments() {
-    const select = document.getElementById("departmentFilter");
-    const currentValue = select.value;
-
-    const departments = [
-        ...new Set(
-            students
-                .map(student => student.department)
-                .filter(Boolean)
-        )
-    ].sort();
-
-    select.innerHTML =
-        '<option value="">All Departments</option>' +
-        departments.map(department =>
-            `<option value="${escapeHTML(department)}">${escapeHTML(department)}</option>`
-        ).join("");
-
-    if (departments.includes(currentValue)) {
-        select.value = currentValue;
-    }
-}
-
-function renderStudents() {
+function renderAdmins() {
     const query = document.getElementById("searchInput")
         .value.toLowerCase().trim();
 
-    const department =
-        document.getElementById("departmentFilter").value;
+    const selectedRole = document.getElementById("roleFilter")
+        .value.toLowerCase();
 
-    const filtered = students.filter(student => {
-        const searchable = [
-            student.name,
-            student.enrollment,
-            student.email,
-            student.mobile,
-            student.department,
-            student.semester
-        ].join(" ").toLowerCase();
+    const filtered = admins.filter(admin => {
+        const name = admin.name ||
+                     admin.fullName ||
+                     admin.username ||
+                     "";
+
+        const email = admin.email || "";
+        const role = admin.role || "admin";
+
+        const searchable = `${name} ${email} ${role}`.toLowerCase();
 
         return searchable.includes(query) &&
-            (!department || student.department === department);
+               (!selectedRole || role.toLowerCase() === selectedRole);
     });
 
-    document.getElementById("studentCount").textContent =
-        `${filtered.length} student${filtered.length === 1 ? "" : "s"} found`;
+    document.getElementById("adminCount").textContent =
+        `${filtered.length} administrator${filtered.length === 1 ? "" : "s"} found`;
 
     if (filtered.length === 0) {
         table.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center py-4">
-                    No students found.
+                <td colspan="4" class="text-center py-4">
+                    No administrators found.
                 </td>
-            </tr>
-        `;
+            </tr>`;
         return;
     }
 
-    table.innerHTML = filtered.map(student => `
-        <tr>
-            <td class="fw-semibold">${escapeHTML(student.name || "—")}</td>
-            <td>${escapeHTML(student.enrollment || "—")}</td>
-            <td>${escapeHTML(student.email || "—")}</td>
-            <td>${escapeHTML(student.mobile || "—")}</td>
-            <td>${escapeHTML(student.department || "—")}</td>
-            <td>${escapeHTML(student.semester || "—")}</td>
-        </tr>
-    `).join("");
+    table.innerHTML = filtered.map(admin => {
+        const name = admin.name ||
+                     admin.fullName ||
+                     admin.username ||
+                     "—";
+
+        const email = admin.email || "—";
+        const role = admin.role || "admin";
+
+        const created = admin.createdAt
+            ? new Date(admin.createdAt).toLocaleDateString()
+            : "—";
+
+        return `
+            <tr>
+                <td class="fw-semibold">${escapeHTML(name)}</td>
+                <td>${escapeHTML(email)}</td>
+                <td>
+                    <span class="admin-badge">
+                        ${escapeHTML(role)}
+                    </span>
+                </td>
+                <td>${escapeHTML(created)}</td>
+            </tr>`;
+    }).join("");
 }
 
-async function loadStudents() {
+async function loadAdmins() {
     const refreshBtn = document.getElementById("refreshBtn");
 
     refreshBtn.disabled = true;
 
     table.innerHTML = `
         <tr>
-            <td colspan="6" class="text-center py-4">
+            <td colspan="4" class="text-center py-4">
                 <span class="spinner-border spinner-border-sm me-2"></span>
-                Loading students...
+                Loading administrators...
             </td>
-        </tr>
-    `;
+        </tr>`;
 
-    document.getElementById("studentCount").textContent =
-        "Loading students...";
+    document.getElementById("adminCount").textContent =
+        "Loading administrators...";
 
     try {
-        const data = await apiRequest("/api/students");
+        const data = await apiRequest("/api/admin/users");
 
-        students = Array.isArray(data)
+        admins = Array.isArray(data)
             ? data
-            : (data.students || data.users || data.data || []);
+            : (data.admins || data.users || data.data || []);
 
-        if (!Array.isArray(students)) {
-            students = [];
+        if (!Array.isArray(admins)) {
+            admins = [];
         }
 
-        populateDepartments();
-        renderStudents();
+        renderAdmins();
         message.classList.add("d-none");
 
     } catch (error) {
-        console.error("Load students error:", error);
+        console.error("Load administrators error:", error);
 
         table.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center text-danger py-4">
-                    ${escapeHTML(error.message || "Unable to load students.")}
+                <td colspan="4" class="text-center text-danger py-4">
+                    ${escapeHTML(error.message || "Unable to load administrators.")}
                 </td>
-            </tr>
-        `;
+            </tr>`;
 
-        document.getElementById("studentCount").textContent =
-            "Students unavailable";
+        document.getElementById("adminCount").textContent =
+            "Administrators unavailable";
 
-        showMessage(error.message || "Unable to load student records.");
+        showMessage(error.message || "Unable to load administrator records.");
 
         if (/access denied|log in again|unauthorized/i.test(error.message)) {
             setTimeout(logout, 1200);
@@ -438,13 +425,13 @@ async function loadStudents() {
 }
 
 document.getElementById("refreshBtn")
-    .addEventListener("click", loadStudents);
+    .addEventListener("click", loadAdmins);
 
 document.getElementById("searchInput")
-    .addEventListener("input", renderStudents);
+    .addEventListener("input", renderAdmins);
 
-document.getElementById("departmentFilter")
-    .addEventListener("change", renderStudents);
+document.getElementById("roleFilter")
+    .addEventListener("change", renderAdmins);
 
 document.getElementById("logoutBtn")
     .addEventListener("click", logout);
@@ -458,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    loadStudents();
+    loadAdmins();
 });
 </script>
 
