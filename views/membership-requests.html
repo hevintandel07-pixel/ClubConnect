@@ -1,49 +1,157 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Membership Requests - ClubConnect</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
     <link rel="stylesheet" href="/css/style.css">
 
     <style>
-        body{background:#f4f7fc;color:#202b3c;font-family:Arial,sans-serif}
-        .navbar{background:#0d1b3d!important;padding:14px 0}
-        .navbar-brand{color:white!important;font-size:23px;font-weight:800}
-        .navbar .nav-link{color:#e8efff!important;font-weight:600}
-        .navbar .nav-link:hover{color:#9fc5ff!important}
-        .page-header{background:linear-gradient(120deg,#0d1b3d,#174ea6);padding:36px 0;color:white}
-        .page-header h1{color:white;font-weight:800}
-        .page-header p{color:#e4edff}
-        .panel{background:white;border:1px solid #e2e8f0;border-radius:15px;padding:24px;box-shadow:0 5px 18px rgba(13,27,61,.05)}
-        h2{color:#0d1b3d;font-weight:750}
-        .form-control,.form-select{min-height:43px;border-radius:8px}
-        .btn{border-radius:8px;font-weight:600}
-        .btn-primary{background:#174ea6!important;border-color:#174ea6!important}
-        .table thead th{background:#eaf2ff;color:#0d1b3d;white-space:nowrap}
-        footer{background:#0d1b3d;color:white;padding:20px 0;margin-top:35px}
-        .status-badge{padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700}
+        body {
+            background: #f4f7fc;
+            color: #202b3c;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background: #0d1b3d !important;
+            padding: 14px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .navbar .nav-link {
+            color: #e8efff !important;
+            font-weight: 600;
+        }
+
+        .navbar .nav-link:hover {
+            color: #9fc5ff !important;
+        }
+
+        .page-header {
+            background: linear-gradient(120deg, #0d1b3d, #174ea6);
+            padding: 36px 0;
+            color: white;
+        }
+
+        .page-header h1 {
+            color: white;
+            font-weight: 800;
+        }
+
+        .page-header p {
+            color: #e4edff;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 24px;
+            box-shadow: 0 5px 18px rgba(13, 27, 61, .05);
+        }
+
+        h2 {
+            color: #0d1b3d;
+            font-weight: 750;
+        }
+
+        .form-control,
+        .form-select {
+            min-height: 43px;
+            border-radius: 8px;
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #174ea6 !important;
+            border-color: #174ea6 !important;
+        }
+
+        .table thead th {
+            background: #eaf2ff;
+            color: #0d1b3d;
+            white-space: nowrap;
+        }
+
+        .status-badge {
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        footer {
+            background: #0d1b3d;
+            color: white;
+            padding: 20px 0;
+            margin-top: 35px;
+        }
     </style>
 </head>
 
 <body>
+
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand" href="/index.html"><i class="bi bi-people-fill me-2"></i>ClubConnect</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Toggle navigation">
+
+        <a class="navbar-brand" href="/index.html">
+            <i class="bi bi-people-fill me-2"></i>ClubConnect
+        </a>
+
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navMenu"
+                aria-label="Toggle navigation">
+
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav ms-auto align-items-lg-center">
-                <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/clubs.html">Clubs</a></li>
-                <li class="nav-item"><a class="nav-link" href="/events.html">Events</a></li>
-                <li class="nav-item"><a class="nav-link" href="/admin-dashboard.html">Dashboard</a></li>
-                <li class="nav-item"><button id="logoutBtn" class="btn btn-outline-light btn-sm ms-lg-2 mt-2 mt-lg-0">Logout</button></li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/index.html">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/clubs.html">Clubs</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/events.html">Events</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-dashboard.html">Dashboard</a>
+                </li>
+
+                <li class="nav-item">
+                    <button id="logoutBtn"
+                            class="btn btn-outline-light btn-sm ms-lg-2 mt-2 mt-lg-0">
+                        Logout
+                    </button>
+                </li>
+
             </ul>
         </div>
     </div>
@@ -52,31 +160,49 @@
 <header class="page-header">
     <div class="container">
         <h1 class="h2">Membership Requests</h1>
-        <p class="mb-0">Review student applications and manage club membership status.</p>
+        <p class="mb-0">
+            Review student applications and manage club membership status.
+        </p>
     </div>
 </header>
 
 <main class="container py-4">
+
     <div id="message" class="alert d-none" role="alert"></div>
 
     <section class="panel">
+
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+
             <div>
                 <h2 class="h4 mb-1">All Requests</h2>
-                <p class="text-muted mb-0">Review pending, approved and rejected requests.</p>
+                <p class="text-muted mb-0">
+                    Review pending, approved and rejected requests.
+                </p>
             </div>
+
             <button id="refreshBtn" class="btn btn-outline-primary">
                 <i class="bi bi-arrow-clockwise me-1"></i>Refresh
             </button>
+
         </div>
 
         <div class="row g-3 mb-3">
+
             <div class="col-md-6">
                 <label for="searchInput" class="form-label">Search</label>
-                <input id="searchInput" type="search" class="form-control" placeholder="Search student or club...">
+
+                <input id="searchInput"
+                       type="search"
+                       class="form-control"
+                       placeholder="Search student or club...">
             </div>
+
             <div class="col-md-6">
-                <label for="statusFilter" class="form-label">Filter by Status</label>
+                <label for="statusFilter" class="form-label">
+                    Filter by Status
+                </label>
+
                 <select id="statusFilter" class="form-select">
                     <option value="">All statuses</option>
                     <option value="pending">Pending</option>
@@ -84,31 +210,37 @@
                     <option value="rejected">Rejected</option>
                 </select>
             </div>
+
         </div>
 
         <div class="row g-3 mb-3">
+
             <div class="col-sm-4">
                 <div class="p-3 rounded-3" style="background:#fff7e6">
                     <div class="text-muted">Pending</div>
                     <div class="fs-3 fw-bold" id="pendingCount">0</div>
                 </div>
             </div>
+
             <div class="col-sm-4">
                 <div class="p-3 rounded-3" style="background:#e9f8ef">
                     <div class="text-muted">Approved</div>
                     <div class="fs-3 fw-bold text-success" id="approvedCount">0</div>
                 </div>
             </div>
+
             <div class="col-sm-4">
                 <div class="p-3 rounded-3" style="background:#fff0f0">
                     <div class="text-muted">Rejected</div>
                     <div class="fs-3 fw-bold text-danger" id="rejectedCount">0</div>
                 </div>
             </div>
+
         </div>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle">
+
                 <thead>
                     <tr>
                         <th>Student</th>
@@ -119,31 +251,49 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
+
                 <tbody id="requestsTable">
-                    <tr><td colspan="6" class="text-center py-4">Loading requests...</td></tr>
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            Loading requests...
+                        </td>
+                    </tr>
                 </tbody>
+
             </table>
         </div>
+
     </section>
 </main>
 
 <footer class="text-center">
-    <div class="container"><small>&copy; 2026 ClubConnect. All Rights Reserved.</small></div>
+    <div class="container">
+        <small>&copy; 2026 ClubConnect. All Rights Reserved.</small>
+    </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 "use strict";
 
-const token = localStorage.getItem("authToken") || localStorage.getItem("token");
+const token =
+    localStorage.getItem("authToken") ||
+    localStorage.getItem("token") ||
+    localStorage.getItem("accessToken");
+
 const table = document.getElementById("requestsTable");
 const message = document.getElementById("message");
+
 let requests = [];
 
 function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, c => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-    })[c]);
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
 }
 
 function showMessage(text, type = "danger") {
@@ -152,8 +302,14 @@ function showMessage(text, type = "danger") {
 }
 
 function headers(json = true) {
-    const result = {"Authorization": "Bearer " + token};
-    if (json) result["Content-Type"] = "application/json";
+    const result = {
+        Authorization: "Bearer " + token
+    };
+
+    if (json) {
+        result["Content-Type"] = "application/json";
+    }
+
     return result;
 }
 
@@ -162,11 +318,9 @@ async function apiRequest(url, options = {}) {
     const data = await response.json().catch(() => ({}));
 
     if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("token");
-        localStorage.removeItem("loggedInUser");
-        window.location.replace("/admin-login.html");
-        throw new Error("Admin session expired.");
+        throw new Error(
+            data.message || "Your session expired or access was denied."
+        );
     }
 
     if (!response.ok) {
@@ -178,96 +332,213 @@ async function apiRequest(url, options = {}) {
 
 function studentName(item) {
     const student = item.student;
+
     if (student && typeof student === "object") {
-        return student.name || student.fullName || student.email || "Student";
+        return student.name ||
+               student.fullName ||
+               student.email ||
+               "Student";
     }
+
     return item.studentName || item.name || "Student";
+}
+
+function studentEmail(item) {
+    const student = item.student;
+
+    if (student && typeof student === "object") {
+        return student.email || item.email || "";
+    }
+
+    return item.email || "";
 }
 
 function clubName(item) {
     const club = item.club;
+
     if (club && typeof club === "object") {
         return club.clubName || club.name || item.clubName || "Club";
     }
-    return item.clubName || item.club || "Club";
+
+    return item.clubName ||
+           (typeof item.club === "string" ? item.club : "") ||
+           "Club";
+}
+
+function formatRequestDate(item) {
+    const value = item.requestDate || item.createdAt;
+
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    return Number.isNaN(date.getTime())
+        ? "—"
+        : date.toLocaleDateString("en-IN");
+}
+
+function normalizedStatus(item) {
+    return String(item.status || "Pending").toLowerCase();
 }
 
 function renderRequests() {
-    const query = document.getElementById("searchInput").value.toLowerCase().trim();
+    const query = document.getElementById("searchInput")
+        .value.toLowerCase().trim();
+
     const status = document.getElementById("statusFilter").value;
 
     const filtered = requests.filter(item => {
         const searchable = [
             studentName(item),
-            item.student?.email,
+            studentEmail(item),
             clubName(item),
             item.category,
             item.status
         ].join(" ").toLowerCase();
 
         return searchable.includes(query) &&
-            (!status || String(item.status || "Pending").toLowerCase() === status);
+            (!status || normalizedStatus(item) === status);
     });
 
-    if (!filtered.length) {
-        table.innerHTML = '<tr><td colspan="6" class="text-center py-4">No membership requests found.</td></tr>';
+    if (filtered.length === 0) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-4">
+                    No membership requests found.
+                </td>
+            </tr>
+        `;
         return;
     }
 
     table.innerHTML = filtered.map(item => {
         const id = item._id || item.id;
-        const currentStatus = String(item.status || "Pending");
-        const normalized = currentStatus.toLowerCase();
-        const badgeClass = normalized === "approved" ? "bg-success" :
-            normalized === "rejected" ? "bg-danger" : "bg-warning text-dark";
+        const currentStatus = item.status || "Pending";
+        const normalized = normalizedStatus(item);
 
-        const actions = normalized === "pending"
-            ? `<button class="btn btn-sm btn-success me-1" data-action="approve" data-id="${escapeHTML(id)}">Approve</button>
-               <button class="btn btn-sm btn-outline-danger" data-action="reject" data-id="${escapeHTML(id)}">Reject</button>`
-            : `<span class="text-muted small">No action</span>`;
+        let badgeClass = "bg-warning text-dark";
 
-        return `<tr>
-            <td><strong>${escapeHTML(studentName(item))}</strong><br>
-                <small class="text-muted">${escapeHTML(item.student?.email || item.email || "")}</small></td>
-            <td>${escapeHTML(clubName(item))}</td>
-            <td>${escapeHTML(item.category || item.club?.category || "—")}</td>
-            <td>${escapeHTML(item.requestDate ? new Date(item.requestDate).toLocaleDateString("en-IN") : item.createdAt ? new Date(item.createdAt).toLocaleDateString("en-IN") : "—")}</td>
-            <td><span class="badge ${badgeClass}">${escapeHTML(currentStatus)}</span></td>
-            <td class="text-nowrap">${actions}</td>
-        </tr>`;
+        if (normalized === "approved") {
+            badgeClass = "bg-success";
+        } else if (normalized === "rejected") {
+            badgeClass = "bg-danger";
+        }
+
+        let actions = '<span class="text-muted small">No action</span>';
+
+        if (normalized === "pending") {
+            actions = `
+                <button
+                    class="btn btn-sm btn-success me-1"
+                    data-action="approve"
+                    data-id="${escapeHTML(id)}">
+                    Approve
+                </button>
+
+                <button
+                    class="btn btn-sm btn-outline-danger"
+                    data-action="reject"
+                    data-id="${escapeHTML(id)}">
+                    Reject
+                </button>
+            `;
+        }
+
+        return `
+            <tr>
+                <td>
+                    <strong>${escapeHTML(studentName(item))}</strong>
+                    <br>
+                    <small class="text-muted">
+                        ${escapeHTML(studentEmail(item))}
+                    </small>
+                </td>
+
+                <td>${escapeHTML(clubName(item))}</td>
+
+                <td>
+                    ${escapeHTML(
+                        item.category ||
+                        (item.club && typeof item.club === "object"
+                            ? item.club.category
+                            : "") ||
+                        "—"
+                    )}
+                </td>
+
+                <td>${escapeHTML(formatRequestDate(item))}</td>
+
+                <td>
+                    <span class="badge ${badgeClass}">
+                        ${escapeHTML(currentStatus)}
+                    </span>
+                </td>
+
+                <td class="text-nowrap">${actions}</td>
+            </tr>
+        `;
     }).join("");
 }
 
 function updateCounts() {
     document.getElementById("pendingCount").textContent =
-        requests.filter(item => String(item.status || "Pending").toLowerCase() === "pending").length;
+        requests.filter(item => normalizedStatus(item) === "pending").length;
+
     document.getElementById("approvedCount").textContent =
-        requests.filter(item => String(item.status || "").toLowerCase() === "approved").length;
+        requests.filter(item => normalizedStatus(item) === "approved").length;
+
     document.getElementById("rejectedCount").textContent =
-        requests.filter(item => String(item.status || "").toLowerCase() === "rejected").length;
+        requests.filter(item => normalizedStatus(item) === "rejected").length;
 }
 
 async function loadRequests() {
-    table.innerHTML = '<tr><td colspan="6" class="text-center py-4">Loading requests...</td></tr>';
+    table.innerHTML = `
+        <tr>
+            <td colspan="6" class="text-center py-4">
+                Loading requests...
+            </td>
+        </tr>
+    `;
 
     try {
         const data = await apiRequest("/api/admin/memberships", {
+            method: "GET",
             headers: headers(false)
         });
 
-        requests = Array.isArray(data) ? data : (data.memberships || data.requests || data.data || []);
+        requests = Array.isArray(data)
+            ? data
+            : (data.memberships || data.requests || data.data || []);
+
+        if (!Array.isArray(requests)) {
+            requests = [];
+        }
+
         updateCounts();
         renderRequests();
         message.classList.add("d-none");
+
     } catch (error) {
-        console.error(error);
-        table.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-4">Unable to load membership requests. Verify the backend route.</td></tr>';
+        console.error("Load membership requests error:", error);
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center text-danger py-4">
+                    Unable to load membership requests. Please check the server.
+                </td>
+            </tr>
+        `;
+
         showMessage(error.message || "Unable to load requests.");
     }
 }
 
 async function updateStatus(id, status, button) {
-    if (!confirm(`Are you sure you want to ${status.toLowerCase()} this request?`)) return;
+    if (!confirm(
+        `Are you sure you want to ${status.toLowerCase()} this request?`
+    )) {
+        return;
+    }
 
     button.disabled = true;
 
@@ -277,48 +548,93 @@ async function updateStatus(id, status, button) {
             {
                 method: "PUT",
                 headers: headers(),
-                body: JSON.stringify({status})
+                body: JSON.stringify({ status })
             }
         );
 
-        showMessage(data.message || `Membership ${status.toLowerCase()} successfully.`, "success");
+        showMessage(
+            data.message ||
+            `Membership ${status.toLowerCase()} successfully.`,
+            "success"
+        );
+
         await loadRequests();
+
     } catch (error) {
-        showMessage(error.message || "Unable to update membership status.");
+        console.error("Update membership error:", error);
+
+        showMessage(
+            error.message || "Unable to update membership status."
+        );
+
         button.disabled = false;
     }
 }
 
 table.addEventListener("click", function(event) {
     const button = event.target.closest("button[data-action]");
+
     if (!button) return;
 
-    const status = button.dataset.action === "approve" ? "Approved" : "Rejected";
-    updateStatus(button.dataset.id, status, button);
+    const id = button.dataset.id;
+
+    if (!id) {
+        showMessage("Membership request ID is missing.");
+        return;
+    }
+
+    const status = button.dataset.action === "approve"
+        ? "Approved"
+        : "Rejected";
+
+    updateStatus(id, status, button);
 });
 
-document.getElementById("refreshBtn").addEventListener("click", loadRequests);
-document.getElementById("searchInput").addEventListener("input", renderRequests);
-document.getElementById("statusFilter").addEventListener("change", renderRequests);
+document.getElementById("refreshBtn")
+    .addEventListener("click", loadRequests);
+
+document.getElementById("searchInput")
+    .addEventListener("input", renderRequests);
+
+document.getElementById("statusFilter")
+    .addEventListener("change", renderRequests);
 
 document.getElementById("logoutBtn").addEventListener("click", function() {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("token");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("loggedInUser");
+    [
+        "authToken",
+        "token",
+        "accessToken",
+        "loggedInUser",
+        "user",
+        "currentUser"
+    ].forEach(key => localStorage.removeItem(key));
+
     window.location.replace("/index.html");
 });
 
-try {
-    const user = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+function checkAdminAccess() {
+    let user;
+
+    try {
+        user = JSON.parse(
+            localStorage.getItem("loggedInUser") || "null"
+        );
+    } catch (error) {
+        user = null;
+    }
+
     if (!token || !user || user.role !== "admin") {
         window.location.replace("/admin-login.html");
-    } else {
-        loadRequests();
+        return false;
     }
-} catch (error) {
-    window.location.replace("/admin-login.html");
+
+    return true;
+}
+
+if (checkAdminAccess()) {
+    loadRequests();
 }
 </script>
+
 </body>
 </html>

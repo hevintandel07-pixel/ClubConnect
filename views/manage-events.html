@@ -1,48 +1,150 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Manage Events - ClubConnect</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
     <link rel="stylesheet" href="/css/style.css">
 
     <style>
-        body{background:#f4f7fc;color:#202b3c;font-family:Arial,sans-serif}
-        .navbar{background:#0d1b3d!important;padding:14px 0}
-        .navbar-brand{color:white!important;font-size:23px;font-weight:800}
-        .navbar .nav-link{color:#e8efff!important;font-weight:600}
-        .navbar .nav-link:hover{color:#9fc5ff!important}
-        .page-header{background:linear-gradient(120deg,#0d1b3d,#174ea6);padding:36px 0;color:white}
-        .page-header h1{color:white;font-weight:800}
-        .page-header p{color:#e4edff}
-        .panel{background:white;border:1px solid #e2e8f0;border-radius:15px;padding:24px;box-shadow:0 5px 18px rgba(13,27,61,.05)}
-        h2{color:#0d1b3d;font-weight:750}
-        .form-control,.form-select{min-height:44px;border-radius:8px}
-        .btn{border-radius:8px;font-weight:600}
-        .btn-primary{background:#174ea6!important;border-color:#174ea6!important}
-        .table thead th{background:#eaf2ff;color:#0d1b3d;white-space:nowrap}
-        footer{background:#0d1b3d;color:white;padding:20px 0;margin-top:35px}
+        body {
+            background: #f4f7fc;
+            color: #202b3c;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background: #0d1b3d !important;
+            padding: 14px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .navbar .nav-link {
+            color: #e8efff !important;
+            font-weight: 600;
+        }
+
+        .navbar .nav-link:hover {
+            color: #9fc5ff !important;
+        }
+
+        .page-header {
+            background: linear-gradient(120deg, #0d1b3d, #174ea6);
+            padding: 36px 0;
+            color: white;
+        }
+
+        .page-header h1 {
+            color: white;
+            font-weight: 800;
+        }
+
+        .page-header p {
+            color: #e4edff;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 24px;
+            box-shadow: 0 5px 18px rgba(13, 27, 61, .05);
+        }
+
+        h2 {
+            color: #0d1b3d;
+            font-weight: 750;
+        }
+
+        .form-control,
+        .form-select {
+            min-height: 44px;
+            border-radius: 8px;
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #174ea6 !important;
+            border-color: #174ea6 !important;
+        }
+
+        .table thead th {
+            background: #eaf2ff;
+            color: #0d1b3d;
+            white-space: nowrap;
+        }
+
+        footer {
+            background: #0d1b3d;
+            color: white;
+            padding: 20px 0;
+            margin-top: 35px;
+        }
     </style>
 </head>
 
 <body>
+
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand" href="/index.html"><i class="bi bi-people-fill me-2"></i>ClubConnect</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Toggle navigation">
+
+        <a class="navbar-brand" href="/index.html">
+            <i class="bi bi-people-fill me-2"></i>ClubConnect
+        </a>
+
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navMenu"
+                aria-label="Toggle navigation">
+
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav ms-auto align-items-lg-center">
-                <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/clubs.html">Clubs</a></li>
-                <li class="nav-item"><a class="nav-link" href="/events.html">Events</a></li>
-                <li class="nav-item"><a class="nav-link" href="/admin-dashboard.html">Dashboard</a></li>
-                <li class="nav-item"><button id="logoutBtn" class="btn btn-outline-light btn-sm ms-lg-2 mt-2 mt-lg-0">Logout</button></li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/index.html">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/clubs.html">Clubs</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/events.html">Events</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin-dashboard.html">Dashboard</a>
+                </li>
+
+                <li class="nav-item">
+                    <button id="logoutBtn"
+                            class="btn btn-outline-light btn-sm ms-lg-2 mt-2 mt-lg-0">
+                        Logout
+                    </button>
+                </li>
+
             </ul>
         </div>
     </div>
@@ -56,68 +158,122 @@
 </header>
 
 <main class="container py-4">
+
     <div id="message" class="alert d-none" role="alert"></div>
 
     <section class="panel mb-4">
+
         <h2 class="h4 mb-3" id="formTitle">Add New Event</h2>
 
         <form id="eventForm">
             <input type="hidden" id="eventId">
 
             <div class="row g-3">
+
                 <div class="col-md-6">
                     <label for="title" class="form-label">Event Name *</label>
-                    <input id="title" class="form-control" maxlength="150" required placeholder="Enter event name">
+
+                    <input id="title"
+                           class="form-control"
+                           maxlength="150"
+                           required
+                           placeholder="Enter event name">
                 </div>
 
                 <div class="col-md-6">
-                    <label for="clubName" class="form-label">Organizing Club</label>
-                    <input id="clubName" class="form-control" maxlength="100" placeholder="Enter club name">
+                    <label for="clubName" class="form-label">
+                        Organizing Club
+                    </label>
+
+                    <input id="clubName"
+                           class="form-control"
+                           maxlength="100"
+                           placeholder="Enter club name">
                 </div>
 
                 <div class="col-md-6">
                     <label for="date" class="form-label">Event Date *</label>
-                    <input id="date" type="date" class="form-control" required>
+
+                    <input id="date"
+                           type="date"
+                           class="form-control"
+                           required>
                 </div>
 
                 <div class="col-md-6">
                     <label for="time" class="form-label">Event Time</label>
+
                     <input id="time" type="time" class="form-control">
                 </div>
 
                 <div class="col-md-6">
                     <label for="venue" class="form-label">Venue</label>
-                    <input id="venue" class="form-control" maxlength="200" placeholder="Enter event venue">
+
+                    <input id="venue"
+                           class="form-control"
+                           maxlength="200"
+                           placeholder="Enter event venue">
                 </div>
 
                 <div class="col-md-6">
                     <label for="image" class="form-label">Image URL</label>
-                    <input id="image" type="url" class="form-control" placeholder="https://example.com/image.jpg">
+
+                    <input id="image"
+                           type="url"
+                           class="form-control"
+                           placeholder="https://example.com/image.jpg">
                 </div>
 
                 <div class="col-12">
-                    <label for="description" class="form-label">Description *</label>
-                    <textarea id="description" class="form-control" rows="3" maxlength="3000" required placeholder="Describe the event"></textarea>
+                    <label for="description" class="form-label">
+                        Description *
+                    </label>
+
+                    <textarea id="description"
+                              class="form-control"
+                              rows="3"
+                              maxlength="3000"
+                              required
+                              placeholder="Describe the event"></textarea>
                 </div>
 
                 <div class="col-12 d-flex flex-wrap gap-2">
-                    <button type="submit" class="btn btn-primary" id="saveBtn">
+
+                    <button type="submit"
+                            class="btn btn-primary"
+                            id="saveBtn">
+
                         <i class="bi bi-plus-circle me-1"></i>Save Event
                     </button>
-                    <button type="button" class="btn btn-outline-secondary d-none" id="cancelBtn">Cancel Edit</button>
+
+                    <button type="button"
+                            class="btn btn-outline-secondary d-none"
+                            id="cancelBtn">
+                        Cancel Edit
+                    </button>
+
                 </div>
+
             </div>
         </form>
     </section>
 
     <section class="panel">
+
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+
             <h2 class="h4 mb-0">All Events</h2>
-            <input id="searchInput" type="search" class="form-control" style="max-width:300px" placeholder="Search events...">
+
+            <input id="searchInput"
+                   type="search"
+                   class="form-control"
+                   style="max-width:300px"
+                   placeholder="Search events...">
         </div>
 
         <div class="table-responsive">
             <table class="table table-hover align-middle">
+
                 <thead>
                     <tr>
                         <th>Event</th>
@@ -128,32 +284,50 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
+
                 <tbody id="eventsTable">
-                    <tr><td colspan="6" class="text-center py-4">Loading events...</td></tr>
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            Loading events...
+                        </td>
+                    </tr>
                 </tbody>
+
             </table>
         </div>
     </section>
+
 </main>
 
 <footer class="text-center">
-    <div class="container"><small>&copy; 2026 ClubConnect. All Rights Reserved.</small></div>
+    <div class="container">
+        <small>&copy; 2026 ClubConnect. All Rights Reserved.</small>
+    </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 "use strict";
 
-const token = localStorage.getItem("authToken") || localStorage.getItem("token");
+const token =
+    localStorage.getItem("authToken") ||
+    localStorage.getItem("token") ||
+    localStorage.getItem("accessToken");
+
 const table = document.getElementById("eventsTable");
 const form = document.getElementById("eventForm");
 const message = document.getElementById("message");
+
 let events = [];
 
 function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, c => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-    })[c]);
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
 }
 
 function showMessage(text, type = "danger") {
@@ -162,8 +336,14 @@ function showMessage(text, type = "danger") {
 }
 
 function headers(json = true) {
-    const result = {"Authorization": "Bearer " + token};
-    if (json) result["Content-Type"] = "application/json";
+    const result = {
+        Authorization: "Bearer " + token
+    };
+
+    if (json) {
+        result["Content-Type"] = "application/json";
+    }
+
     return result;
 }
 
@@ -172,71 +352,154 @@ async function apiRequest(url, options = {}) {
     const data = await response.json().catch(() => ({}));
 
     if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("token");
-        localStorage.removeItem("loggedInUser");
-        window.location.replace("/admin-login.html");
-        throw new Error("Admin session expired.");
+        throw new Error(
+            data.message || "Session expired or access denied."
+        );
     }
 
-    if (!response.ok) throw new Error(data.message || "Request failed.");
+    if (!response.ok) {
+        throw new Error(data.message || "Request failed.");
+    }
+
     return data;
 }
 
 function formatDate(value) {
     if (!value) return "—";
+
+    const text = String(value);
+
+    // Avoid timezone shifting for date-only values.
+    if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+        const [year, month, day] = text.split("-");
+        return `${day}/${month}/${year}`;
+    }
+
     const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString("en-IN");
+
+    return Number.isNaN(date.getTime())
+        ? text
+        : date.toLocaleDateString("en-IN");
 }
 
 function resetForm() {
     form.reset();
+
     document.getElementById("eventId").value = "";
     document.getElementById("formTitle").textContent = "Add New Event";
-    document.getElementById("saveBtn").innerHTML = '<i class="bi bi-plus-circle me-1"></i>Save Event';
+
+    document.getElementById("saveBtn").innerHTML =
+        '<i class="bi bi-plus-circle me-1"></i>Save Event';
+
     document.getElementById("cancelBtn").classList.add("d-none");
 }
 
 function renderEvents() {
-    const query = document.getElementById("searchInput").value.toLowerCase().trim();
+    const query = document.getElementById("searchInput")
+        .value.toLowerCase().trim();
 
     const filtered = events.filter(item =>
-        [item.title, item.name, item.eventName, item.clubName, item.description, item.venue, item.location]
-            .join(" ").toLowerCase().includes(query)
+        [
+            item.title,
+            item.name,
+            item.eventName,
+            item.clubName,
+            item.club,
+            item.description,
+            item.venue,
+            item.location,
+            item.date
+        ].join(" ").toLowerCase().includes(query)
     );
 
-    if (!filtered.length) {
-        table.innerHTML = '<tr><td colspan="6" class="text-center py-4">No events found.</td></tr>';
+    if (filtered.length === 0) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-4">
+                    No events found.
+                </td>
+            </tr>
+        `;
         return;
     }
 
     table.innerHTML = filtered.map(item => {
         const id = item._id || item.id;
-        return `<tr>
-            <td class="fw-semibold">${escapeHTML(item.title || item.name || item.eventName || "Untitled Event")}</td>
-            <td>${escapeHTML(item.clubName || item.club || "—")}</td>
-            <td>${escapeHTML(formatDate(item.date))}</td>
-            <td>${escapeHTML(item.venue || item.location || "—")}</td>
-            <td>${escapeHTML(item.description || "—")}</td>
-            <td class="text-nowrap">
-                <button class="btn btn-sm btn-outline-primary me-1" data-action="edit" data-id="${escapeHTML(id)}">Edit</button>
-                <button class="btn btn-sm btn-outline-danger" data-action="delete" data-id="${escapeHTML(id)}">Delete</button>
-            </td>
-        </tr>`;
+
+        return `
+            <tr>
+                <td class="fw-semibold">
+                    ${escapeHTML(
+                        item.title || item.name ||
+                        item.eventName || "Untitled Event"
+                    )}
+                </td>
+
+                <td>${escapeHTML(item.clubName || item.club || "—")}</td>
+
+                <td>${escapeHTML(formatDate(item.date))}</td>
+
+                <td>${escapeHTML(item.venue || item.location || "—")}</td>
+
+                <td>${escapeHTML(item.description || "—")}</td>
+
+                <td class="text-nowrap">
+                    <button
+                        class="btn btn-sm btn-outline-primary me-1"
+                        data-action="edit"
+                        data-id="${escapeHTML(id)}">
+                        Edit
+                    </button>
+
+                    <button
+                        class="btn btn-sm btn-outline-danger"
+                        data-action="delete"
+                        data-id="${escapeHTML(id)}">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        `;
     }).join("");
 }
 
 async function loadEvents() {
-    table.innerHTML = '<tr><td colspan="6" class="text-center py-4">Loading events...</td></tr>';
+    table.innerHTML = `
+        <tr>
+            <td colspan="6" class="text-center py-4">
+                Loading events...
+            </td>
+        </tr>
+    `;
 
     try {
-        const data = await apiRequest("/api/events", {headers: headers(false)});
-        events = Array.isArray(data) ? data : (data.events || data.data || []);
+        const data = await apiRequest("/api/events", {
+            method: "GET",
+            headers: headers(false)
+        });
+
+        events = Array.isArray(data)
+            ? data
+            : (data.events || data.data || []);
+
+        if (!Array.isArray(events)) {
+            events = [];
+        }
+
         renderEvents();
+
     } catch (error) {
-        console.error(error);
-        table.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-4">Unable to load events. Check the API route.</td></tr>';
-        showMessage(error.message);
+        console.error("Load events error:", error);
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center text-danger py-4">
+                    Unable to load events. Please check the server and API route.
+                </td>
+            </tr>
+        `;
+
+        showMessage(error.message || "Unable to load events.");
     }
 }
 
@@ -244,6 +507,7 @@ form.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const id = document.getElementById("eventId").value;
+
     const payload = {
         title: document.getElementById("title").value.trim(),
         clubName: document.getElementById("clubName").value.trim(),
@@ -254,11 +518,23 @@ form.addEventListener("submit", async function(event) {
         description: document.getElementById("description").value.trim()
     };
 
+    if (
+        !payload.title ||
+        !payload.date ||
+        !payload.description
+    ) {
+        showMessage("Please fill in all required fields.");
+        return;
+    }
+
     const saveBtn = document.getElementById("saveBtn");
     saveBtn.disabled = true;
 
     try {
-        const url = id ? `/api/events/${encodeURIComponent(id)}` : "/api/events";
+        const url = id
+            ? `/api/events/${encodeURIComponent(id)}`
+            : "/api/events";
+
         const method = id ? "PUT" : "POST";
 
         const data = await apiRequest(url, {
@@ -267,11 +543,21 @@ form.addEventListener("submit", async function(event) {
             body: JSON.stringify(payload)
         });
 
-        showMessage(data.message || (id ? "Event updated successfully." : "Event created successfully."), "success");
+        showMessage(
+            data.message ||
+            (id
+                ? "Event updated successfully."
+                : "Event created successfully."),
+            "success"
+        );
+
         resetForm();
         await loadEvents();
+
     } catch (error) {
+        console.error("Save event error:", error);
         showMessage(error.message || "Unable to save event.");
+
     } finally {
         saveBtn.disabled = false;
     }
@@ -279,68 +565,144 @@ form.addEventListener("submit", async function(event) {
 
 table.addEventListener("click", async function(event) {
     const button = event.target.closest("button[data-action]");
+
     if (!button) return;
 
-    const item = events.find(value => String(value._id || value.id) === button.dataset.id);
-    if (!item) return;
+    const item = events.find(value =>
+        String(value._id || value.id) === button.dataset.id
+    );
+
+    if (!item) {
+        showMessage("Event not found. Please refresh the list.");
+        return;
+    }
 
     if (button.dataset.action === "edit") {
-        document.getElementById("eventId").value = item._id || item.id;
-        document.getElementById("title").value = item.title || item.name || item.eventName || "";
-        document.getElementById("clubName").value = item.clubName || item.club || "";
-        document.getElementById("date").value = item.date ? String(item.date).slice(0, 10) : "";
-        document.getElementById("time").value = item.time || "";
-        document.getElementById("venue").value = item.venue || item.location || "";
-        document.getElementById("image").value = item.image || item.imageUrl || "";
-        document.getElementById("description").value = item.description || "";
+        document.getElementById("eventId").value =
+            item._id || item.id;
+
+        document.getElementById("title").value =
+            item.title || item.name || item.eventName || "";
+
+        document.getElementById("clubName").value =
+            item.clubName || item.club || "";
+
+        document.getElementById("date").value =
+            item.date ? String(item.date).slice(0, 10) : "";
+
+        document.getElementById("time").value =
+            item.time || "";
+
+        document.getElementById("venue").value =
+            item.venue || item.location || "";
+
+        document.getElementById("image").value =
+            item.image || item.imageUrl || "";
+
+        document.getElementById("description").value =
+            item.description || "";
 
         document.getElementById("formTitle").textContent = "Edit Event";
-        document.getElementById("saveBtn").innerHTML = '<i class="bi bi-check-circle me-1"></i>Update Event';
+
+        document.getElementById("saveBtn").innerHTML =
+            '<i class="bi bi-check-circle me-1"></i>Update Event';
+
         document.getElementById("cancelBtn").classList.remove("d-none");
-        window.scrollTo({top: 0, behavior: "smooth"});
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
         return;
     }
 
     if (button.dataset.action === "delete") {
-        if (!confirm("Delete this event? This action cannot be undone.")) return;
+        const eventName =
+            item.title || item.name || item.eventName || "this event";
+
+        if (!confirm(
+            `Delete "${eventName}"? This action cannot be undone.`
+        )) {
+            return;
+        }
+
         button.disabled = true;
 
         try {
-            const data = await apiRequest(`/api/events/${encodeURIComponent(button.dataset.id)}`, {
-                method: "DELETE",
-                headers: headers(false)
-            });
+            const data = await apiRequest(
+                `/api/events/${encodeURIComponent(button.dataset.id)}`,
+                {
+                    method: "DELETE",
+                    headers: headers(false)
+                }
+            );
 
-            showMessage(data.message || "Event deleted successfully.", "success");
+            showMessage(
+                data.message || "Event deleted successfully.",
+                "success"
+            );
+
+            if (
+                document.getElementById("eventId").value ===
+                button.dataset.id
+            ) {
+                resetForm();
+            }
+
             await loadEvents();
+
         } catch (error) {
+            console.error("Delete event error:", error);
+
             showMessage(error.message || "Unable to delete event.");
             button.disabled = false;
         }
     }
 });
 
-document.getElementById("cancelBtn").addEventListener("click", resetForm);
-document.getElementById("searchInput").addEventListener("input", renderEvents);
+document.getElementById("cancelBtn")
+    .addEventListener("click", resetForm);
+
+document.getElementById("searchInput")
+    .addEventListener("input", renderEvents);
 
 document.getElementById("logoutBtn").addEventListener("click", function() {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("token");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("loggedInUser");
+    [
+        "authToken",
+        "token",
+        "accessToken",
+        "loggedInUser",
+        "user",
+        "currentUser"
+    ].forEach(key => localStorage.removeItem(key));
+
     window.location.replace("/index.html");
 });
 
-try {
-    const user = JSON.parse(localStorage.getItem("loggedInUser") || "null");
+function checkAdminAccess() {
+    let user;
+
+    try {
+        user = JSON.parse(
+            localStorage.getItem("loggedInUser") || "null"
+        );
+    } catch (error) {
+        user = null;
+    }
+
     if (!token || !user || user.role !== "admin") {
         window.location.replace("/admin-login.html");
-    } else {
-        loadEvents();
+        return false;
     }
-} catch (error) {
-    window.location.replace("/admin-login.html");
+
+    return true;
+}
+
+if (checkAdminAccess()) {
+    loadEvents();
 }
 </script>
+
 </body>
 </html>

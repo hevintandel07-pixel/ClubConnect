@@ -188,7 +188,6 @@ async function seedDefaultData() {
     }
 }
 
-
 // COMMON HELPERS
 function validId(id) {
     return mongoose.Types.ObjectId.isValid(id);
@@ -414,6 +413,7 @@ app.post("/api/register", async (req, res) => {
         });
     }
 });
+
 // LOGIN
 app.post("/api/login", async (req, res) => {
     try {
@@ -724,6 +724,7 @@ app.delete("/api/clubs/:id", requireAuth, requireAdmin, async (req, res) => {
         });
     }
 });
+
 // STUDENT MEMBERSHIP REQUEST
 app.post("/api/membership", requireAuth, async (req, res) => {
     try {
@@ -841,7 +842,6 @@ app.put("/api/admin/memberships/:id", requireAuth, requireAdmin, async (req, res
         });
     }
 });
-
 // EVENTS - PUBLIC
 app.get("/api/events", async (req, res) => {
     try {
@@ -1134,12 +1134,19 @@ app.get("/api/events/registrations/:studentId", requireAuth, async (req, res) =>
         });
     }
 });
+
 // ANNOUNCEMENTS - PUBLIC
 app.get("/api/announcements", async (req, res) => {
     try {
-        const announcements = await Announcement.find()
+        const records = await Announcement.find()
             .sort({ date: -1, createdAt: -1 })
             .lean();
+
+        // Support older announcement records and the Audience field.
+        const announcements = records.map(item => ({
+            ...item,
+            audience: item.audience || item.clubName || "All"
+        }));
 
         res.json({ announcements });
     } catch (error) {
@@ -1154,26 +1161,34 @@ app.get("/api/announcements", async (req, res) => {
 // ANNOUNCEMENTS - ADMIN CREATE
 app.post("/api/announcements", requireAuth, requireAdmin, async (req, res) => {
     try {
-        const { title, clubName, date, message } = req.body;
-        const announcementDate = new Date(date);
+        const {
+            title,
+            clubName,
+            date,
+            message,
+            description,
+            audience
+        } = req.body;
+
+        const announcementMessage = String(message || description || "").trim();
+        const announcementDate = date ? new Date(date) : new Date();
+        const selectedAudience = String(audience || "All").trim();
 
         if (
-            !title ||
-            !clubName ||
-            !date ||
-            Number.isNaN(announcementDate.getTime()) ||
-            !message
+            !String(title || "").trim() ||
+            !announcementMessage ||
+            Number.isNaN(announcementDate.getTime())
         ) {
             return res.status(400).json({
-                message: "Please fill all announcement fields."
+                message: "Please enter a valid announcement title and message."
             });
         }
 
         const announcement = await Announcement.create({
             title: String(title).trim(),
-            clubName: String(clubName).trim(),
+            clubName: String(clubName || selectedAudience || "All").trim(),
             date: announcementDate,
-            message: String(message).trim()
+            message: announcementMessage
         });
 
         res.status(201).json({
@@ -1198,18 +1213,26 @@ app.put("/api/announcements/:id", requireAuth, requireAdmin, async (req, res) =>
             });
         }
 
-        const { title, clubName, date, message } = req.body;
-        const announcementDate = new Date(date);
+        const {
+            title,
+            clubName,
+            date,
+            message,
+            description,
+            audience
+        } = req.body;
+
+        const announcementMessage = String(message || description || "").trim();
+        const announcementDate = date ? new Date(date) : new Date();
+        const selectedAudience = String(audience || "All").trim();
 
         if (
-            !title ||
-            !clubName ||
-            !date ||
-            Number.isNaN(announcementDate.getTime()) ||
-            !message
+            !String(title || "").trim() ||
+            !announcementMessage ||
+            Number.isNaN(announcementDate.getTime())
         ) {
             return res.status(400).json({
-                message: "Please fill all announcement fields."
+                message: "Please enter a valid announcement title and message."
             });
         }
 
@@ -1217,9 +1240,9 @@ app.put("/api/announcements/:id", requireAuth, requireAdmin, async (req, res) =>
             req.params.id,
             {
                 title: String(title).trim(),
-                clubName: String(clubName).trim(),
+                clubName: String(clubName || selectedAudience || "All").trim(),
                 date: announcementDate,
-                message: String(message).trim()
+                message: announcementMessage
             },
             { new: true, runValidators: true }
         );
@@ -1270,6 +1293,60 @@ app.delete("/api/announcements/:id", requireAuth, requireAdmin, async (req, res)
 
         res.status(500).json({
             message: "Unable to delete announcement."
+        });
+    }
+});
+
+// ADMIN - LIST STUDENTS
+app.get("/api/students", requireAuth, requireAdmin, async (req, res) => {
+    try {
+        const students = await User.find({ role: "student" })
+            .select("name email enrollment department semester createdAt")
+            .sort({ name: 1 })
+            .lean();
+
+        res.json({ students });
+    } catch (error) {
+        console.error("Load Students Error:", error.message);
+
+        res.status(500).json({
+            message: "Unable to load students."
+        });
+    }
+});
+
+// Compatibility endpoint for older admin-profile.html versions.
+// Admins can only access their own profile through this endpoint.
+app.get("/api/profile/:userId", requireAuth, requireAdmin, async (req, res) => {
+    try {
+        if (!validId(req.params.userId)) {
+            return res.status(400).json({
+                message: "Invalid profile ID."
+            });
+        }
+
+        if (String(req.user._id) !== String(req.params.userId)) {
+            return res.status(403).json({
+                message: "Access denied."
+            });
+        }
+
+        const user = await User.findById(req.user._id)
+            .select("name email role department createdAt")
+            .lean();
+
+        if (!user) {
+            return res.status(404).json({
+                message: "Admin profile not found."
+            });
+        }
+
+        res.json({ user });
+    } catch (error) {
+        console.error("Load Admin Profile Error:", error.message);
+
+        res.status(500).json({
+            message: "Unable to load admin profile."
         });
     }
 });
@@ -1357,6 +1434,7 @@ app.get("/api/student/dashboard/:studentId", requireAuth, async (req, res) => {
         });
     }
 });
+
 // EXCEL EXPORT HELPERS
 function createWorksheet(workbook, name, headers) {
     const worksheet = workbook.addWorksheet(name);
@@ -1528,6 +1606,7 @@ app.get("/api/export/clubs", requireAuth, requireAdmin, async (req, res) => {
         }
     }
 });
+
 // EXPORT EVENTS
 app.get("/api/export/events", requireAuth, requireAdmin, async (req, res) => {
     try {
@@ -1710,10 +1789,8 @@ app.get(
         }
     }
 );
-// =========================
-// ADMIN - VIEW OWN PROFILE
-// =========================
 
+// ADMIN - VIEW OWN PROFILE
 app.get(
     "/api/admin/profile",
     requireAuth,
@@ -1741,10 +1818,7 @@ app.get(
     }
 );
 
-// =========================
 // ADMIN - UPDATE OWN PROFILE
-// =========================
-
 app.put(
     "/api/admin/profile",
     requireAuth,
@@ -1845,10 +1919,7 @@ app.put(
     }
 );
 
-// =========================
 // ADMIN - VIEW ADMIN USERS
-// =========================
-
 app.get(
     "/api/admin/users",
     requireAuth,
@@ -1871,10 +1942,7 @@ app.get(
     }
 );
 
-// =========================
 // ADMIN - CREATE ADMIN USER
-// =========================
-
 app.post(
     "/api/admin/users",
     requireAuth,
@@ -1961,10 +2029,8 @@ app.post(
         }
     }
 );
-// =========================
-// STUDENT - VIEW OWN PROFILE
-// =========================
 
+// STUDENT - VIEW OWN PROFILE
 app.get(
     "/api/student/profile",
     requireAuth,
@@ -1997,10 +2063,7 @@ app.get(
     }
 );
 
-// =========================
 // STUDENT - UPDATE OWN PROFILE
-// =========================
-
 app.put(
     "/api/student/profile",
     requireAuth,
@@ -2096,10 +2159,7 @@ app.put(
     }
 );
 
-// =========================
 // STUDENT - CHANGE PASSWORD
-// =========================
-
 app.put(
     "/api/student/profile/password",
     requireAuth,
@@ -2170,10 +2230,7 @@ app.put(
     }
 );
 
-// =========================
 // HEALTH CHECK
-// =========================
-
 app.get("/api/health", (req, res) => {
     res.json({
         status: "OK",
@@ -2181,10 +2238,7 @@ app.get("/api/health", (req, res) => {
     });
 });
 
-// =========================
 // START SERVER
-// =========================
-
 app.listen(PORT, () => {
     console.log(`ClubConnect server is running on port ${PORT}`);
 });
