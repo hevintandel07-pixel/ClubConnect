@@ -1195,6 +1195,47 @@ app.put(
     }
 );
 
+
+ // ADMIN DASHBOARD - STATISTICS
+app.get(
+    "/api/admin/stats",
+    requireAuth,
+    requireAdmin,
+    async (req, res) => {
+        try {
+            const [
+                students,
+                clubs,
+                events,
+                pendingMemberships,
+                approvedMemberships
+            ] = await Promise.all([
+                User.countDocuments({ role: "student" }),
+                Club.countDocuments(),
+                Event.countDocuments(),
+                Membership.countDocuments({ status: "Pending" }),
+                Membership.countDocuments({ status: "Approved" })
+            ]);
+
+            res.json({
+                students,
+                clubs,
+                events,
+                pendingMemberships,
+                approvedMemberships
+            });
+
+        } catch (error) {
+            console.error("Admin Dashboard Stats Error:", error);
+
+            res.status(500).json({
+                message: "Unable to load admin dashboard statistics."
+            });
+        }
+    }
+);
+
+
 // HEALTH CHECK
 app.get("/api/health", (req, res) => {
     res.json({
