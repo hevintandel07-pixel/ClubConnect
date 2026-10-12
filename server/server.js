@@ -1236,6 +1236,498 @@ app.get(
 );
 
 
+ // ADMIN - VIEW ADMINISTRATORS
+app.get(
+    "/api/admin/users",
+    requireAuth,
+    requireAdmin,
+    async (req, res) => {
+        try {
+            const admins = await User.find({ role: "admin" })
+                .select("name email role createdAt")
+                .sort({ createdAt: -1 })
+                .lean();
+
+            return res.status(200).json({ admins });
+        } catch (error) {
+            console.error("Load Administrators Error:", error);
+
+            return res.status(500).json({
+                message: "Unable to load administrators."
+            });
+        }
+    }
+);
+
+
+/* ADMIN - VIEW OWN PROFILE */
+app.get(
+    "/api/profile/:id",
+    requireAuth,
+    requireAdmin,
+    async (req, res) => {
+        try {
+            // Admin can only view their own profile
+            if (String(req.user._id) !== String(req.params.id)) {
+                return res.status(403).json({
+                    message: "You can only view your own profile."
+                });
+            }
+
+            const admin = await User.findById(req.user._id)
+                .select("-password")
+                .lean();
+
+            if (!admin) {
+                return res.status(404).json({
+                    message: "Administrator profile not found."
+                });
+            }
+
+            return res.status(200).json({
+                user: admin
+            });
+        } catch (error) {
+            console.error("Admin Profile Error:", error);
+
+            return res.status(500).json({
+                message: "Unable to load profile information."
+            });
+        }
+    }
+);
+
+
+/* ADMIN - EXCEL EXPORT */
+app.get(
+    "/api/export/:type",
+    requireAuth,
+    requireAdmin,
+    async (req, res) => {
+        try {
+            const ExcelJS = require("exceljs");
+            const type = req.params.type;
+
+            const config = {
+                students: {
+                    model: User,
+                    filter: { role: "student" },
+                    columns: ["name", "enrollment", "email", "mobile", "department", "semester", "role", "createdAt"]
+                },
+                clubs: {
+                    model: Club,
+                    columns: null
+                },
+                memberships: {
+                    model: Membership,
+                    columns: null
+                },
+                events: {
+                    model: Event,
+                    columns: null
+                },
+                "event-registrations": {
+                    model: EventRegistration,
+                    columns: null
+                },
+                announcements: {
+                    model: Announcement,
+                    columns: null
+                }
+            };
+
+            const selected = config[type];
+
+            if (!selected) {
+                return res.status(400).json({
+                    message: "Invalid export type."
+                });
+            }
+
+            const records = await selected.model
+                .find(selected.filter || {})
+                .lean();
+
+            const workbook = new ExcelJS.Workbook();
+            const sheet = workbook.addWorksheet("ClubConnect");
+
+            if (records.length > 0) {
+                const columns = selected.columns ||
+                    Object.keys(records[0]).filter(key => key !== "__v" && key !== "password");
+
+                sheet.columns = columns.map(key => ({
+                    header: key,
+                    key,
+                    width: 22
+                }));
+
+                records.forEach(record => {
+                    const row = {};
+                    columns.forEach(key => {
+                        const value = record[key];
+                        row[key] = value && typeof value === "object"
+                            ? JSON.stringify(value)
+                            : value ?? "";
+                    });
+                    sheet.addRow(row);
+                });
+            } else {
+                sheet.columns = [{ header: "Message", key: "message", width: 30 }];
+                sheet.addRow({ message: "No records found" });
+            }
+
+            sheet.getRow(1).font = { bold: true };
+
+            res.setHeader(
+                "Content-Type",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename="ClubConnect_${type}.xlsx"`
+            );
+
+            await workbook.xlsx.write(res);
+            res.end();
+        } catch (error) {
+            console.error("Excel Export Error:", error);
+            if (!res.headersSent) {
+                res.status(500).json({
+                    message: "Excel export failed."
+                });
+            }
+        }
+    }
+);
+
+
+
+/* ADMIN - ANNOUNCEMENTS CRUD */
+
+// GET ALL ANNOUNCEMENTS
+app.get("/api/announcements", requireAuth, requireAdmin, async (req, res) => {
+    try {
+        const announcements = await Announcement.find()
+            .sort({ createdAt: -1 })
+            .lean();
+
+        res.json({ announcements });
+    } catch (error) {
+        console.error("Load Announcements Error:", error);
+        res.status(500).json({ message: "Unable to load announcements." });
+    }
+});
+
+// CREATE ANNOUNCEMENT
+app.post("/api/announcements", requireAuth, requireAdmin, async (req, res) => {
+    try {
+        const { title, message, description, audience } = req.body;
+        const content = String(message || description || "").trim();
+
+        if (!String(title || "").trim() || !content) {
+            return res.status(400).json({
+                message: "Title and announcement message are required."
+            });
+        }
+
+        const announcement = await Announcement.create({
+            title: String(title).trim(),
+            clubName: "General",
+            date: new Date(),
+            message: content
+        });
+
+        res.status(201).json({
+            message: "Announcement published successfully.",
+            announcement: {
+                ...announcement.toObject(),
+                audience: audience || "All"
+            }
+        });
+    } catch (error) {
+        console.error("Create Announcement Error:", error);
+        res.status(500).json({ message: "Unable to publish announcement." });
+    }
+});
+
+// UPDATE ANNOUNCEMENT
+app.put("/api/announcements/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+        if (!validId(req.params.id)) {
+            return res.status(400).json({ message: "Invalid announcement ID." });
+        }
+
+        const { title, message, description, audience } = req.body;
+        const content = String(message || description || "").trim();
+
+        if (!String(title || "").trim() || !content) {
+            return res.status(400).json({
+                message: "Title and announcement message are required."
+            });
+        }
+
+        const announcement = await Announcement.findByIdAndUpdate(
+            req.params.id,
+            {
+                title: String(title).trim(),
+                message: content
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!announcement) {
+            return res.status(404).json({ message: "Announcement not found." });
+        }
+
+        res.json({
+            message: "Announcement updated successfully.",
+            announcement: {
+                ...announcement.toObject(),
+                audience: audience || "All"
+            }
+        });
+    } catch (error) {
+        console.error("Update Announcement Error:", error);
+        res.status(500).json({ message: "Unable to update announcement." });
+    }
+});
+
+// DELETE ANNOUNCEMENT
+app.delete("/api/announcements/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+        if (!validId(req.params.id)) {
+            return res.status(400).json({ message: "Invalid announcement ID." });
+        }
+
+        const announcement = await Announcement.findByIdAndDelete(req.params.id);
+
+        if (!announcement) {
+            return res.status(404).json({ message: "Announcement not found." });
+        }
+
+        res.json({ message: "Announcement deleted successfully." });
+    } catch (error) {
+        console.error("Delete Announcement Error:", error);
+        res.status(500).json({ message: "Unable to delete announcement." });
+    }
+});
+
+
+
+/* ADMIN - EVENTS CRUD */
+
+// Get all events
+app.get("/api/events", requireAuth, requireAdmin, async (req, res) => {
+    try {
+        const events = await Event.find()
+            .sort({ date: 1 })
+            .lean();
+
+        res.status(200).json({ events });
+    } catch (error) {
+        console.error("Load Events Error:", error);
+        res.status(500).json({
+            message: "Unable to load events."
+        });
+    }
+});
+
+
+// Create event
+app.post("/api/events", requireAuth, requireAdmin, async (req, res) => {
+    try {
+        const {
+            title,
+            clubName,
+            date,
+            time,
+            venue,
+            image,
+            description,
+            totalSeats
+        } = req.body;
+
+        const seats = Number(totalSeats);
+
+        if (
+            !title?.trim() ||
+            !clubName?.trim() ||
+            !date ||
+            !time?.trim() ||
+            !venue?.trim() ||
+            !description?.trim() ||
+            !Number.isInteger(seats) ||
+            seats < 1
+        ) {
+            return res.status(400).json({
+                message: "Please provide all required event details and valid total seats."
+            });
+        }
+
+        const parsedDate = new Date(date);
+
+        if (Number.isNaN(parsedDate.getTime())) {
+            return res.status(400).json({
+                message: "Please provide a valid event date."
+            });
+        }
+
+        const newEvent = await Event.create({
+            title: title.trim(),
+            clubName: clubName.trim(),
+            date: parsedDate,
+            time: time.trim(),
+            venue: venue.trim(),
+            image: image?.trim() || "",
+            description: description.trim(),
+            totalSeats: seats,
+            availableSeats: seats
+        });
+
+        res.status(201).json({
+            message: "Event created successfully.",
+            event: newEvent
+        });
+    } catch (error) {
+        console.error("Create Event Error:", error);
+
+        res.status(500).json({
+            message: "Unable to create event."
+        });
+    }
+});
+
+
+// Update event
+app.put("/api/events/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(400).json({
+                message: "Invalid event ID."
+            });
+        }
+
+        const {
+            title,
+            clubName,
+            date,
+            time,
+            venue,
+            image,
+            description,
+            totalSeats
+        } = req.body;
+
+        const seats = Number(totalSeats);
+
+        if (
+            !title?.trim() ||
+            !clubName?.trim() ||
+            !date ||
+            !time?.trim() ||
+            !venue?.trim() ||
+            !description?.trim() ||
+            !Number.isInteger(seats) ||
+            seats < 1
+        ) {
+            return res.status(400).json({
+                message: "Please provide all required event details and valid total seats."
+            });
+        }
+
+        const parsedDate = new Date(date);
+
+        if (Number.isNaN(parsedDate.getTime())) {
+            return res.status(400).json({
+                message: "Please provide a valid event date."
+            });
+        }
+
+        const existingEvent = await Event.findById(id);
+
+        if (!existingEvent) {
+            return res.status(404).json({
+                message: "Event not found."
+            });
+        }
+
+        const registeredCount = await EventRegistration.countDocuments({
+            event: existingEvent._id,
+            status: "Registered"
+        });
+
+        if (seats < registeredCount) {
+            return res.status(400).json({
+                message: `Total seats cannot be less than ${registeredCount}, because that many registrations already exist.`
+            });
+        }
+
+        existingEvent.title = title.trim();
+        existingEvent.clubName = clubName.trim();
+        existingEvent.date = parsedDate;
+        existingEvent.time = time.trim();
+        existingEvent.venue = venue.trim();
+        existingEvent.image = image?.trim() || "";
+        existingEvent.description = description.trim();
+        existingEvent.totalSeats = seats;
+        existingEvent.availableSeats = seats - registeredCount;
+
+        await existingEvent.save();
+
+        res.status(200).json({
+            message: "Event updated successfully.",
+            event: existingEvent
+        });
+    } catch (error) {
+        console.error("Update Event Error:", error);
+
+        res.status(500).json({
+            message: "Unable to update event."
+        });
+    }
+});
+
+
+// Delete event
+app.delete("/api/events/:id", requireAuth, requireAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(400).json({
+                message: "Invalid event ID."
+            });
+        }
+
+        const event = await Event.findById(id);
+
+        if (!event) {
+            return res.status(404).json({
+                message: "Event not found."
+            });
+        }
+
+        await EventRegistration.deleteMany({
+            event: event._id
+        });
+
+        await Event.findByIdAndDelete(id);
+
+        res.status(200).json({
+            message: "Event deleted successfully."
+        });
+    } catch (error) {
+        console.error("Delete Event Error:", error);
+
+        res.status(500).json({
+            message: "Unable to delete event."
+        });
+    }
+});
+
 // HEALTH CHECK
 app.get("/api/health", (req, res) => {
     res.json({

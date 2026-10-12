@@ -1,19 +1,17 @@
+
 const mongoose = require("mongoose");
 
 const eventSchema = new mongoose.Schema({
-
     title: {
         type: String,
         required: true,
         trim: true
     },
-
     clubName: {
         type: String,
         required: true,
         trim: true
     },
-
     date: {
         type: Date,
         required: true,
@@ -22,19 +20,16 @@ const eventSchema = new mongoose.Schema({
             message: "Please enter a valid event date."
         }
     },
-
     time: {
         type: String,
         required: true,
         trim: true
     },
-
     venue: {
         type: String,
         required: true,
         trim: true
     },
-
     totalSeats: {
         type: Number,
         required: true,
@@ -44,7 +39,6 @@ const eventSchema = new mongoose.Schema({
             message: "Total seats must be a whole number."
         }
     },
-
     availableSeats: {
         type: Number,
         required: true,
@@ -54,16 +48,17 @@ const eventSchema = new mongoose.Schema({
             message: "Available seats must be a whole number."
         }
     },
-
+    description: {
+        type: String,
+        default: "",
+        trim: true
+    },
     image: {
         type: String,
         default: ""
     }
-
 }, {
     timestamps: true
 });
 
-const Event = mongoose.model("Event", eventSchema);
-
-module.exports = Event;
+module.exports = mongoose.model("Event", eventSchema);
