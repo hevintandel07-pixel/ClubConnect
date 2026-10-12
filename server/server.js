@@ -778,6 +778,64 @@ app.delete(
     }
 );
 
+// STUDENT DASHBOARD
+app.get(
+    "/api/student/dashboard/:studentId",
+    requireAuth,
+    async (req, res) => {
+        try {
+            if (req.user.role !== "student") {
+                return res.status(403).json({
+                    message: "Student access required."
+                });
+            }
+
+            // Only allow students to access their own dashboard.
+            if (String(req.user._id) !== String(req.params.studentId)) {
+                return res.status(403).json({
+                    message: "You can only view your own dashboard."
+                });
+            }
+
+            const memberships = await Membership.find({
+                student: req.user._id
+            }).sort({ requestDate: -1 }).lean();
+
+            const registrations = await EventRegistration.find({
+                student: req.user._id
+            })
+                .populate("event")
+                .sort({ registrationDate: -1 })
+                .lean();
+
+            const announcements = await Announcement.find()
+                .sort({ date: -1 })
+                .limit(10)
+                .lean();
+
+            res.json({
+                memberships,
+                registrations: registrations.map(registration => ({
+                    ...registration,
+                    eventName:
+                        registration.event?.title ||
+                        registration.event?.name ||
+                        registration.event?.eventName ||
+                        "Event"
+                })),
+                announcements
+            });
+
+        } catch (error) {
+            console.error("Student Dashboard Error:", error);
+
+            res.status(500).json({
+                message: "Unable to load dashboard."
+            });
+        }
+    }
+);
+
 // STUDENT MEMBERSHIP REQUEST
 app.post("/api/membership", requireAuth, async (req, res) => {
     try {
