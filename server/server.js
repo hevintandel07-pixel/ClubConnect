@@ -340,9 +340,11 @@ app.post("/api/register", async (req, res) => {
             name,
             enrollment,
             email,
+            mobile,
             department,
             semester,
-            password
+            password,
+            confirmPassword
         } = req.body;
 
         if (
@@ -354,26 +356,46 @@ app.post("/api/register", async (req, res) => {
             !password
         ) {
             return res.status(400).json({
-                message: "Please fill all fields."
+                message: "Please fill all required fields."
+            });
+        }
+
+        if (String(password).length < 8) {
+            return res.status(400).json({
+                message: "Password must contain at least 8 characters."
             });
         }
 
         if (
-            String(password).length < 8 ||
-            !Number.isInteger(Number(semester)) ||
-            Number(semester) < 1 ||
-            Number(semester) > 8
+            confirmPassword !== undefined &&
+            password !== confirmPassword
         ) {
             return res.status(400).json({
-                message: "Password must contain at least 8 characters and semester must be between 1 and 8."
+                message: "Passwords do not match."
             });
         }
 
-        const normalizedEmail = String(email)
-            .trim()
-            .toLowerCase();
+        const semesterNumber = Number(semester);
 
+        if (
+            !Number.isInteger(semesterNumber) ||
+            semesterNumber < 1 ||
+            semesterNumber > 8
+        ) {
+            return res.status(400).json({
+                message: "Semester must be between 1 and 8."
+            });
+        }
+
+        const normalizedEmail = String(email).trim().toLowerCase();
         const normalizedEnrollment = String(enrollment).trim();
+        const normalizedMobile = String(mobile || "").trim();
+
+        if (normalizedMobile && !/^[0-9+\-\s()]{10,15}$/.test(normalizedMobile)) {
+            return res.status(400).json({
+                message: "Please enter a valid mobile number."
+            });
+        }
 
         const existingEmail = await User.findOne({
             email: normalizedEmail
@@ -399,25 +421,35 @@ app.post("/api/register", async (req, res) => {
             name: String(name).trim(),
             enrollment: normalizedEnrollment,
             email: normalizedEmail,
+            mobile: normalizedMobile,
             department: String(department).trim(),
-            semester: Number(semester),
+            semester: semesterNumber,
             password: await bcrypt.hash(password, 10),
             role: "student"
         });
 
-        res.status(201).json({
+        return res.status(201).json({
             message: "Registration successful!",
             user: {
                 id: newUser._id,
                 name: newUser.name,
+                enrollment: newUser.enrollment,
                 email: newUser.email,
+                mobile: newUser.mobile,
                 role: newUser.role
             }
         });
+
     } catch (error) {
         console.error("Registration Error:", error.message);
 
-        res.status(500).json({
+        if (error.code === 11000) {
+            return res.status(400).json({
+                message: "Email or enrollment number is already registered."
+            });
+        }
+
+        return res.status(500).json({
             message: "Registration failed."
         });
     }

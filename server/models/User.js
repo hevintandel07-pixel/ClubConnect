@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema(
       trim: true,
       lowercase: true
     },
+    mobile: {
+      type: String,
+      trim: true,
+      default: ""
+    },
     department: {
       type: String,
       required: true,
