@@ -22,20 +22,13 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// =========================
 // SERVE FRONTEND AND STATIC FILES
-// =========================
-
+app.use(express.static(path.join(__dirname, "../public")));
 app.use("/public", express.static(path.join(__dirname, "../public")));
-
 app.use(express.static(path.join(__dirname, "../views")));
-
 app.use(express.static(path.join(__dirname, "../public/js")));
 
-// =========================
 // HOME PAGE
-// =========================
-
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../views/index.html"));
 });
@@ -107,7 +100,6 @@ const defaultClubs = [
 // INITIAL DATA
 async function seedDefaultData() {
     try {
-        // Default admin credentials for your demo.
         const adminEmail = "admin@clubconnect.com";
         const adminPassword = "ClubAdmin@123";
 
@@ -132,7 +124,6 @@ async function seedDefaultData() {
             await initialAdmin.save();
         }
 
-        // Update images for existing clubs in MongoDB.
         const clubImages = {
             "Coding Club": "/public/images/coding-club.png",
             "Cultural Club": "/public/images/cultural-event.png",
@@ -151,7 +142,6 @@ async function seedDefaultData() {
 
         console.log("Club images updated successfully.");
 
-        // Insert default clubs if none exist.
         if (await Club.countDocuments() === 0) {
             await Club.insertMany(
                 defaultClubs.map(club => ({
@@ -166,7 +156,6 @@ async function seedDefaultData() {
             console.log("Default clubs created.");
         }
 
-        // Insert default announcements if none exist.
         if (await Announcement.countDocuments() === 0) {
             await Announcement.insertMany([
                 {
@@ -191,7 +180,6 @@ async function seedDefaultData() {
 
             console.log("Default announcements created.");
         }
-
     } catch (error) {
         console.log("Seed Error:", error.message);
     }
@@ -332,7 +320,6 @@ function requireAdmin(req, res, next) {
 
     next();
 }
-
 // REGISTER
 app.post("/api/register", async (req, res) => {
     try {
@@ -391,7 +378,10 @@ app.post("/api/register", async (req, res) => {
         const normalizedEnrollment = String(enrollment).trim();
         const normalizedMobile = String(mobile || "").trim();
 
-        if (normalizedMobile && !/^[0-9+\-\s()]{10,15}$/.test(normalizedMobile)) {
+        if (
+            normalizedMobile &&
+            !/^[0-9+\-\s()]{10,15}$/.test(normalizedMobile)
+        ) {
             return res.status(400).json({
                 message: "Please enter a valid mobile number."
             });
@@ -428,7 +418,7 @@ app.post("/api/register", async (req, res) => {
             role: "student"
         });
 
-        return res.status(201).json({
+        res.status(201).json({
             message: "Registration successful!",
             user: {
                 id: newUser._id,
@@ -439,7 +429,6 @@ app.post("/api/register", async (req, res) => {
                 role: newUser.role
             }
         });
-
     } catch (error) {
         console.error("Registration Error:", error.message);
 
@@ -449,7 +438,7 @@ app.post("/api/register", async (req, res) => {
             });
         }
 
-        return res.status(500).json({
+        res.status(500).json({
             message: "Registration failed."
         });
     }
@@ -595,176 +584,199 @@ app.get("/api/clubs/:id", async (req, res) => {
 });
 
 // CLUBS - ADMIN CREATE
-app.post("/api/clubs", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const {
-            name,
-            category,
-            coordinator,
-            description,
-            image
-        } = req.body;
+app.post(
+    "/api/clubs",
+    requireAuth,
+    requireAdmin,
+    async (req, res) => {
+        try {
+            const {
+                name,
+                category,
+                coordinator,
+                description,
+                image
+            } = req.body;
 
-        if (!name || !category || !coordinator || !description) {
-            return res.status(400).json({
-                message: "Please fill all club fields."
+            if (!name || !category || !coordinator || !description) {
+                return res.status(400).json({
+                    message: "Please fill all club fields."
+                });
+            }
+
+            const cleanName = String(name).trim();
+
+            if (await Club.findOne({ name: cleanName })) {
+                return res.status(400).json({
+                    message: "Club already exists."
+                });
+            }
+
+            const club = await Club.create({
+                name: cleanName,
+                category: String(category).trim(),
+                coordinator: String(coordinator).trim(),
+                description: String(description).trim(),
+                image: image || ""
+            });
+
+            res.status(201).json({
+                message: "Club added successfully!",
+                club
+            });
+        } catch (error) {
+            console.error("Add Club Error:", error.message);
+
+            res.status(500).json({
+                message: "Unable to add club."
             });
         }
-
-        const cleanName = String(name).trim();
-
-        if (await Club.findOne({ name: cleanName })) {
-            return res.status(400).json({
-                message: "Club already exists."
-            });
-        }
-
-        const club = await Club.create({
-            name: cleanName,
-            category: String(category).trim(),
-            coordinator: String(coordinator).trim(),
-            description: String(description).trim(),
-            image: image || ""
-        });
-
-        res.status(201).json({
-            message: "Club added successfully!",
-            club
-        });
-    } catch (error) {
-        console.error("Add Club Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to add club."
-        });
     }
-});
+);
 
 // CLUBS - ADMIN UPDATE
-app.put("/api/clubs/:id", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        if (!validId(req.params.id)) {
-            return res.status(400).json({
-                message: "Invalid club ID."
+app.put(
+    "/api/clubs/:id",
+    requireAuth,
+    requireAdmin,
+    async (req, res) => {
+        try {
+            if (!validId(req.params.id)) {
+                return res.status(400).json({
+                    message: "Invalid club ID."
+                });
+            }
+
+            const {
+                name,
+                category,
+                coordinator,
+                description,
+                image
+            } = req.body;
+
+            if (!name || !category || !coordinator || !description) {
+                return res.status(400).json({
+                    message: "Please fill all club fields."
+                });
+            }
+
+            const club = await Club.findById(req.params.id);
+
+            if (!club) {
+                return res.status(404).json({
+                    message: "Club not found."
+                });
+            }
+
+            const oldName = club.name;
+            const newName = String(name).trim();
+
+            if (
+                newName !== oldName &&
+                await Club.findOne({ name: newName })
+            ) {
+                return res.status(400).json({
+                    message: "Another club already uses this name."
+                });
+            }
+
+            club.name = newName;
+            club.category = String(category).trim();
+            club.coordinator = String(coordinator).trim();
+            club.description = String(description).trim();
+            club.image = image || "";
+
+            await club.save();
+
+            if (oldName !== newName) {
+                await Membership.updateMany(
+                    { clubName: oldName },
+                    { $set: { clubName: newName } }
+                );
+
+                await Announcement.updateMany(
+                    { clubName: oldName },
+                    { $set: { clubName: newName } }
+                );
+
+                await Event.updateMany(
+                    { clubName: oldName },
+                    { $set: { clubName: newName } }
+                );
+            }
+
+            res.json({
+                message: "Club updated successfully!",
+                club
+            });
+        } catch (error) {
+            console.error("Update Club Error:", error.message);
+
+            res.status(500).json({
+                message: "Unable to update club."
             });
         }
-
-        const {
-            name,
-            category,
-            coordinator,
-            description,
-            image
-        } = req.body;
-
-        if (!name || !category || !coordinator || !description) {
-            return res.status(400).json({
-                message: "Please fill all club fields."
-            });
-        }
-
-        const club = await Club.findById(req.params.id);
-
-        if (!club) {
-            return res.status(404).json({
-                message: "Club not found."
-            });
-        }
-
-        const oldName = club.name;
-        const newName = String(name).trim();
-
-        if (
-            newName !== oldName &&
-            await Club.findOne({ name: newName })
-        ) {
-            return res.status(400).json({
-                message: "Another club already uses this name."
-            });
-        }
-
-        club.name = newName;
-        club.category = String(category).trim();
-        club.coordinator = String(coordinator).trim();
-        club.description = String(description).trim();
-        club.image = image || "";
-
-        await club.save();
-
-        if (oldName !== newName) {
-            await Membership.updateMany(
-                { clubName: oldName },
-                { $set: { clubName: newName } }
-            );
-
-            await Announcement.updateMany(
-                { clubName: oldName },
-                { $set: { clubName: newName } }
-            );
-
-            await Event.updateMany(
-                { clubName: oldName },
-                { $set: { clubName: newName } }
-            );
-        }
-
-        res.json({
-            message: "Club updated successfully!",
-            club
-        });
-    } catch (error) {
-        console.error("Update Club Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to update club."
-        });
     }
-});
+);
 
 // CLUBS - ADMIN DELETE
-app.delete("/api/clubs/:id", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        if (!validId(req.params.id)) {
-            return res.status(400).json({
-                message: "Invalid club ID."
-            });
-        }
-
-        const club = await Club.findById(req.params.id);
-
-        if (!club) {
-            return res.status(404).json({
-                message: "Club not found."
-            });
-        }
-
-        await Membership.deleteMany({ clubName: club.name });
-        await Announcement.deleteMany({ clubName: club.name });
-
-        const events = await Event.find({
-            clubName: club.name
-        }).select("_id");
-
-        await EventRegistration.deleteMany({
-            event: {
-                $in: events.map(event => event._id)
+app.delete(
+    "/api/clubs/:id",
+    requireAuth,
+    requireAdmin,
+    async (req, res) => {
+        try {
+            if (!validId(req.params.id)) {
+                return res.status(400).json({
+                    message: "Invalid club ID."
+                });
             }
-        });
 
-        await Event.deleteMany({ clubName: club.name });
-        await Club.findByIdAndDelete(req.params.id);
+            const club = await Club.findById(req.params.id);
 
-        res.json({
-            message: "Club deleted successfully!"
-        });
-    } catch (error) {
-        console.error("Delete Club Error:", error.message);
+            if (!club) {
+                return res.status(404).json({
+                    message: "Club not found."
+                });
+            }
 
-        res.status(500).json({
-            message: "Unable to delete club."
-        });
+            await Membership.deleteMany({
+                clubName: club.name
+            });
+
+            await Announcement.deleteMany({
+                clubName: club.name
+            });
+
+            const events = await Event.find({
+                clubName: club.name
+            }).select("_id");
+
+            await EventRegistration.deleteMany({
+                event: {
+                    $in: events.map(event => event._id)
+                }
+            });
+
+            await Event.deleteMany({
+                clubName: club.name
+            });
+
+            await Club.findByIdAndDelete(req.params.id);
+
+            res.json({
+                message: "Club deleted successfully!"
+            });
+        } catch (error) {
+            console.error("Delete Club Error:", error.message);
+
+            res.status(500).json({
+                message: "Unable to delete club."
+            });
+        }
     }
-});
+);
 
 // STUDENT MEMBERSHIP REQUEST
 app.post("/api/membership", requireAuth, async (req, res) => {
@@ -825,1252 +837,74 @@ app.post("/api/membership", requireAuth, async (req, res) => {
 });
 
 // ADMIN - VIEW MEMBERSHIPS
-app.get("/api/admin/memberships", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const memberships = await Membership.find()
-            .populate("student", "name enrollment email department")
-            .sort({ requestDate: -1 })
-            .lean();
+app.get(
+    "/api/admin/memberships",
+    requireAuth,
+    requireAdmin,
+    async (req, res) => {
+        try {
+            const memberships = await Membership.find()
+                .populate("student", "name enrollment email department")
+                .sort({ requestDate: -1 })
+                .lean();
 
-        res.json({ memberships });
-    } catch (error) {
-        console.error("Load Memberships Error:", error.message);
+            res.json({ memberships });
+        } catch (error) {
+            console.error("Load Memberships Error:", error.message);
 
-        res.status(500).json({
-            message: "Unable to load membership requests."
-        });
+            res.status(500).json({
+                message: "Unable to load membership requests."
+            });
+        }
     }
-});
+);
 
 // ADMIN - APPROVE / REJECT MEMBERSHIP
-app.put("/api/admin/memberships/:id", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const { status } = req.body;
-
-        if (!validId(req.params.id)) {
-            return res.status(400).json({
-                message: "Invalid membership request ID."
-            });
-        }
-
-        if (!["Approved", "Rejected"].includes(status)) {
-            return res.status(400).json({
-                message: "Invalid membership status."
-            });
-        }
-
-        const membership = await Membership.findByIdAndUpdate(
-            req.params.id,
-            { status },
-            { new: true, runValidators: true }
-        );
-
-        if (!membership) {
-            return res.status(404).json({
-                message: "Membership request not found."
-            });
-        }
-
-        res.json({
-            message: `Membership request ${status.toLowerCase()} successfully.`,
-            membership
-        });
-    } catch (error) {
-        console.error("Update Membership Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to update membership request."
-        });
-    }
-});
-// EVENTS - PUBLIC
-app.get("/api/events", async (req, res) => {
-    try {
-        const events = await Event.find()
-            .sort({ date: 1 })
-            .lean();
-
-        res.json({ events });
-    } catch (error) {
-        console.error("Load Events Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to load events."
-        });
-    }
-});
-
-// EVENTS - ADMIN CREATE
-app.post("/api/events", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const {
-            title,
-            clubName,
-            date,
-            time,
-            venue,
-            totalSeats,
-            image
-        } = req.body;
-
-        const seats = Number(totalSeats);
-        const eventDate = new Date(date);
-
-        if (
-            !title ||
-            !clubName ||
-            !date ||
-            Number.isNaN(eventDate.getTime()) ||
-            !time ||
-            !venue ||
-            !Number.isInteger(seats) ||
-            seats < 1
-        ) {
-            return res.status(400).json({
-                message: "Please fill all required event fields correctly."
-            });
-        }
-
-        const event = await Event.create({
-            title: String(title).trim(),
-            clubName: String(clubName).trim(),
-            date: eventDate,
-            time: String(time).trim(),
-            venue: String(venue).trim(),
-            totalSeats: seats,
-            availableSeats: seats,
-            image: image || ""
-        });
-
-        res.status(201).json({
-            message: "Event added successfully!",
-            event
-        });
-    } catch (error) {
-        console.error("Add Event Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to add event."
-        });
-    }
-});
-
-// EVENTS - ADMIN UPDATE
-app.put("/api/events/:eventId", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        if (!validId(req.params.eventId)) {
-            return res.status(400).json({
-                message: "Invalid event ID."
-            });
-        }
-
-        const {
-            title,
-            clubName,
-            date,
-            time,
-            venue,
-            totalSeats,
-            image
-        } = req.body;
-
-        const seats = Number(totalSeats);
-        const eventDate = new Date(date);
-
-        const event = await Event.findById(req.params.eventId);
-
-        if (!event) {
-            return res.status(404).json({
-                message: "Event not found."
-            });
-        }
-
-        if (
-            !title ||
-            !clubName ||
-            !date ||
-            Number.isNaN(eventDate.getTime()) ||
-            !time ||
-            !venue ||
-            !Number.isInteger(seats) ||
-            seats < 1
-        ) {
-            return res.status(400).json({
-                message: "Please fill all required event fields correctly."
-            });
-        }
-
-        const registeredCount = await EventRegistration.countDocuments({
-            event: event._id,
-            status: "Registered"
-        });
-
-        if (seats < registeredCount) {
-            return res.status(400).json({
-                message: `Total seats cannot be less than the ${registeredCount} registered student(s).`
-            });
-        }
-
-        Object.assign(event, {
-            title: String(title).trim(),
-            clubName: String(clubName).trim(),
-            date: eventDate,
-            time: String(time).trim(),
-            venue: String(venue).trim(),
-            totalSeats: seats,
-            availableSeats: seats - registeredCount,
-            image: image || ""
-        });
-
-        await event.save();
-
-        res.json({
-            message: "Event updated successfully!",
-            event
-        });
-    } catch (error) {
-        console.error("Update Event Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to update event."
-        });
-    }
-});
-
-// EVENTS - ADMIN DELETE
-app.delete("/api/events/:eventId", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        if (!validId(req.params.eventId)) {
-            return res.status(400).json({
-                message: "Invalid event ID."
-            });
-        }
-
-        const event = await Event.findById(req.params.eventId);
-
-        if (!event) {
-            return res.status(404).json({
-                message: "Event not found."
-            });
-        }
-
-        await EventRegistration.deleteMany({
-            event: event._id
-        });
-
-        await Event.findByIdAndDelete(event._id);
-
-        res.json({
-            message: "Event deleted successfully!"
-        });
-    } catch (error) {
-        console.error("Delete Event Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to delete event."
-        });
-    }
-});
-
-// STUDENT EVENT REGISTRATION
-app.post("/api/events/:eventId/register", requireAuth, async (req, res) => {
-    try {
-        if (req.user.role !== "student") {
-            return res.status(403).json({
-                message: "Student access required."
-            });
-        }
-
-        const eventId = req.params.eventId;
-
-        if (!validId(eventId)) {
-            return res.status(400).json({
-                message: "Invalid event ID."
-            });
-        }
-
-        const event = await Event.findById(eventId);
-
-        if (!event) {
-            return res.status(404).json({
-                message: "Event not found."
-            });
-        }
-
-        const existing = await EventRegistration.findOne({
-            student: req.user._id,
-            event: eventId
-        });
-
-        if (existing) {
-            return res.status(400).json({
-                message: "You have already registered for this event."
-            });
-        }
-
-        if (event.availableSeats <= 0) {
-            return res.status(400).json({
-                message: "No seats available for this event."
-            });
-        }
-
-        await EventRegistration.create({
-            student: req.user._id,
-            event: eventId
-        });
-
-        event.availableSeats -= 1;
-        await event.save();
-
-        res.status(201).json({
-            message: "Event registration successful!"
-        });
-    } catch (error) {
-        if (error.code === 11000) {
-            return res.status(400).json({
-                message: "You have already registered for this event."
-            });
-        }
-
-        console.error("Event Registration Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to register for event."
-        });
-    }
-});
-
-// STUDENT EVENT REGISTRATIONS
-app.get("/api/events/registrations/:studentId", requireAuth, async (req, res) => {
-    try {
-        if (
-            String(req.user._id) !== req.params.studentId &&
-            req.user.role !== "admin"
-        ) {
-            return res.status(403).json({
-                message: "Access denied."
-            });
-        }
-
-        if (!validId(req.params.studentId)) {
-            return res.status(400).json({
-                message: "Invalid student ID."
-            });
-        }
-
-        const registrations = await EventRegistration.find({
-            student: req.params.studentId,
-            status: "Registered"
-        })
-            .populate("event")
-            .sort({ registrationDate: -1 })
-            .lean();
-
-        res.json({ registrations });
-    } catch (error) {
-        console.error("Load Registrations Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to load event registrations."
-        });
-    }
-});
-
-// ANNOUNCEMENTS - PUBLIC
-app.get("/api/announcements", async (req, res) => {
-    try {
-        const records = await Announcement.find()
-            .sort({ date: -1, createdAt: -1 })
-            .lean();
-
-        // Support older announcement records and the Audience field.
-        const announcements = records.map(item => ({
-            ...item,
-            audience: item.audience || item.clubName || "All"
-        }));
-
-        res.json({ announcements });
-    } catch (error) {
-        console.error("Load Announcements Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to load announcements."
-        });
-    }
-});
-
-// ANNOUNCEMENTS - ADMIN CREATE
-app.post("/api/announcements", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const {
-            title,
-            clubName,
-            date,
-            message,
-            description,
-            audience
-        } = req.body;
-
-        const announcementMessage = String(message || description || "").trim();
-        const announcementDate = date ? new Date(date) : new Date();
-        const selectedAudience = String(audience || "All").trim();
-
-        if (
-            !String(title || "").trim() ||
-            !announcementMessage ||
-            Number.isNaN(announcementDate.getTime())
-        ) {
-            return res.status(400).json({
-                message: "Please enter a valid announcement title and message."
-            });
-        }
-
-        const announcement = await Announcement.create({
-            title: String(title).trim(),
-            clubName: String(clubName || selectedAudience || "All").trim(),
-            date: announcementDate,
-            message: announcementMessage
-        });
-
-        res.status(201).json({
-            message: "Announcement added successfully!",
-            announcement
-        });
-    } catch (error) {
-        console.error("Add Announcement Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to add announcement."
-        });
-    }
-});
-
-// ANNOUNCEMENTS - ADMIN UPDATE
-app.put("/api/announcements/:id", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        if (!validId(req.params.id)) {
-            return res.status(400).json({
-                message: "Invalid announcement ID."
-            });
-        }
-
-        const {
-            title,
-            clubName,
-            date,
-            message,
-            description,
-            audience
-        } = req.body;
-
-        const announcementMessage = String(message || description || "").trim();
-        const announcementDate = date ? new Date(date) : new Date();
-        const selectedAudience = String(audience || "All").trim();
-
-        if (
-            !String(title || "").trim() ||
-            !announcementMessage ||
-            Number.isNaN(announcementDate.getTime())
-        ) {
-            return res.status(400).json({
-                message: "Please enter a valid announcement title and message."
-            });
-        }
-
-        const announcement = await Announcement.findByIdAndUpdate(
-            req.params.id,
-            {
-                title: String(title).trim(),
-                clubName: String(clubName || selectedAudience || "All").trim(),
-                date: announcementDate,
-                message: announcementMessage
-            },
-            { new: true, runValidators: true }
-        );
-
-        if (!announcement) {
-            return res.status(404).json({
-                message: "Announcement not found."
-            });
-        }
-
-        res.json({
-            message: "Announcement updated successfully!",
-            announcement
-        });
-    } catch (error) {
-        console.error("Update Announcement Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to update announcement."
-        });
-    }
-});
-
-// ANNOUNCEMENTS - ADMIN DELETE
-app.delete("/api/announcements/:id", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        if (!validId(req.params.id)) {
-            return res.status(400).json({
-                message: "Invalid announcement ID."
-            });
-        }
-
-        const announcement = await Announcement.findByIdAndDelete(
-            req.params.id
-        );
-
-        if (!announcement) {
-            return res.status(404).json({
-                message: "Announcement not found."
-            });
-        }
-
-        res.json({
-            message: "Announcement deleted successfully!"
-        });
-    } catch (error) {
-        console.error("Delete Announcement Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to delete announcement."
-        });
-    }
-});
-
-// ADMIN - LIST STUDENTS
-app.get("/api/students", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const students = await User.find({ role: "student" })
-            .select("name email enrollment department semester createdAt")
-            .sort({ name: 1 })
-            .lean();
-
-        res.json({ students });
-    } catch (error) {
-        console.error("Load Students Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to load students."
-        });
-    }
-});
-
-// Compatibility endpoint for older admin-profile.html versions.
-// Admins can only access their own profile through this endpoint.
-app.get("/api/profile/:userId", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        if (!validId(req.params.userId)) {
-            return res.status(400).json({
-                message: "Invalid profile ID."
-            });
-        }
-
-        if (String(req.user._id) !== String(req.params.userId)) {
-            return res.status(403).json({
-                message: "Access denied."
-            });
-        }
-
-        const user = await User.findById(req.user._id)
-            .select("name email role department createdAt")
-            .lean();
-
-        if (!user) {
-            return res.status(404).json({
-                message: "Admin profile not found."
-            });
-        }
-
-        res.json({ user });
-    } catch (error) {
-        console.error("Load Admin Profile Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to load admin profile."
-        });
-    }
-});
-
-// ADMIN DASHBOARD STATISTICS
-app.get("/api/admin/stats", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const [
-            students,
-            clubs,
-            events,
-            pendingMemberships,
-            approvedMemberships
-        ] = await Promise.all([
-            User.countDocuments({ role: "student" }),
-            Club.countDocuments(),
-            Event.countDocuments(),
-            Membership.countDocuments({ status: "Pending" }),
-            Membership.countDocuments({ status: "Approved" })
-        ]);
-
-        res.json({
-            students,
-            clubs,
-            events,
-            pendingMemberships,
-            approvedMemberships
-        });
-    } catch (error) {
-        console.error("Admin Stats Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to load dashboard statistics."
-        });
-    }
-});
-
-// STUDENT DASHBOARD
-app.get("/api/student/dashboard/:studentId", requireAuth, async (req, res) => {
-    try {
-        if (
-            String(req.user._id) !== req.params.studentId &&
-            req.user.role !== "admin"
-        ) {
-            return res.status(403).json({
-                message: "Access denied."
-            });
-        }
-
-        if (!validId(req.params.studentId)) {
-            return res.status(400).json({
-                message: "Invalid student ID."
-            });
-        }
-
-        const memberships = await Membership.find({
-            student: req.params.studentId
-        })
-            .sort({ requestDate: -1 })
-            .lean();
-
-        const registrations = await EventRegistration.find({
-            student: req.params.studentId,
-            status: "Registered"
-        })
-            .populate("event")
-            .sort({ registrationDate: -1 })
-            .lean();
-
-        const announcements = await Announcement.find()
-            .sort({ date: -1 })
-            .limit(10)
-            .lean();
-
-        res.json({
-            memberships,
-            registrations,
-            announcements
-        });
-    } catch (error) {
-        console.error("Student Dashboard Error:", error.message);
-
-        res.status(500).json({
-            message: "Unable to load student dashboard."
-        });
-    }
-});
-
-// EXCEL EXPORT HELPERS
-function createWorksheet(workbook, name, headers) {
-    const worksheet = workbook.addWorksheet(name);
-
-    worksheet.columns = headers.map(item => ({
-        header: item.header,
-        key: item.key,
-        width: item.width || 20
-    }));
-
-    worksheet.getRow(1).font = { bold: true };
-    worksheet.views = [{ state: "frozen", ySplit: 1 }];
-
-    return worksheet;
-}
-
-async function sendWorkbook(res, workbook, filename) {
-    excelResponse(res, filename);
-    await workbook.xlsx.write(res);
-    res.end();
-}
-
-// EXPORT STUDENTS
-app.get("/api/export/students", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const students = await User.find({ role: "student" })
-            .sort({ name: 1 })
-            .lean();
-
-        const workbook = new ExcelJS.Workbook();
-
-        const worksheet = createWorksheet(workbook, "Students", [
-            { header: "Sr. No.", key: "srNo", width: 10 },
-            { header: "Name", key: "name", width: 25 },
-            { header: "Enrollment", key: "enrollment", width: 20 },
-            { header: "Email", key: "email", width: 30 },
-            { header: "Department", key: "department", width: 22 },
-            { header: "Semester", key: "semester", width: 12 },
-            { header: "Registered On", key: "createdAt", width: 24 }
-        ]);
-
-        students.forEach((student, index) => {
-            worksheet.addRow({
-                srNo: index + 1,
-                name: student.name,
-                enrollment: student.enrollment,
-                email: student.email,
-                department: student.department,
-                semester: student.semester,
-                createdAt: student.createdAt
-                    ? new Date(student.createdAt).toLocaleString()
-                    : ""
-            });
-        });
-
-        await sendWorkbook(res, workbook, "ClubConnect_Students.xlsx");
-    } catch (error) {
-        console.error("Export Students Error:", error.message);
-
-        if (!res.headersSent) {
-            res.status(500).json({
-                message: "Unable to export students."
-            });
-        }
-    }
-});
-
-// EXPORT MEMBERSHIPS
-app.get("/api/export/memberships", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const memberships = await Membership.find()
-            .populate("student", "name enrollment email department")
-            .sort({ requestDate: -1 })
-            .lean();
-
-        const workbook = new ExcelJS.Workbook();
-
-        const worksheet = createWorksheet(workbook, "Memberships", [
-            { header: "Sr. No.", key: "srNo", width: 10 },
-            { header: "Student Name", key: "studentName", width: 25 },
-            { header: "Enrollment", key: "enrollment", width: 20 },
-            { header: "Email", key: "email", width: 30 },
-            { header: "Department", key: "department", width: 22 },
-            { header: "Club Name", key: "clubName", width: 25 },
-            { header: "Category", key: "category", width: 18 },
-            { header: "Status", key: "status", width: 15 },
-            { header: "Request Date", key: "requestDate", width: 24 }
-        ]);
-
-        memberships.forEach((membership, index) => {
-            worksheet.addRow({
-                srNo: index + 1,
-                studentName: membership.student?.name || "",
-                enrollment: membership.student?.enrollment || "",
-                email: membership.student?.email || "",
-                department: membership.student?.department || "",
-                clubName: membership.clubName,
-                category: membership.category,
-                status: membership.status,
-                requestDate: membership.requestDate
-                    ? new Date(membership.requestDate).toLocaleString()
-                    : ""
-            });
-        });
-
-        await sendWorkbook(res, workbook, "ClubConnect_Memberships.xlsx");
-    } catch (error) {
-        console.error("Export Memberships Error:", error.message);
-
-        if (!res.headersSent) {
-            res.status(500).json({
-                message: "Unable to export memberships."
-            });
-        }
-    }
-});
-
-// EXPORT CLUBS
-app.get("/api/export/clubs", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const clubs = await Club.find()
-            .sort({ name: 1 })
-            .lean();
-
-        const counts = await Membership.aggregate([
-            { $match: { status: "Approved" } },
-            {
-                $group: {
-                    _id: "$clubName",
-                    count: { $sum: 1 }
-                }
-            }
-        ]);
-
-        const countMap = Object.fromEntries(
-            counts.map(item => [item._id, item.count])
-        );
-
-        const workbook = new ExcelJS.Workbook();
-
-        const worksheet = createWorksheet(workbook, "Clubs", [
-            { header: "Sr. No.", key: "srNo", width: 10 },
-            { header: "Club Name", key: "name", width: 25 },
-            { header: "Category", key: "category", width: 18 },
-            { header: "Coordinator", key: "coordinator", width: 25 },
-            { header: "Members", key: "members", width: 12 },
-            { header: "Description", key: "description", width: 55 }
-        ]);
-
-        clubs.forEach((club, index) => {
-            worksheet.addRow({
-                srNo: index + 1,
-                name: club.name,
-                category: club.category,
-                coordinator: club.coordinator,
-                members: countMap[club.name] || 0,
-                description: club.description
-            });
-        });
-
-        await sendWorkbook(res, workbook, "ClubConnect_Clubs.xlsx");
-    } catch (error) {
-        console.error("Export Clubs Error:", error.message);
-
-        if (!res.headersSent) {
-            res.status(500).json({
-                message: "Unable to export clubs."
-            });
-        }
-    }
-});
-
-// EXPORT EVENTS
-app.get("/api/export/events", requireAuth, requireAdmin, async (req, res) => {
-    try {
-        const events = await Event.find()
-            .sort({ date: 1 })
-            .lean();
-
-        const workbook = new ExcelJS.Workbook();
-
-        const worksheet = createWorksheet(workbook, "Events", [
-            { header: "Sr. No.", key: "srNo", width: 10 },
-            { header: "Event Name", key: "title", width: 28 },
-            { header: "Club", key: "clubName", width: 22 },
-            { header: "Date", key: "date", width: 16 },
-            { header: "Time", key: "time", width: 15 },
-            { header: "Venue", key: "venue", width: 25 },
-            { header: "Total Seats", key: "totalSeats", width: 14 },
-            { header: "Available Seats", key: "availableSeats", width: 16 }
-        ]);
-
-        events.forEach((event, index) => {
-            worksheet.addRow({
-                srNo: index + 1,
-                title: event.title,
-                clubName: event.clubName,
-                date: event.date
-                    ? new Date(event.date).toLocaleDateString()
-                    : "",
-                time: event.time,
-                venue: event.venue,
-                totalSeats: event.totalSeats,
-                availableSeats: event.availableSeats
-            });
-        });
-
-        await sendWorkbook(
-            res,
-            workbook,
-            "ClubConnect_Events.xlsx"
-        );
-    } catch (error) {
-        console.error("Export Events Error:", error.message);
-
-        if (!res.headersSent) {
-            res.status(500).json({
-                message: "Unable to export events."
-            });
-        }
-    }
-});
-
-// EXPORT EVENT REGISTRATIONS
-app.get(
-    "/api/export/event-registrations",
-    requireAuth,
-    requireAdmin,
-    async (req, res) => {
-        try {
-            const registrations = await EventRegistration.find()
-                .populate("student", "name enrollment email department")
-                .populate("event", "title clubName date time venue")
-                .sort({ registrationDate: -1 })
-                .lean();
-
-            const workbook = new ExcelJS.Workbook();
-
-            const worksheet = createWorksheet(
-                workbook,
-                "Event Registrations",
-                [
-                    { header: "Sr. No.", key: "srNo", width: 10 },
-                    { header: "Student Name", key: "studentName", width: 25 },
-                    { header: "Enrollment", key: "enrollment", width: 20 },
-                    { header: "Email", key: "email", width: 30 },
-                    { header: "Department", key: "department", width: 20 },
-                    { header: "Event", key: "event", width: 28 },
-                    { header: "Club", key: "club", width: 22 },
-                    { header: "Event Date", key: "eventDate", width: 16 },
-                    { header: "Time", key: "time", width: 15 },
-                    { header: "Venue", key: "venue", width: 25 },
-                    { header: "Registration Date", key: "registrationDate", width: 24 },
-                    { header: "Status", key: "status", width: 15 }
-                ]
-            );
-
-            registrations.forEach((registration, index) => {
-                worksheet.addRow({
-                    srNo: index + 1,
-                    studentName: registration.student?.name || "",
-                    enrollment: registration.student?.enrollment || "",
-                    email: registration.student?.email || "",
-                    department: registration.student?.department || "",
-                    event: registration.event?.title || "",
-                    club: registration.event?.clubName || "",
-                    eventDate: registration.event?.date
-                        ? new Date(
-                            registration.event.date
-                        ).toLocaleDateString()
-                        : "",
-                    time: registration.event?.time || "",
-                    venue: registration.event?.venue || "",
-                    registrationDate: registration.registrationDate
-                        ? new Date(
-                            registration.registrationDate
-                        ).toLocaleString()
-                        : "",
-                    status: registration.status
-                });
-            });
-
-            await sendWorkbook(
-                res,
-                workbook,
-                "ClubConnect_Event_Registrations.xlsx"
-            );
-        } catch (error) {
-            console.error("Export Registrations Error:", error.message);
-
-            if (!res.headersSent) {
-                res.status(500).json({
-                    message: "Unable to export event registrations."
-                });
-            }
-        }
-    }
-);
-
-// EXPORT ANNOUNCEMENTS
-app.get(
-    "/api/export/announcements",
-    requireAuth,
-    requireAdmin,
-    async (req, res) => {
-        try {
-            const announcements = await Announcement.find()
-                .sort({ date: -1 })
-                .lean();
-
-            const workbook = new ExcelJS.Workbook();
-
-            const worksheet = createWorksheet(
-                workbook,
-                "Announcements",
-                [
-                    { header: "Sr. No.", key: "srNo", width: 10 },
-                    { header: "Title", key: "title", width: 30 },
-                    { header: "Club", key: "clubName", width: 22 },
-                    { header: "Date", key: "date", width: 16 },
-                    { header: "Announcement", key: "message", width: 70 }
-                ]
-            );
-
-            announcements.forEach((announcement, index) => {
-                worksheet.addRow({
-                    srNo: index + 1,
-                    title: announcement.title,
-                    clubName: announcement.clubName,
-                    date: announcement.date
-                        ? new Date(
-                            announcement.date
-                        ).toLocaleDateString()
-                        : "",
-                    message: announcement.message
-                });
-            });
-
-            await sendWorkbook(
-                res,
-                workbook,
-                "ClubConnect_Announcements.xlsx"
-            );
-        } catch (error) {
-            console.error("Export Announcements Error:", error.message);
-
-            if (!res.headersSent) {
-                res.status(500).json({
-                    message: "Unable to export announcements."
-                });
-            }
-        }
-    }
-);
-
-// ADMIN - VIEW OWN PROFILE
-app.get(
-    "/api/admin/profile",
-    requireAuth,
-    requireAdmin,
-    async (req, res) => {
-        try {
-            const admin = await User.findById(req.user._id)
-                .select("name email role createdAt")
-                .lean();
-
-            if (!admin) {
-                return res.status(404).json({
-                    message: "Admin profile not found."
-                });
-            }
-
-            res.json({ user: admin });
-        } catch (error) {
-            console.error("Admin Profile Error:", error.message);
-
-            res.status(500).json({
-                message: "Unable to load admin profile."
-            });
-        }
-    }
-);
-
-// ADMIN - UPDATE OWN PROFILE
 app.put(
-    "/api/admin/profile",
+    "/api/admin/memberships/:id",
     requireAuth,
     requireAdmin,
     async (req, res) => {
         try {
-            const {
-                name,
-                email,
-                currentPassword,
-                newPassword
-            } = req.body;
+            const { status } = req.body;
 
-            if (!name || !email) {
+            if (!validId(req.params.id)) {
                 return res.status(400).json({
-                    message: "Name and email are required."
+                    message: "Invalid membership request ID."
                 });
             }
 
-            const cleanName = String(name).trim();
-            const cleanEmail = String(email).trim().toLowerCase();
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            if (!emailPattern.test(cleanEmail)) {
+            if (!["Approved", "Rejected"].includes(status)) {
                 return res.status(400).json({
-                    message: "Please enter a valid email address."
+                    message: "Invalid membership status."
                 });
             }
 
-            const duplicateEmail = await User.findOne({
-                email: cleanEmail,
-                _id: { $ne: req.user._id }
-            });
+            const membership = await Membership.findByIdAndUpdate(
+                req.params.id,
+                { status },
+                { new: true, runValidators: true }
+            );
 
-            if (duplicateEmail) {
-                return res.status(400).json({
-                    message: "This email is already in use."
-                });
-            }
-
-            const admin = await User.findById(req.user._id);
-
-            if (!admin || admin.role !== "admin") {
+            if (!membership) {
                 return res.status(404).json({
-                    message: "Admin account not found."
+                    message: "Membership request not found."
                 });
             }
-
-            admin.name = cleanName;
-            admin.email = cleanEmail;
-
-            if (newPassword) {
-                if (!currentPassword) {
-                    return res.status(400).json({
-                        message: "Enter your current password to change it."
-                    });
-                }
-
-                if (String(newPassword).length < 8) {
-                    return res.status(400).json({
-                        message: "New password must contain at least 8 characters."
-                    });
-                }
-
-                const passwordMatches = await bcrypt.compare(
-                    currentPassword,
-                    admin.password
-                );
-
-                if (!passwordMatches) {
-                    return res.status(400).json({
-                        message: "Current password is incorrect."
-                    });
-                }
-
-                admin.password = await bcrypt.hash(newPassword, 10);
-            }
-
-            await admin.save();
 
             res.json({
-                message: "Profile updated successfully!",
-                user: {
-                    id: admin._id,
-                    _id: admin._id,
-                    name: admin.name,
-                    email: admin.email,
-                    role: admin.role
-                }
+                message: `Membership request ${status.toLowerCase()} successfully.`,
+                membership
             });
         } catch (error) {
-            console.error("Update Admin Profile Error:", error.message);
+            console.error("Update Membership Error:", error.message);
 
             res.status(500).json({
-                message: "Unable to update admin profile."
+                message: "Unable to update membership request."
             });
         }
     }
 );
-
-// ADMIN - VIEW ADMIN USERS
-app.get(
-    "/api/admin/users",
-    requireAuth,
-    requireAdmin,
-    async (req, res) => {
-        try {
-            const admins = await User.find({ role: "admin" })
-                .select("name email role createdAt")
-                .sort({ createdAt: -1 })
-                .lean();
-
-            res.json({ admins });
-        } catch (error) {
-            console.error("Load Admin Users Error:", error.message);
-
-            res.status(500).json({
-                message: "Unable to load admin users."
-            });
-        }
-    }
-);
-
-// ADMIN - CREATE ADMIN USER
-app.post(
-    "/api/admin/users",
-    requireAuth,
-    requireAdmin,
-    async (req, res) => {
-        try {
-            const {
-                name,
-                email,
-                password,
-                confirmPassword
-            } = req.body;
-
-            if (!name || !email || !password || !confirmPassword) {
-                return res.status(400).json({
-                    message: "Please fill all admin user fields."
-                });
-            }
-
-            const cleanName = String(name).trim();
-            const cleanEmail = String(email).trim().toLowerCase();
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            if (!emailPattern.test(cleanEmail)) {
-                return res.status(400).json({
-                    message: "Please enter a valid email address."
-                });
-            }
-
-            if (String(password).length < 8) {
-                return res.status(400).json({
-                    message: "Password must contain at least 8 characters."
-                });
-            }
-
-            if (password !== confirmPassword) {
-                return res.status(400).json({
-                    message: "Passwords do not match."
-                });
-            }
-
-            const existingAdmin = await User.findOne({
-                email: cleanEmail
-            });
-
-            if (existingAdmin) {
-                return res.status(400).json({
-                    message: "An account with this email already exists."
-                });
-            }
-
-            const admin = await User.create({
-                name: cleanName,
-                email: cleanEmail,
-                password: await bcrypt.hash(password, 10),
-                enrollment: `ADMIN-${crypto.randomUUID()}`,
-                department: "Administration",
-                semester: 1,
-                role: "admin"
-            });
-
-            res.status(201).json({
-                message: "Admin user created successfully!",
-                admin: {
-                    _id: admin._id,
-                    name: admin.name,
-                    email: admin.email,
-                    role: admin.role,
-                    createdAt: admin.createdAt
-                }
-            });
-        } catch (error) {
-            console.error("Create Admin User Error:", error.message);
-
-            if (error.code === 11000) {
-                return res.status(400).json({
-                    message: "An account with this email already exists."
-                });
-            }
-
-            res.status(500).json({
-                message: "Unable to create admin user."
-            });
-        }
-    }
-);
-
 // STUDENT - VIEW OWN PROFILE
 app.get(
     "/api/student/profile",
@@ -2084,7 +918,9 @@ app.get(
             }
 
             const user = await User.findById(req.user._id)
-                .select("name email enrollment department semester role createdAt")
+                .select(
+                    "name email mobile enrollment department semester role createdAt"
+                )
                 .lean();
 
             if (!user) {
@@ -2119,11 +955,17 @@ app.put(
             const {
                 name,
                 email,
+                mobile,
                 department,
                 semester
             } = req.body;
 
-            if (!name || !email || !department || semester === undefined) {
+            if (
+                !name ||
+                !email ||
+                !department ||
+                semester === undefined
+            ) {
                 return res.status(400).json({
                     message: "Please fill all required profile fields."
                 });
@@ -2131,13 +973,30 @@ app.put(
 
             const cleanName = String(name).trim();
             const cleanEmail = String(email).trim().toLowerCase();
+            const cleanMobile = String(mobile || "").trim();
             const cleanDepartment = String(department).trim();
             const semesterNumber = Number(semester);
+
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!cleanName) {
+                return res.status(400).json({
+                    message: "Name cannot be empty."
+                });
+            }
 
             if (!emailPattern.test(cleanEmail)) {
                 return res.status(400).json({
                     message: "Please enter a valid email address."
+                });
+            }
+
+            if (
+                cleanMobile &&
+                !/^[0-9+\-\s()]{10,15}$/.test(cleanMobile)
+            ) {
+                return res.status(400).json({
+                    message: "Please enter a valid mobile number."
                 });
             }
 
@@ -2172,6 +1031,7 @@ app.put(
 
             user.name = cleanName;
             user.email = cleanEmail;
+            user.mobile = cleanMobile;
             user.department = cleanDepartment;
             user.semester = semesterNumber;
 
@@ -2184,6 +1044,7 @@ app.put(
                     _id: user._id,
                     name: user.name,
                     email: user.email,
+                    mobile: user.mobile || "",
                     enrollment: user.enrollment,
                     department: user.department,
                     semester: user.semester,
@@ -2191,7 +1052,10 @@ app.put(
                 }
             });
         } catch (error) {
-            console.error("Update Student Profile Error:", error.message);
+            console.error(
+                "Update Student Profile Error:",
+                error.message
+            );
 
             res.status(500).json({
                 message: "Unable to update student profile."
@@ -2199,7 +1063,6 @@ app.put(
         }
     }
 );
-
 // STUDENT - CHANGE PASSWORD
 app.put(
     "/api/student/profile/password",
@@ -2262,7 +1125,10 @@ app.put(
                 message: "Password changed successfully!"
             });
         } catch (error) {
-            console.error("Change Student Password Error:", error.message);
+            console.error(
+                "Change Student Password Error:",
+                error.message
+            );
 
             res.status(500).json({
                 message: "Unable to change password."
