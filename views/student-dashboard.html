@@ -372,133 +372,185 @@
     }
 
     async function loadDashboard() {
-        if (!token || !user || !user.id || user.role !== "student") {
-            window.location.replace("/login.html?role=student");
-            return;
-        }
+    const savedUser =
+        localStorage.getItem("loggedInUser") ||
+        localStorage.getItem("user");
 
-        document.getElementById("welcomeTitle").textContent =
-            "Welcome, " + (user.name || "Student") + "!";
+    const authToken =
+        localStorage.getItem("authToken") ||
+        localStorage.getItem("token");
 
-        try {
-            const response = await fetch(
-                "/api/student/dashboard/" + encodeURIComponent(user.id),
-                {
-                    headers: {
-                        "Authorization": "Bearer " + token
-                    }
+    let currentUser;
+
+    try {
+        currentUser = JSON.parse(savedUser || "null");
+    } catch (error) {
+        currentUser = null;
+    }
+
+    const studentId = currentUser?.id || currentUser?._id;
+
+    if (!authToken || !studentId) {
+        window.location.replace("/login.html?role=student");
+        return;
+    }
+
+    document.getElementById("welcomeTitle").textContent =
+        "Welcome, " + (currentUser.name || "Student") + "!";
+
+    try {
+        const response = await fetch(
+            "/api/student/dashboard/" + encodeURIComponent(studentId),
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + authToken,
+                    "Accept": "application/json"
                 }
-            );
+            }
+        );
 
-            const data = await response.json().catch(() => ({}));
+        const data = await response.json().catch(() => ({}));
 
-            if (!response.ok) {
-                if (response.status === 401 || response.status === 403) {
-                    localStorage.removeItem("authToken");
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("loggedInUser");
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("token");
+                localStorage.removeItem("loggedInUser");
+                localStorage.removeItem("user");
 
-                    window.location.replace("/login.html?role=student");
-                    return;
-                }
-
-                throw new Error(data.message || "Unable to load dashboard.");
+                window.location.replace("/login.html?role=student");
+                return;
             }
 
-            const memberships = data.memberships || [];
-            const registrations = data.registrations || [];
-            const announcements = data.announcements || [];
-
-            document.getElementById("membershipCount").textContent =
-                memberships.length;
-
-            document.getElementById("registrationCount").textContent =
-                registrations.length;
-
-            document.getElementById("announcementCount").textContent =
-                announcements.length;
-
-            renderList(
-                "memberships",
-                memberships,
-                "You have no club memberships yet.",
-                item => {
-                    const name =
-                        item.clubName ||
-                        item.club?.name ||
-                        item.club?.clubName ||
-                        "Club";
-
-                    return `
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                            <strong>${escapeHTML(name)}</strong>
-                            ${statusBadge(item.status)}
-                        </div>
-                    `;
-                }
+            throw new Error(
+                data.message || "Dashboard request failed: " + response.status
             );
-
-            renderList(
-                "registrations",
-                registrations,
-                "You have not registered for any events yet.",
-                item => {
-                    const name =
-                        item.eventName ||
-                        item.event?.title ||
-                        item.event?.name ||
-                        item.title ||
-                        "Event";
-
-                    const status =
-                        item.status ||
-                        item.registrationStatus ||
-                        "Registered";
-
-                    return `
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                            <strong>${escapeHTML(name)}</strong>
-                            ${statusBadge(status)}
-                        </div>
-                    `;
-                }
-            );
-
-            renderList(
-                "announcements",
-                announcements,
-                "No announcements available.",
-                item => {
-                    const title = item.title || item.subject || "Announcement";
-                    const description = item.message || item.description || "";
-
-                    const date = item.createdAt
-                        ? new Date(item.createdAt).toLocaleDateString("en-IN")
-                        : "";
-
-                    return `
-                        <strong>${escapeHTML(title)}</strong>
-                        <p class="mb-1 mt-1">${escapeHTML(description)}</p>
-                        ${
-                            date
-                                ? `<small class="text-muted">${escapeHTML(date)}</small>`
-                                : ""
-                        }
-                    `;
-                }
-            );
-
-        } catch (error) {
-            console.error(error);
-
-            showMessage(error.message || "Unable to load dashboard.");
-
-            ["memberships", "registrations", "announcements"].forEach(id => {
-                document.getElementById(id).innerHTML =
-                    '<p class="text-muted mb-0">Could not load this section.</p>';
-            });
         }
+
+        const result = data.dashboard || data.data || data;
+
+        const memberships =
+            result.memberships ||
+            result.myMemberships ||
+            result.membershipRequests ||
+            [];
+
+        const registrations =
+            result.registrations ||
+            result.eventRegistrations ||
+            result.myRegistrations ||
+            [];
+
+        const announcements = result.announcements || [];
+
+        if (
+            !Array.isArray(memberships) ||
+            !Array.isArray(registrations) ||
+            !Array.isArray(announcements)
+        ) {
+            throw new Error("Unexpected dashboard API response format.");
+        }
+
+        document.getElementById("membershipCount").textContent =
+            memberships.length;
+
+        document.getElementById("registrationCount").textContent =
+            registrations.length;
+
+        document.getElementById("announcementCount").textContent =
+            announcements.length;
+
+        renderList(
+            "memberships",
+            memberships,
+            "You have no club memberships yet.",
+            item => {
+                const name =
+                    item.clubName ||
+                    item.club?.name ||
+                    item.club?.clubName ||
+                    "Club";
+
+                return `
+                    <div class="d-flex justify-content-between align-items-center gap-2">
+                        <strong>${escapeHTML(name)}</strong>
+                        ${statusBadge(item.status)}
+                    </div>
+                `;
+            }
+        );
+
+        renderList(
+            "registrations",
+            registrations,
+            "You have not registered for any events yet.",
+            item => {
+                const name =
+                    item.eventName ||
+                    item.event?.title ||
+                    item.event?.name ||
+                    item.title ||
+                    "Event";
+
+                const status =
+                    item.status ||
+                    item.registrationStatus ||
+                    "Registered";
+
+                return `
+                    <div class="d-flex justify-content-between align-items-center gap-2">
+                        <strong>${escapeHTML(name)}</strong>
+                        ${statusBadge(status)}
+                    </div>
+                `;
+            }
+        );
+
+        renderList(
+            "announcements",
+            announcements,
+            "No announcements available.",
+            item => {
+                const title = item.title || item.subject || "Announcement";
+                const description = item.message || item.description || "";
+
+                const date = item.createdAt
+                    ? new Date(item.createdAt).toLocaleDateString("en-IN")
+                    : "";
+
+                return `
+                    <strong>${escapeHTML(title)}</strong>
+                    <p class="mb-1 mt-1">${escapeHTML(description)}</p>
+                    ${
+                        date
+                            ? `<small class="text-muted">${escapeHTML(date)}</small>`
+                            : ""
+                    }
+                `;
+            }
+        );
+
+        document.getElementById("message").classList.add("d-none");
+
+    } catch (error) {
+        console.error("Dashboard loading error:", error);
+
+        showMessage(
+            "Dashboard error: " + error.message,
+            "danger"
+        );
+
+        [
+            "memberships",
+            "registrations",
+            "announcements"
+        ].forEach(id => {
+            document.getElementById(id).innerHTML =
+                '<p class="text-muted mb-0">Could not load this section.</p>';
+        });
     }
+}
 
     document.getElementById("logoutBtn").addEventListener("click", function () {
         localStorage.removeItem("authToken");
