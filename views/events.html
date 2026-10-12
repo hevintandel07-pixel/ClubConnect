@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -130,9 +129,7 @@
         }
 
         @media (max-width: 576px) {
-            .page-hero {
-                padding: 38px 0;
-            }
+            .page-hero { padding: 38px 0; }
         }
     </style>
 </head>
@@ -146,31 +143,19 @@
         </a>
 
         <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarMenu"
-                aria-controls="navbarMenu"
-                aria-expanded="false"
+                data-bs-toggle="collapse" data-bs-target="#navbarMenu"
+                aria-controls="navbarMenu" aria-expanded="false"
                 aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarMenu">
             <ul class="navbar-nav ms-auto align-items-lg-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="/index.html">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/clubs.html">Clubs</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/events.html">Events</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login.html?role=student">Student Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin-login.html">Admin Login</a>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/clubs.html">Clubs</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/events.html">Events</a></li>
+                <li class="nav-item"><a class="nav-link" href="/login.html?role=student">Student Login</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin-login.html">Admin Login</a></li>
                 <li class="nav-item">
                     <a class="btn btn-light btn-sm ms-lg-2 mt-2 mt-lg-0"
                        href="/register.html">Register</a>
@@ -193,17 +178,13 @@
 </header>
 
 <main class="container py-5">
-
     <div class="search-panel mb-4">
-        <label for="eventSearch" class="form-label fw-semibold">
-            Search Events
-        </label>
+        <label for="eventSearch" class="form-label fw-semibold">Search Events</label>
         <input type="search" id="eventSearch" class="form-control"
                placeholder="Search by event name, club or description...">
     </div>
 
-    <div id="message" class="alert d-none" role="alert"
-         aria-live="polite"></div>
+    <div id="message" class="alert d-none" role="alert" aria-live="polite"></div>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
         <h2 class="h4 fw-bold mb-0" id="eventsHeading">Available Events</h2>
@@ -226,7 +207,6 @@
             Try another search or check again later.
         </p>
     </div>
-
 </main>
 
 <footer class="text-center py-4">
@@ -238,7 +218,6 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
 "use strict";
 
@@ -253,9 +232,37 @@ let allEvents = [];
 
 const params = new URLSearchParams(window.location.search);
 const selectedClub = (params.get("club") || "").trim();
-const normalizedSelectedClub = selectedClub.toLowerCase();
 
-if (normalizedSelectedClub) {
+function normalizeClubName(name) {
+    return String(name || "")
+        .toLowerCase()
+        .replace(/&/g, "and")
+        .replace(/\bclub\b/g, "")
+        .replace(/[^a-z0-9]/g, "")
+        .trim();
+}
+
+/*
+  Homepage club name and database club name may differ.
+  Coding & Technology Club is linked to Coding Club.
+*/
+function getComparableClubName(name) {
+    const normalized = normalizeClubName(name);
+
+    if (
+        normalized === "codingandtechnology" ||
+        normalized === "codingtechnology" ||
+        normalized === "codingandtechnologyclub"
+    ) {
+        return "coding";
+    }
+
+    return normalized;
+}
+
+const normalizedSelectedClub = getComparableClubName(selectedClub);
+
+if (selectedClub) {
     document.getElementById("pageTitle").textContent =
         selectedClub + " Events";
 
@@ -284,7 +291,7 @@ function escapeHTML(value) {
 
 function showMessage(text, type = "danger") {
     message.textContent = text;
-    message.className = `alert alert-${type}`;
+    message.className = "alert alert-" + type;
     message.classList.remove("d-none");
 }
 
@@ -323,22 +330,26 @@ function formatDate(dateValue) {
 }
 
 function getEventImage(event) {
-    return event.image || event.imageUrl || event.photo ||
-        "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=900&q=80";
+    return event.image ||
+           event.imageUrl ||
+           event.photo ||
+           "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=900&q=80";
 }
 
 function getEventClubName(event) {
     const clubValue = event.clubName || event.club || "";
 
     if (typeof clubValue === "string") {
-        return clubValue;
+        return clubValue.trim();
     }
 
     if (clubValue && typeof clubValue === "object") {
-        return clubValue.name ||
-               clubValue.clubName ||
-               clubValue.title ||
-               "";
+        return String(
+            clubValue.name ||
+            clubValue.clubName ||
+            clubValue.title ||
+            ""
+        ).trim();
     }
 
     return "";
@@ -360,14 +371,18 @@ function createEventCard(event) {
 
     if (user && user.role === "student") {
         registerButton = `
-            <button type="button" class="btn btn-primary mt-3 register-event-btn"
+            <button type="button"
+                    class="btn btn-primary mt-3 register-event-btn"
                     data-event-id="${escapeHTML(id)}">
-                <i class="bi bi-calendar-check me-1"></i>Register for Event
+                <i class="bi bi-calendar-check me-1"></i>
+                Register for Event
             </button>`;
     } else {
         registerButton = `
-            <a href="/login.html?role=student" class="btn btn-primary mt-3">
-                <i class="bi bi-box-arrow-in-right me-1"></i>Login to Register
+            <a href="/login.html?role=student"
+               class="btn btn-primary mt-3">
+                <i class="bi bi-box-arrow-in-right me-1"></i>
+                Login to Register
             </a>`;
     }
 
@@ -391,8 +406,15 @@ function createEventCard(event) {
                         <i class="bi bi-calendar3 me-2"></i>${date}
                     </div>
 
-                    ${time ? `<div class="event-meta"><i class="bi bi-clock me-2"></i>${escapeHTML(time)}</div>` : ""}
-                    ${venue ? `<div class="event-meta"><i class="bi bi-geo-alt me-2"></i>${escapeHTML(venue)}</div>` : ""}
+                    ${time ? `
+                        <div class="event-meta">
+                            <i class="bi bi-clock me-2"></i>${escapeHTML(time)}
+                        </div>` : ""}
+
+                    ${venue ? `
+                        <div class="event-meta">
+                            <i class="bi bi-geo-alt me-2"></i>${escapeHTML(venue)}
+                        </div>` : ""}
 
                     <p class="event-description mt-2">${escapeHTML(description)}</p>
 
@@ -405,15 +427,18 @@ function createEventCard(event) {
 function renderEvents() {
     const query = eventSearch.value.trim().toLowerCase();
 
-    // Club-wise filtering
-    const clubFilteredEvents = normalizedSelectedClub
-        ? allEvents.filter(event =>
-            getEventClubName(event).trim().toLowerCase() ===
-            normalizedSelectedClub
-        )
+    // First filter by selected club.
+    const clubFilteredEvents = selectedClub
+        ? allEvents.filter(event => {
+            const eventClub = getEventClubName(event);
+
+            if (!eventClub) return false;
+
+            return getComparableClubName(eventClub) === normalizedSelectedClub;
+        })
         : allEvents;
 
-    // Search within the selected club's events
+    // Then apply the search only to that club's events.
     const filtered = clubFilteredEvents.filter(event => {
         const searchable = [
             event.title,
@@ -435,18 +460,15 @@ function renderEvents() {
 
     emptyState.classList.toggle("d-none", filtered.length !== 0);
 
-    if (filtered.length === 0 && normalizedSelectedClub) {
+    if (filtered.length === 0 && selectedClub) {
         document.getElementById("emptyTitle").textContent =
             "No events available for this club";
 
-        document.getElementById("emptyDescription").textContent =
-            query
-                ? "No events match your search for " + selectedClub + ". Try another search."
-                : "There are currently no events listed for " + selectedClub + ".";
+        document.getElementById("emptyDescription").textContent = query
+            ? `No events match your search for ${selectedClub}. Try another search.`
+            : `There are currently no events listed for ${selectedClub}.`;
     } else if (filtered.length === 0) {
-        document.getElementById("emptyTitle").textContent =
-            "No events found";
-
+        document.getElementById("emptyTitle").textContent = "No events found";
         document.getElementById("emptyDescription").textContent =
             "Try another search or check again later.";
     }
@@ -474,7 +496,6 @@ async function loadEvents() {
         }
 
         renderEvents();
-
     } catch (error) {
         console.error("Events loading error:", error);
         showMessage("Unable to load events right now. Please refresh the page.");
@@ -531,7 +552,6 @@ async function registerForEvent(eventId, button) {
 
         button.textContent = "Registered";
         button.disabled = true;
-
     } catch (error) {
         console.error("Event registration error:", error);
         showMessage(error.message || "Unable to register for this event.");
