@@ -1518,8 +1518,7 @@ app.delete("/api/announcements/:id", requireAuth, requireAdmin, async (req, res)
 /* ADMIN - EVENTS CRUD */
 
 // Get all events
-app.get("/api/events", requireAuth, requireAdmin, async (req, res) => {
-    try {
+app.get("/api/events", async (req, res) => {    try {
         const events = await Event.find()
             .sort({ date: 1 })
             .lean();
