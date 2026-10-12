@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,6 +61,11 @@
             color: #172554;
             overflow-wrap: anywhere;
         }
+
+        #editProfileForm {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 24px;
+        }
     </style>
 </head>
 
@@ -97,6 +103,11 @@
             <p class="text-secondary mb-0">
                 Your ClubConnect account details
             </p>
+
+            <button id="editProfileBtn"
+                    class="btn btn-primary mt-3 d-none">
+                Edit Profile
+            </button>
         </div>
 
         <div id="message" class="alert d-none" role="alert"></div>
@@ -104,6 +115,8 @@
         <div id="loading" class="text-center py-3">
             Loading profile...
         </div>
+
+        <!-- Profile Details -->
 
         <div id="profileDetails" class="row g-3 d-none">
 
@@ -158,24 +171,140 @@
 
         </div>
 
+        <!-- Edit Profile Form -->
+
+        <form id="editProfileForm" class="mt-4 d-none">
+
+            <h5 class="fw-bold mb-3">Edit Profile Details</h5>
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label for="editName" class="form-label">
+                        Full Name
+                    </label>
+
+                    <input type="text"
+                           id="editName"
+                           class="form-control"
+                           maxlength="100"
+                           required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="editEmail" class="form-label">
+                        Email Address
+                    </label>
+
+                    <input type="email"
+                           id="editEmail"
+                           class="form-control"
+                           required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="editMobile" class="form-label">
+                        Mobile Number
+                    </label>
+
+                    <input type="tel"
+                           id="editMobile"
+                           class="form-control"
+                           pattern="[0-9]{10}"
+                           maxlength="10"
+                           minlength="10"
+                           title="Enter a 10-digit mobile number"
+                           required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="editDepartment" class="form-label">
+                        Department
+                    </label>
+
+                    <input type="text"
+                           id="editDepartment"
+                           class="form-control"
+                           maxlength="100"
+                           required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="editSemester" class="form-label">
+                        Semester
+                    </label>
+
+                    <select id="editSemester"
+                            class="form-select"
+                            required>
+                        <option value="">Select Semester</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit"
+                        id="saveProfileBtn"
+                        class="btn btn-success">
+                    Save Changes
+                </button>
+
+                <button type="button"
+                        id="cancelEditBtn"
+                        class="btn btn-secondary">
+                    Cancel
+                </button>
+            </div>
+
+        </form>
+
         <div class="alert alert-info mt-4 mb-0">
             Your profile information is loaded from your ClubConnect account.
         </div>
 
     </div>
 </div>
+
 <script>
+
     "use strict";
 
     const message = document.getElementById("message");
     const loading = document.getElementById("loading");
     const profileDetails = document.getElementById("profileDetails");
 
+    const editProfileBtn = document.getElementById("editProfileBtn");
+    const editProfileForm = document.getElementById("editProfileForm");
+    const saveProfileBtn = document.getElementById("saveProfileBtn");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+
+    let currentProfile = null;
+
+    // Display success or error messages
     function showMessage(text, type = "warning") {
         message.textContent = text;
         message.className = `alert alert-${type}`;
     }
 
+    // Get the saved authentication token
+    function getToken() {
+        return (
+            localStorage.getItem("authToken") ||
+            localStorage.getItem("token") ||
+            localStorage.getItem("accessToken")
+        );
+    }
+
+    // Logout the student
     function logout() {
         [
             "authToken",
@@ -190,11 +319,47 @@
         window.location.href = "login.html";
     }
 
+    // Display profile information on the page
+    function displayProfile(user) {
+        currentProfile = user;
+
+        document.getElementById("studentName").textContent =
+            user.name || "Student";
+
+        document.getElementById("profileIcon").textContent =
+            (user.name || "S").charAt(0).toUpperCase();
+
+        document.getElementById("name").textContent =
+            user.name || "Not available";
+
+        document.getElementById("enrollment").textContent =
+            user.enrollment || "Not available";
+
+        document.getElementById("email").textContent =
+            user.email || "Not available";
+
+        document.getElementById("mobile").textContent =
+            user.mobile || "Not provided";
+
+        document.getElementById("department").textContent =
+            user.department || "Not available";
+
+        document.getElementById("semester").textContent =
+            user.semester
+                ? `Semester ${user.semester}`
+                : "Not available";
+
+        document.getElementById("role").textContent =
+            user.role || "Student";
+
+        loading.classList.add("d-none");
+        profileDetails.classList.remove("d-none");
+        editProfileBtn.classList.remove("d-none");
+    }
+
+    // Load profile details from the backend
     async function loadProfile() {
-        const token =
-            localStorage.getItem("authToken") ||
-            localStorage.getItem("token") ||
-            localStorage.getItem("accessToken");
+        const token = getToken();
 
         const storedUser =
             localStorage.getItem("loggedInUser") ||
@@ -202,15 +367,20 @@
 
         if (!token || !storedUser) {
             window.location.href = "login.html";
-            return;
+            return false;
         }
 
         try {
             JSON.parse(storedUser);
         } catch (error) {
-            showMessage("Saved login details are invalid. Please log in again.");
             loading.classList.add("d-none");
-            return;
+
+            showMessage(
+                "Saved login details are invalid. Please log in again.",
+                "danger"
+            );
+
+            return false;
         }
 
         try {
@@ -224,9 +394,13 @@
             const data = await response.json().catch(() => ({}));
 
             if (response.status === 401 || response.status === 403) {
-                showMessage("Your session has expired. Please log in again.");
+                showMessage(
+                    "Your session has expired. Please log in again.",
+                    "warning"
+                );
+
                 setTimeout(logout, 1200);
-                return;
+                return false;
             }
 
             if (!response.ok) {
@@ -235,41 +409,12 @@
                 );
             }
 
-            // Supports either { user: {...} } or a direct user object.
+            // Supports either { user: {...} } or a direct user object
             const user = data.user || data;
 
-            document.getElementById("studentName").textContent =
-                user.name || "Student";
+            displayProfile(user);
 
-            document.getElementById("profileIcon").textContent =
-                (user.name || "S").charAt(0).toUpperCase();
-
-            document.getElementById("name").textContent =
-                user.name || "Not available";
-
-            document.getElementById("enrollment").textContent =
-                user.enrollment || "Not available";
-
-            document.getElementById("email").textContent =
-                user.email || "Not available";
-
-            document.getElementById("mobile").textContent =
-                user.mobile || "Not provided";
-
-            document.getElementById("department").textContent =
-                user.department || "Not available";
-
-            document.getElementById("semester").textContent =
-                user.semester
-                    ? `Semester ${user.semester}`
-                    : "Not available";
-
-            document.getElementById("role").textContent =
-                user.role || "Student";
-
-            loading.classList.add("d-none");
-            profileDetails.classList.remove("d-none");
-            message.classList.add("d-none");
+            return true;
 
         } catch (error) {
             console.error("Profile loading error:", error);
@@ -280,11 +425,189 @@
                 error.message || "Unable to load your profile.",
                 "danger"
             );
+
+            return false;
         }
     }
 
-    document.getElementById("logoutBtn").addEventListener("click", logout);
+    // Open the edit form with the current profile information
+    function openEditForm() {
+        if (!currentProfile) {
+            showMessage(
+                "Profile information is not available.",
+                "warning"
+            );
+            return;
+        }
 
+        document.getElementById("editName").value =
+            currentProfile.name || "";
+
+        document.getElementById("editEmail").value =
+            currentProfile.email || "";
+
+        document.getElementById("editMobile").value =
+            currentProfile.mobile || "";
+
+        document.getElementById("editDepartment").value =
+            currentProfile.department || "";
+
+        document.getElementById("editSemester").value =
+            currentProfile.semester != null
+                ? String(currentProfile.semester)
+                : "";
+
+        profileDetails.classList.add("d-none");
+        editProfileForm.classList.remove("d-none");
+        editProfileBtn.classList.add("d-none");
+        message.classList.add("d-none");
+    }
+
+    // Cancel editing without saving
+    function cancelEdit() {
+        editProfileForm.classList.add("d-none");
+        profileDetails.classList.remove("d-none");
+        editProfileBtn.classList.remove("d-none");
+        message.classList.add("d-none");
+    }
+
+    // Save updated profile information to the backend
+    async function saveProfile(event) {
+        event.preventDefault();
+
+        const token = getToken();
+
+        if (!token) {
+            logout();
+            return;
+        }
+
+        const updatedProfile = {
+            name: document.getElementById("editName").value.trim(),
+            email: document.getElementById("editEmail").value.trim(),
+            mobile: document.getElementById("editMobile").value.trim(),
+            department: document.getElementById("editDepartment").value.trim(),
+            semester: Number(
+                document.getElementById("editSemester").value
+            )
+        };
+
+        if (
+            !updatedProfile.name ||
+            !updatedProfile.email ||
+            !updatedProfile.mobile ||
+            !updatedProfile.department ||
+            !updatedProfile.semester
+        ) {
+            showMessage(
+                "Please fill in all the fields.",
+                "warning"
+            );
+            return;
+        }
+
+        if (!/^[0-9]{10}$/.test(updatedProfile.mobile)) {
+            showMessage(
+                "Please enter a valid 10-digit mobile number.",
+                "warning"
+            );
+            return;
+        }
+
+        saveProfileBtn.disabled = true;
+        cancelEditBtn.disabled = true;
+        saveProfileBtn.textContent = "Saving...";
+
+        try {
+            const response = await fetch("/api/student/profile", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(updatedProfile)
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (response.status === 401 || response.status === 403) {
+                showMessage(
+                    "Your session has expired. Please log in again.",
+                    "warning"
+                );
+
+                setTimeout(logout, 1200);
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Unable to update your profile."
+                );
+            }
+
+            // Reload the saved details from the backend
+            const loaded = await loadProfile();
+
+            if (!loaded) {
+                editProfileForm.classList.remove("d-none");
+                profileDetails.classList.add("d-none");
+                editProfileBtn.classList.add("d-none");
+
+                showMessage(
+                    "Your profile was saved, but refreshing the details failed. Please reload the page.",
+                    "warning"
+                );
+
+                return;
+            }
+
+            editProfileForm.classList.add("d-none");
+            profileDetails.classList.remove("d-none");
+            editProfileBtn.classList.remove("d-none");
+
+            showMessage(
+                data.message || "Profile updated successfully!",
+                "success"
+            );
+
+        } catch (error) {
+            console.error("Profile update error:", error);
+
+            showMessage(
+                error.message || "Something went wrong while saving.",
+                "danger"
+            );
+
+        } finally {
+            saveProfileBtn.disabled = false;
+            cancelEditBtn.disabled = false;
+            saveProfileBtn.textContent = "Save Changes";
+        }
+    }
+
+    // Button event listeners
+    document.getElementById("logoutBtn").addEventListener(
+        "click",
+        logout
+    );
+
+    editProfileBtn.addEventListener(
+        "click",
+        openEditForm
+    );
+
+    cancelEditBtn.addEventListener(
+        "click",
+        cancelEdit
+    );
+
+    editProfileForm.addEventListener(
+        "submit",
+        saveProfile
+    );
+
+    // Load profile when the page opens
     loadProfile();
 </script>
 
