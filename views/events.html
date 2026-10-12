@@ -139,10 +139,8 @@
 
 <body>
 
-<!-- COMMON NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-
         <a class="navbar-brand" href="/index.html">
             <i class="bi bi-people-fill me-2"></i>ClubConnect
         </a>
@@ -182,7 +180,6 @@
     </div>
 </nav>
 
-<!-- HEADER -->
 <header class="page-hero text-center">
     <div class="container">
         <span class="badge bg-light text-primary mb-3 px-3 py-2">
@@ -195,7 +192,6 @@
     </div>
 </header>
 
-<!-- EVENTS CONTENT -->
 <main class="container py-5">
 
     <div class="search-panel mb-4">
@@ -255,13 +251,9 @@ const eventSearch = document.getElementById("eventSearch");
 
 let allEvents = [];
 
-// Selected club name passed from clubs.html
-const selectedClub = new URLSearchParams(window.location.search)
-    .get("club");
-
-const normalizedSelectedClub = (selectedClub || "")
-    .trim()
-    .toLowerCase();
+const params = new URLSearchParams(window.location.search);
+const selectedClub = (params.get("club") || "").trim();
+const normalizedSelectedClub = selectedClub.toLowerCase();
 
 if (normalizedSelectedClub) {
     document.getElementById("pageTitle").textContent =
@@ -313,9 +305,6 @@ function getUser() {
         return null;
     }
 }
-</script>
-</body>
-</html>
 
 function formatDate(dateValue) {
     if (!dateValue) return "Date to be announced";
@@ -338,7 +327,6 @@ function getEventImage(event) {
         "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=900&q=80";
 }
 
-// Supports clubName or club fields, including populated club objects.
 function getEventClubName(event) {
     const clubValue = event.clubName || event.club || "";
 
@@ -417,7 +405,7 @@ function createEventCard(event) {
 function renderEvents() {
     const query = eventSearch.value.trim().toLowerCase();
 
-    // First filter events by selected club, if one was selected.
+    // Club-wise filtering
     const clubFilteredEvents = normalizedSelectedClub
         ? allEvents.filter(event =>
             getEventClubName(event).trim().toLowerCase() ===
@@ -425,7 +413,7 @@ function renderEvents() {
         )
         : allEvents;
 
-    // Then apply the existing event search.
+    // Search within the selected club's events
     const filtered = clubFilteredEvents.filter(event => {
         const searchable = [
             event.title,
@@ -452,7 +440,9 @@ function renderEvents() {
             "No events available for this club";
 
         document.getElementById("emptyDescription").textContent =
-            "There are currently no events listed for " + selectedClub + ".";
+            query
+                ? "No events match your search for " + selectedClub + ". Try another search."
+                : "There are currently no events listed for " + selectedClub + ".";
     } else if (filtered.length === 0) {
         document.getElementById("emptyTitle").textContent =
             "No events found";
@@ -469,7 +459,7 @@ async function loadEvents() {
 
     try {
         const response = await fetch("/api/events");
-        const data = await response.json().catch(() => []);
+        const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
             throw new Error(data.message || "Unable to load events.");
@@ -479,12 +469,18 @@ async function loadEvents() {
             ? data
             : (data.events || data.data || []);
 
+        if (!Array.isArray(allEvents)) {
+            allEvents = [];
+        }
+
         renderEvents();
 
     } catch (error) {
         console.error("Events loading error:", error);
         showMessage("Unable to load events right now. Please refresh the page.");
         eventCount.textContent = "Events unavailable";
+        eventsContainer.innerHTML = "";
+        emptyState.classList.add("d-none");
     } finally {
         loading.classList.add("d-none");
     }
@@ -538,9 +534,7 @@ async function registerForEvent(eventId, button) {
 
     } catch (error) {
         console.error("Event registration error:", error);
-
         showMessage(error.message || "Unable to register for this event.");
-
         button.disabled = false;
         button.innerHTML = originalText;
     }
@@ -556,7 +550,7 @@ eventsContainer.addEventListener("click", function (event) {
     registerForEvent(button.dataset.eventId, button);
 });
 
-document.addEventListener("DOMContentLoaded", loadEvents);
+loadEvents();
 </script>
 
 </body>
